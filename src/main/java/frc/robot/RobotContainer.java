@@ -6,8 +6,6 @@ package frc.robot;
 
 // import edu.wpi.first.math.MathUtil;
 // import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,15 +27,14 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
-  private final XboxController m_controller = new XboxController(OperatorConstants.kXBoxControllerPort);
+  private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final DriveTrain m_swerve = new DriveTrain();
   // private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   // private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kXBoxControllerPort);
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ModuleConstants;
 
@@ -22,6 +23,9 @@ public class SwerveModule extends SubsystemBase {
 
   private final Encoder m_driveEncoder;
   private final Encoder m_turningEncoder;
+  private double turningKp = 1;
+  private double turningKd = 0;
+  private double turningKi = 0;
 
   // This creates a PIDController object passing through the kP, kI, and kD parameters
   // We need to change these values, starting with kP and kI, then kI
@@ -29,11 +33,12 @@ public class SwerveModule extends SubsystemBase {
 
 
   // This creates a ProfiledPIDController object passing through the kP, kI, and kD parameters
+  // hte kp, kd, ki values should be in constants, I am testing this with smartdhasboard getNumber functions
   private final ProfiledPIDController m_turningPIDController =
       new ProfiledPIDController(
-          ModuleConstants.kPModuleTurningController,
-          0,
-          0,
+          turningKp,
+          turningKd,
+          turningKi,
           new TrapezoidProfile.Constraints(
               ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
               ModuleConstants.kMaxModuleAngularAccelerationRadiansPerSecondSquared));
@@ -132,6 +137,16 @@ public class SwerveModule extends SubsystemBase {
   public void resetEncoders() {
     m_driveEncoder.reset();
     m_turningEncoder.reset();
+  }
+  @Override
+  public void periodic() {
+    turningKp = SmartDashboard.getNumber("Turning Kp", 1);
+    turningKd = SmartDashboard.getNumber("Turning Kd", 0);
+    turningKi = SmartDashboard.getNumber("Turning Ki", 0);
+
+    SmartDashboard.putNumber("Current Kp", turningKp);
+    SmartDashboard.putNumber("Current Kd", turningKd);
+    SmartDashboard.putNumber("Current Ki", turningKi);
   }
 }
 

@@ -5,23 +5,41 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ElevatorSubsystem. */
-  private final SparkMax m_elevatorMotor;
+  private final SparkMax m_elevatorRightMotor;
+  private final SparkMax m_elevatorLeftMotor;
+
+  // intialize the encoder objects
+  private final Encoder m_elevatorEncoder;
+
   public ElevatorSubsystem() {
-    m_elevatorMotor = new SparkMax(ElevatorConstants.kElevatorPort, MotorType.kBrushless);
+    // define motor and encoder objects
+    m_elevatorRightMotor = new SparkMax(ElevatorConstants.kElevatorPorts[1], MotorType.kBrushless);
+    m_elevatorLeftMotor = new SparkMax(ElevatorConstants.kElevatorPorts[0], MotorType.kBrushless);
+    m_elevatorEncoder = new Encoder(ElevatorConstants.kElevatorEncoders1[0], ElevatorConstants.kElevatorEncoders1[1]);
+
+    m_elevatorRightMotor.configure(ElevatorConstants.RIGHTELEVATOR_CONFIG, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    m_elevatorLeftMotor.configure(ElevatorConstants.LEFTELEVATOR_CONFIG, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void moveElevator(double elevatorSpeed) {
-    m_elevatorMotor.set(elevatorSpeed);
+    m_elevatorLeftMotor.set(elevatorSpeed);
+    m_elevatorRightMotor.set(elevatorSpeed);
   }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Elevator Speed", m_elevatorLeftMotor.get());
+    SmartDashboard.putNumber("Position", m_elevatorEncoder.get());
   }
 }
