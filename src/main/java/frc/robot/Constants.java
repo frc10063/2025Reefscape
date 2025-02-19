@@ -29,20 +29,20 @@ public final class Constants {
     public static final int kJoystickControllerPort = 1;
   }
   public static final class DriveConstants {
-    public static final int kFrontLeftDriveMotorPort = 0;
-    public static final int kRearLeftDriveMotorPort = 2;
-    public static final int kFrontRightDriveMotorPort = 4;
-    public static final int kRearRightDriveMotorPort = 6;
+    public static final int kFrontLeftDriveMotorPort = 2;
+    public static final int kRearLeftDriveMotorPort = 3;
+    public static final int kFrontRightDriveMotorPort = 5;
+    public static final int kRearRightDriveMotorPort = 4;
 
-    public static final int kFrontLeftTurningMotorPort = 1;
-    public static final int kRearLeftTurningMotorPort = 3;
-    public static final int kFrontRightTurningMotorPort = 5;
-    public static final int kRearRightTurningMotorPort = 7;
+    public static final int kFrontLeftTurningMotorPort = 6;
+    public static final int kRearLeftTurningMotorPort = 7;
+    public static final int kFrontRightTurningMotorPort = 9;
+    public static final int kRearRightTurningMotorPort = 8;
 
-    public static final int[] kFrontLeftTurningEncoderPorts = new int[] {0, 1};
-    public static final int[] kRearLeftTurningEncoderPorts = new int[] {2, 3};
-    public static final int[] kFrontRightTurningEncoderPorts = new int[] {4, 5};
-    public static final int[] kRearRightTurningEncoderPorts = new int[] {6, 7};
+    public static final int kFrontLeftTurningEncoderPorts = 1;
+    public static final int kRearLeftTurningEncoderPorts = 2;
+    public static final int kFrontRightTurningEncoderPorts = 0;
+    public static final int kRearRightTurningEncoderPorts = 3;
 
     public static final boolean kFrontLeftTurningEncoderReversed = false;
     public static final boolean kRearLeftTurningEncoderReversed = true;
@@ -64,7 +64,7 @@ public final class Constants {
     public static final double kTrackWidth = 0.5;
     // Distance between centers of right and left wheels on robot
     // we need to measure this out
-    public static final double kWheelBase = 0.7;
+    public static final double kWheelBase = 0.5;
     // Distance between front and back wheels on robot
     // Also measure this out
     public static final SwerveDriveKinematics kDriveKinematics =
@@ -84,7 +84,7 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
-    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxSpeedMetersPerSecond = 2;
   }
   public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
@@ -93,7 +93,7 @@ public final class Constants {
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 42;
     // Our wheel diameter is 0.0508, i do not know what unit so change this
-    public static final double kWheelDiameterMeters = 0.15;
+    public static final double kWheelDiameterMeters = 0.1016;
     public static final double kDriveEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
         (kWheelDiameterMeters * Math.PI) / (double) kdriveEncoderCPR;
@@ -122,17 +122,17 @@ public final class Constants {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
-  public static final class ElevatorConstants {
-    public static final int[] kElevatorPorts = new int[] {0, 1};
+  // public static final class ElevatorConstants {
+  //   public static final int[] kElevatorPorts = new int[] {0, 1};
 
 
-    public static final int[] kElevatorEncoders1 = new int[] {0, 1};
-    public static final int kElevatorEncoderRes = 4096;
-    public static final SparkBaseConfig LEFTELEVATOR_CONFIG = new SparkMaxConfig()
-        .inverted(true)
-        .idleMode(IdleMode.kBrake);
-    public static final SparkBaseConfig RIGHTELEVATOR_CONFIG = new SparkMaxConfig()
-        .inverted(false)
-        .idleMode(IdleMode.kBrake);
-  }
+  //   public static final int[] kElevatorEncoders1 = new int[] {0, 1};
+  //   public static final int kElevatorEncoderRes = 4096;
+  //   public static final SparkBaseConfig LEFTELEVATOR_CONFIG = new SparkMaxConfig()
+  //       .inverted(true)
+  //       .idleMode(IdleMode.kBrake);
+  //   public static final SparkBaseConfig RIGHTELEVATOR_CONFIG = new SparkMaxConfig()
+  //       .inverted(false)
+  //       .idleMode(IdleMode.kBrake);
+  // }
 }

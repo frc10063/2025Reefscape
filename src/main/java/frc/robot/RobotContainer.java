@@ -26,7 +26,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  // private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final DriveTrain m_swerve = new DriveTrain();
@@ -49,12 +49,12 @@ public class RobotContainer {
                   m_controller.getRightX() * ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
                   false), 
                   m_swerve));
-    m_elevatorSubsystem.setDefaultCommand(
-        new RunCommand(
-          () -> 
-              m_elevatorSubsystem.moveElevator(
-                m_joystick.getY()),
-                m_elevatorSubsystem));
+    // m_elevatorSubsystem.setDefaultCommand(
+    //     new RunCommand(
+    //       () -> 
+    //           m_elevatorSubsystem.moveElevator(
+    //             m_joystick.getY()),
+    //             m_elevatorSubsystem));
   }
 
   /**

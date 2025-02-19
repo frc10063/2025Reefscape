@@ -17,7 +17,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ModuleConstants;
@@ -28,7 +28,7 @@ public class SwerveModule extends SubsystemBase {
   private final SparkMax m_turningMotor;
 
   private final RelativeEncoder m_driveEncoder;
-  private final Encoder m_turningEncoder;
+  private final AnalogEncoder m_turningEncoder;
   private double turningKp = 1;
   private double turningKd = 0;
   private double turningKi = 0;
@@ -71,14 +71,14 @@ public class SwerveModule extends SubsystemBase {
   public SwerveModule(
       int driveMotorChannel,
       int turningMotorChannel,
-      int[] turningEncoderChannels,
+      int turningEncoderChannel,
       boolean driveEncoderReversed,
       boolean turningEncoderReversed) {
     m_driveMotor = new SparkMax(driveMotorChannel, MotorType.kBrushless);
     m_turningMotor = new SparkMax(turningMotorChannel, MotorType.kBrushless);
 
     m_driveEncoder = m_driveMotor.getEncoder(); 
-    m_turningEncoder = new Encoder(turningEncoderChannels[0], turningEncoderChannels[1]);
+    m_turningEncoder = new AnalogEncoder(turningEncoderChannel);
 
     // Distance per pulse is basically distance driven for each count of the encoder
     // 2*pi*radius is circumference of the wheel, divided by encoder resolution would
@@ -89,8 +89,10 @@ public class SwerveModule extends SubsystemBase {
     
     // 2pi represents 360 degrees in radians, then divided by resolution to give
     // radians per count of encoder
-    m_turningEncoder.setDistancePerPulse(ModuleConstants.kTurningEncoderDistancePerPulse);
-    m_turningEncoder.setReverseDirection(turningEncoderReversed);
+
+    // this method doesnt exist for analogencoders
+    //m_turningEncoder.setDistancePerPulse(ModuleConstants.kTurningEncoderDistancePerPulse);
+    m_turningEncoder.setInverted(turningEncoderReversed);
 
     driveConfig.encoder
         .positionConversionFactor(ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) 
@@ -115,7 +117,7 @@ public class SwerveModule extends SubsystemBase {
     // with scale (m_driveEncoder.getVelocity() * ModuleConstants.kdriveEncoderCPR * ModuleConstants.kDriveEncoderDistancePerPulse)/60
     return new SwerveModuleState(
         m_driveEncoder.getVelocity(), 
-        new Rotation2d(m_turningEncoder.getDistance()));
+        new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse));
   }
 
   /**
@@ -127,9 +129,10 @@ public class SwerveModule extends SubsystemBase {
     // return new SwerveModulePosition(
     //   m_driveEncoder.getDistance(), new Rotation2d(m_turningEncoder.getDistance()));
     // with scale (m_driveEncoder.getPosition() * ModuleConstants.kdriveEncoderCPR * ModuleConstants.kDriveEncoderDistancePerPulse)
+    // 
     return new SwerveModulePosition(
         m_driveEncoder.getPosition(),
-        new Rotation2d(m_turningEncoder.getDistance()));
+        new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse));
   }
 
   /**
@@ -137,8 +140,9 @@ public class SwerveModule extends SubsystemBase {
    *
    * @param desiredState Desired state with speed and angle.
    */
+  // var encoderRotation = new Rotation2d(m_turningEncoder.getDistance());
   public void setDesiredState(SwerveModuleState desiredState) {
-    var encoderRotation = new Rotation2d(m_turningEncoder.getDistance());
+    var encoderRotation = new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse);
 
     // Optimize the reference state to avoid spinning further than 90 degrees
     desiredState.optimize(encoderRotation);
@@ -154,16 +158,19 @@ public class SwerveModule extends SubsystemBase {
 
 
     // Calculate the turning motor output from the turning PID controller.
-    final double turnOutput =
+    // final double turnOutput =
+    //     m_turningPIDController.calculate(
+    //         m_turningEncoder.getDistance(), desiredState.angle.getRadians());
+    final double turnOutput = 
         m_turningPIDController.calculate(
-            m_turningEncoder.getDistance(), desiredState.angle.getRadians());
-
+          (m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse), 
+          desiredState.angle.getRadians());
     m_driveMotor.setVoltage(driveOutput);
     m_turningMotor.setVoltage(turnOutput);
   }
   public void resetEncoders() {
     m_driveEncoder.setPosition(0);
-    m_turningEncoder.reset();
+    // m_turningEncoder.reset();
   }
   @Override
   public void periodic() {
@@ -183,6 +190,8 @@ public class SwerveModule extends SubsystemBase {
     SmartDashboard.putNumber("Current Drive Kp", driveKp);
     SmartDashboard.putNumber("Current Drive Ki", driveKi);
     SmartDashboard.putNumber("Current Drive Kd", driveKd);
+
+    // SmartDashboard.putNumber("Drive Velocity", m_driveEncoder.getVelocity());
   }
 }
 
