@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,7 +24,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // intialize the encoder objects
   private final Encoder m_elevatorEncoder;
-
   private final PIDController m_pidController;
   private final double kP = 1;
   private final double kI = 0;
@@ -45,7 +45,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevatorLeftMotor.set(elevatorSpeed);
     m_elevatorRightMotor.set(elevatorSpeed);
   }
-
   public void setElevatorPosition(double targetPosition) {
     double currentPosition = m_elevatorEncoder.get();
     double output = m_pidController.calculate(currentPosition, targetPosition);
@@ -53,7 +52,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevatorLeftMotor.set(output);
     m_elevatorRightMotor.set(output);
   }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
