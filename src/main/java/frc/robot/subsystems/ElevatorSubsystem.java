@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
+import edu.wpi.first.math.controller.PIDController;
+
 public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ElevatorSubsystem. */
   private final SparkMax m_elevatorRightMotor;
@@ -21,6 +23,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // intialize the encoder objects
   private final Encoder m_elevatorEncoder;
+
+  private final PIDController m_pidController;
+  private final double kP = 1;
+  private final double kI = 0;
+  private final double kD = 0;
 
   public ElevatorSubsystem() {
     // define motor and encoder objects
@@ -30,12 +37,23 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     m_elevatorRightMotor.configure(ElevatorConstants.RIGHTELEVATOR_CONFIG, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     m_elevatorLeftMotor.configure(ElevatorConstants.LEFTELEVATOR_CONFIG, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+    m_pidController = new PIDController(kP, kI, kD);
   }
 
   public void moveElevator(double elevatorSpeed) {
     m_elevatorLeftMotor.set(elevatorSpeed);
     m_elevatorRightMotor.set(elevatorSpeed);
   }
+
+  public void setElevatorPosition(double targetPosition) {
+    double currentPosition = m_elevatorEncoder.get();
+    double output = m_pidController.calculate(currentPosition, targetPosition);
+
+    m_elevatorLeftMotor.set(output);
+    m_elevatorRightMotor.set(output);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
