@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -93,14 +94,14 @@ public class SwerveModule extends SubsystemBase {
     // this method doesnt exist for analogencoders
     //m_turningEncoder.setDistancePerPulse(ModuleConstants.kTurningEncoderDistancePerPulse);
     m_turningEncoder.setInverted(turningEncoderReversed);
-
+    driveConfig = new SparkMaxConfig();
     driveConfig.encoder
         .positionConversionFactor(ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) 
-        .velocityConversionFactor((ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) / 60)
-        .inverted(driveEncoderReversed);
+        .velocityConversionFactor((ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) / 60);
+        // .inverted(driveEncoderReversed);
     // driveConfig.inverted(driveEncoderReversed); 
     // Idk what these parameters are
-    m_driveMotor.configure(driveConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    m_driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous. 
     m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
@@ -129,7 +130,7 @@ public class SwerveModule extends SubsystemBase {
     // return new SwerveModulePosition(
     //   m_driveEncoder.getDistance(), new Rotation2d(m_turningEncoder.getDistance()));
     // with scale (m_driveEncoder.getPosition() * ModuleConstants.kdriveEncoderCPR * ModuleConstants.kDriveEncoderDistancePerPulse)
-    // 
+    
     return new SwerveModulePosition(
         m_driveEncoder.getPosition(),
         new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse));

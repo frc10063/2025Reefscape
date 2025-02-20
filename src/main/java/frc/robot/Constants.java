@@ -45,9 +45,9 @@ public final class Constants {
     public static final int kRearRightTurningEncoderPorts = 3;
 
     public static final boolean kFrontLeftTurningEncoderReversed = false;
-    public static final boolean kRearLeftTurningEncoderReversed = true;
+    public static final boolean kRearLeftTurningEncoderReversed = false;
     public static final boolean kFrontRightTurningEncoderReversed = false;
-    public static final boolean kRearRightTurningEncoderReversed = true;
+    public static final boolean kRearRightTurningEncoderReversed = false;
 
     // public static final int[] kFrontLeftDriveEncoderPorts = new int[] {8, 9};
     // public static final int[] kRearLeftDriveEncoderPorts = new int[] {10, 11};
@@ -55,9 +55,9 @@ public final class Constants {
     // public static final int[] kRearRightDriveEncoderPorts = new int[] {14, 15};
 
     public static final boolean kFrontLeftDriveEncoderReversed = false;
-    public static final boolean kRearLeftDriveEncoderReversed = true;
+    public static final boolean kRearLeftDriveEncoderReversed = false;
     public static final boolean kFrontRightDriveEncoderReversed = false;
-    public static final boolean kRearRightDriveEncoderReversed = true;
+    public static final boolean kRearRightDriveEncoderReversed = false;
 
     public static final double kDrivePeriod = TimedRobot.kDefaultPeriod;
 
@@ -92,7 +92,7 @@ public final class Constants {
 
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 42;
-    // Our wheel diameter is 0.0508, i do not know what unit so change this
+
     public static final double kWheelDiameterMeters = 0.1016;
     public static final double kDriveEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
@@ -127,7 +127,7 @@ public final class Constants {
 
 
   //   public static final int[] kElevatorEncoders1 = new int[] {0, 1};
-  //   public static final int kElevatorEncoderRes = 4096;
+  //   public static final int kElevatorEncoderRes = 2048;
   //   public static final SparkBaseConfig LEFTELEVATOR_CONFIG = new SparkMaxConfig()
   //       .inverted(true)
   //       .idleMode(IdleMode.kBrake);

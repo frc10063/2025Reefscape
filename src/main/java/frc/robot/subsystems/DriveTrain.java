@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
+import com.studica.frc.AHRS;
+
 public class DriveTrain extends SubsystemBase {
   public DriveTrain() {
     m_gyro.reset();
@@ -49,7 +51,7 @@ public class DriveTrain extends SubsystemBase {
 
 
 
-  private final AnalogGyro m_gyro = new AnalogGyro(0);
+  private final AHRS m_gyro = new AHRS(AHRS.NavXComType.kI2C);
   private final SwerveDriveOdometry m_odometry =
       new SwerveDriveOdometry(
           DriveConstants.kDriveKinematics,

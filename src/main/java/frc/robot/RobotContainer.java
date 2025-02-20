@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 // import edu.wpi.first.math.MathUtil;
 // import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -44,9 +45,9 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                  m_controller.getLeftY() * DriveConstants.kMaxSpeedMetersPerSecond,
-                  m_controller.getLeftX() * DriveConstants.kMaxSpeedMetersPerSecond,
-                  m_controller.getRightX() * ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
+                  MathUtil.applyDeadband(-0.1, 0.2) * DriveConstants.kMaxSpeedMetersPerSecond,
+                  MathUtil.applyDeadband(m_controller.getLeftY(), 0.2) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  MathUtil.applyDeadband(m_controller.getRightX(), 0.2) * ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
                   false), 
                   m_swerve));
     // m_elevatorSubsystem.setDefaultCommand(
