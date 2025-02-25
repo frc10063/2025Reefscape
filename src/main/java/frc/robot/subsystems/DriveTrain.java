@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
@@ -27,21 +28,21 @@ public class DriveTrain extends SubsystemBase {
         DriveConstants.kFrontLeftTurningEncoderPorts,
         DriveConstants.kFrontLeftDriveEncoderReversed,
         DriveConstants.kFrontLeftTurningEncoderReversed);
-  private final SwerveModule m_frontRight = 
+  private final SwerveModule m_rearLeft = 
       new SwerveModule(
         DriveConstants.kRearLeftDriveMotorPort, 
         DriveConstants.kRearLeftTurningMotorPort,
         DriveConstants.kRearLeftTurningEncoderPorts,
         DriveConstants.kRearLeftDriveEncoderReversed,
         DriveConstants.kRearLeftTurningEncoderReversed);
-  private final SwerveModule m_rearRight = 
+  private final SwerveModule m_frontRight = 
       new SwerveModule(
         DriveConstants.kFrontRightDriveMotorPort, 
         DriveConstants.kFrontRightTurningMotorPort,
         DriveConstants.kFrontRightTurningEncoderPorts,
         DriveConstants.kFrontRightDriveEncoderReversed,
         DriveConstants.kFrontRightTurningEncoderReversed);
-  private final SwerveModule m_rearLeft =
+  private final SwerveModule m_rearRight =
       new SwerveModule(
         DriveConstants.kRearRightDriveMotorPort, 
         DriveConstants.kRearRightTurningMotorPort,
@@ -103,7 +104,10 @@ public class DriveTrain extends SubsystemBase {
    */
   public void drive(
       double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    var swerveModuleStates =
+    SmartDashboard.putNumber("XSpeed", xSpeed);
+    SmartDashboard.putNumber("YSpeed", ySpeed);
+    SmartDashboard.putNumber("Rotation", rot);
+        var swerveModuleStates =
         DriveConstants.kDriveKinematics.toSwerveModuleStates(
             ChassisSpeeds.discretize(
                 fieldRelative

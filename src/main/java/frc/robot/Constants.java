@@ -39,14 +39,14 @@ public final class Constants {
     public static final int kFrontRightTurningMotorPort = 9;
     public static final int kRearRightTurningMotorPort = 8;
 
-    public static final int kFrontLeftTurningEncoderPorts = 1;
+    public static final int kFrontLeftTurningEncoderPorts = 3;
     public static final int kRearLeftTurningEncoderPorts = 2;
     public static final int kFrontRightTurningEncoderPorts = 0;
-    public static final int kRearRightTurningEncoderPorts = 3;
+    public static final int kRearRightTurningEncoderPorts = 1; 
 
     public static final boolean kFrontLeftTurningEncoderReversed = false;
-    public static final boolean kRearLeftTurningEncoderReversed = false;
-    public static final boolean kFrontRightTurningEncoderReversed = false;
+    public static final boolean kRearLeftTurningEncoderReversed = true;
+    public static final boolean kFrontRightTurningEncoderReversed = true;
     public static final boolean kRearRightTurningEncoderReversed = false;
 
     // public static final int[] kFrontLeftDriveEncoderPorts = new int[] {8, 9};
@@ -55,8 +55,8 @@ public final class Constants {
     // public static final int[] kRearRightDriveEncoderPorts = new int[] {14, 15};
 
     public static final boolean kFrontLeftDriveEncoderReversed = false;
-    public static final boolean kRearLeftDriveEncoderReversed = false;
-    public static final boolean kFrontRightDriveEncoderReversed = false;
+    public static final boolean kRearLeftDriveEncoderReversed = true;
+    public static final boolean kFrontRightDriveEncoderReversed = true;
     public static final boolean kRearRightDriveEncoderReversed = false;
 
     public static final double kDrivePeriod = TimedRobot.kDefaultPeriod;
@@ -84,7 +84,7 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
-    public static final double kMaxSpeedMetersPerSecond = 2;
+    public static final double kMaxSpeedMetersPerSecond = 3;
   }
   public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;

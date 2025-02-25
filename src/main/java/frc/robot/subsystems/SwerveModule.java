@@ -25,16 +25,18 @@ import frc.robot.Constants.ModuleConstants;
 
 public class SwerveModule extends SubsystemBase {
 
+  int drivePort, turnPort;
+
   private final SparkMax m_driveMotor;
   private final SparkMax m_turningMotor;
 
   private final RelativeEncoder m_driveEncoder;
   private final AnalogEncoder m_turningEncoder;
-  private double turningKp = 1;
+  private double turningKp = 0.5;
   private double turningKd = 0;
   private double turningKi = 0;
   
-  private double driveKp = 1;
+  private double driveKp = 0.3;
   private double driveKd = 0;
   private double driveKi = 0;
 
@@ -75,6 +77,8 @@ public class SwerveModule extends SubsystemBase {
       int turningEncoderChannel,
       boolean driveEncoderReversed,
       boolean turningEncoderReversed) {
+        drivePort = driveMotorChannel;
+        turnPort = turningMotorChannel;
     m_driveMotor = new SparkMax(driveMotorChannel, MotorType.kBrushless);
     m_turningMotor = new SparkMax(turningMotorChannel, MotorType.kBrushless);
 
@@ -94,7 +98,8 @@ public class SwerveModule extends SubsystemBase {
     // this method doesnt exist for analogencoders
     //m_turningEncoder.setDistancePerPulse(ModuleConstants.kTurningEncoderDistancePerPulse);
     m_turningEncoder.setInverted(turningEncoderReversed);
-    driveConfig = new SparkMaxConfig();
+    driveConfig = new SparkMaxConfig()
+        .inverted(driveEncoderReversed);
     driveConfig.encoder
         .positionConversionFactor(ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) 
         .velocityConversionFactor((ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) / 60);
@@ -104,7 +109,7 @@ public class SwerveModule extends SubsystemBase {
     m_driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous. 
-    m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
+    m_turningPIDController.enableContinuousInput(0, 2*Math.PI);
   }
 
   /**
@@ -116,6 +121,8 @@ public class SwerveModule extends SubsystemBase {
     // return new SwerveModuleState(
     //     m_driveEncoder.getRate(), new Rotation2d(m_turningEncoder.getDistance()));
     // with scale (m_driveEncoder.getVelocity() * ModuleConstants.kdriveEncoderCPR * ModuleConstants.kDriveEncoderDistancePerPulse)/60
+
+    SmartDashboard.putNumber("Encoder Turn "+turnPort, m_turningEncoder.get());
     return new SwerveModuleState(
         m_driveEncoder.getVelocity(), 
         new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse));
@@ -143,8 +150,9 @@ public class SwerveModule extends SubsystemBase {
    */
   // var encoderRotation = new Rotation2d(m_turningEncoder.getDistance());
   public void setDesiredState(SwerveModuleState desiredState) {
-    var encoderRotation = new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse);
 
+    var encoderRotation = new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse);
+    SmartDashboard.putNumber("Turn Encoder "+turnPort, m_turningEncoder.get());
     // Optimize the reference state to avoid spinning further than 90 degrees
     desiredState.optimize(encoderRotation);
 
@@ -166,8 +174,10 @@ public class SwerveModule extends SubsystemBase {
         m_turningPIDController.calculate(
           (m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse), 
           desiredState.angle.getRadians());
+    SmartDashboard.putNumber("Drive Motor "+drivePort, driveOutput);
+    SmartDashboard.putNumber("Turn Motor "+turnPort, turnOutput);
     m_driveMotor.setVoltage(driveOutput);
-    m_turningMotor.setVoltage(turnOutput);
+    // m_turningMotor.setVoltage(turnOutput);
   }
   public void resetEncoders() {
     m_driveEncoder.setPosition(0);
@@ -175,13 +185,13 @@ public class SwerveModule extends SubsystemBase {
   }
   @Override
   public void periodic() {
-    turningKp = SmartDashboard.getNumber("Turning Kp", 1);
-    turningKi = SmartDashboard.getNumber("Turning Ki", 0);
-    turningKd = SmartDashboard.getNumber("Turning Kd", 0);
+    // turningKp = SmartDashboard.getNumber("Turning Kp", 0.3);
+    // turningKi = SmartDashboard.getNumber("Turning Ki", 0);
+    // turningKd = SmartDashboard.getNumber("Turning Kd", 0);
 
-    driveKp = SmartDashboard.getNumber("Drive Kp", 1);
-    driveKi = SmartDashboard.getNumber("Drive Ki", 0);
-    driveKd = SmartDashboard.getNumber("Drive Kd", 0);
+    // driveKp = SmartDashboard.getNumber("Drive Kp", 0.3);
+    // driveKi = SmartDashboard.getNumber("Drive Ki", 0);
+    // driveKd = SmartDashboard.getNumber("Drive Kd", 0);
 
 
     SmartDashboard.putNumber("Current Turning Kp", turningKp);
