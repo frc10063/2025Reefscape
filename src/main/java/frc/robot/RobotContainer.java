@@ -18,6 +18,7 @@ import frc.robot.Constants.OperatorConstants;
 // import frc.robot.commands.Autos;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 
 /**
@@ -28,7 +29,8 @@ import frc.robot.subsystems.ElevatorSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  // private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  private final IntakeSubsystem m_elevatorSubsystem = new IntakeSubsystem();
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final DriveTrain m_swerve = new DriveTrain();
@@ -51,12 +53,18 @@ public class RobotContainer {
                   MathUtil.applyDeadband(m_controller.getRightX(), 0.2) * ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
                   false), 
                   m_swerve));
-    // m_elevatorSubsystem.setDefaultCommand(
-    //     new RunCommand(
-    //       () -> 
-    //           m_elevatorSubsystem.moveElevator(
-    //             m_joystick.getY()),
-    //             m_elevatorSubsystem));
+    m_elevatorSubsystem.setDefaultCommand(
+        new RunCommand(
+          () -> 
+              m_elevatorSubsystem.moveElevator(
+                m_joystick.getY()),
+                m_elevatorSubsystem));
+    m_intakeSubsystem.setDefaultCommand(
+        new RunCommand(
+          () ->
+              m_intakeSubsystem.runIntakeMaxSpeed(
+                m_joystick.getX()), // I'm not sure how to bind the thing so this is temporary
+                m_intakeSubsystem));
   }
 
   /**

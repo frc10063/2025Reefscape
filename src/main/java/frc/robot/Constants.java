@@ -122,17 +122,20 @@ public final class Constants {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
-  // public static final class ElevatorConstants {
-  //   public static final int[] kElevatorPorts = new int[] {0, 1};
+  public static final class ElevatorConstants {
+    public static final int[] kElevatorPorts = new int[] {0, 1};
 
 
-  //   public static final int[] kElevatorEncoders1 = new int[] {0, 1};
-  //   public static final int kElevatorEncoderRes = 2048;
-  //   public static final SparkBaseConfig LEFTELEVATOR_CONFIG = new SparkMaxConfig()
-  //       .inverted(true)
-  //       .idleMode(IdleMode.kBrake);
-  //   public static final SparkBaseConfig RIGHTELEVATOR_CONFIG = new SparkMaxConfig()
-  //       .inverted(false)
-  //       .idleMode(IdleMode.kBrake);
-  // }
+    public static final int[] kElevatorEncoders1 = new int[] {0, 1};
+    public static final int kElevatorEncoderRes = 2048;
+    public static final SparkBaseConfig LEFTELEVATOR_CONFIG = new SparkMaxConfig()
+        .inverted(true)
+        .idleMode(IdleMode.kBrake);
+    public static final SparkBaseConfig RIGHTELEVATOR_CONFIG = new SparkMaxConfig()
+        .inverted(false)
+        .idleMode(IdleMode.kBrake);
+  }
+  public static final class IntakeConstants {
+    public static final int[] kIntakePorts = new int[] {0, 1}; // Temp values
+  }
 }
