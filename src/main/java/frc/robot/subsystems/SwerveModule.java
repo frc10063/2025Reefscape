@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -32,13 +33,13 @@ public class SwerveModule extends SubsystemBase {
 
   private final RelativeEncoder m_driveEncoder;
   private final AnalogEncoder m_turningEncoder;
-  private double turningKp = 0.5;
-  private double turningKd = 0;
-  private double turningKi = 0;
+  private static double turningKp = 10; // 12? 
+  private static double turningKd = 0.3;
+  private static double turningKi = 0;
   
-  private double driveKp = 0.3;
-  private double driveKd = 0;
-  private double driveKi = 0;
+  private static double driveKp = 0.3; // 0.36
+  private static double driveKd = 0;
+  private static double driveKi = 0;
 
   private SparkBaseConfig driveConfig;
   
@@ -75,6 +76,7 @@ public class SwerveModule extends SubsystemBase {
       int driveMotorChannel,
       int turningMotorChannel,
       int turningEncoderChannel,
+      double expectedEncoderZero,
       boolean driveEncoderReversed,
       boolean turningEncoderReversed) {
         drivePort = driveMotorChannel;
@@ -83,7 +85,7 @@ public class SwerveModule extends SubsystemBase {
     m_turningMotor = new SparkMax(turningMotorChannel, MotorType.kBrushless);
 
     m_driveEncoder = m_driveMotor.getEncoder(); 
-    m_turningEncoder = new AnalogEncoder(turningEncoderChannel);
+    m_turningEncoder = new AnalogEncoder(turningEncoderChannel, 1, expectedEncoderZero);
 
     // Distance per pulse is basically distance driven for each count of the encoder
     // 2*pi*radius is circumference of the wheel, divided by encoder resolution would
@@ -99,7 +101,8 @@ public class SwerveModule extends SubsystemBase {
     //m_turningEncoder.setDistancePerPulse(ModuleConstants.kTurningEncoderDistancePerPulse);
     m_turningEncoder.setInverted(turningEncoderReversed);
     driveConfig = new SparkMaxConfig()
-        .inverted(driveEncoderReversed);
+        .inverted(driveEncoderReversed)
+        .idleMode(IdleMode.kBrake);
     driveConfig.encoder
         .positionConversionFactor(ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) 
         .velocityConversionFactor((ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) / 60);
@@ -176,33 +179,32 @@ public class SwerveModule extends SubsystemBase {
           desiredState.angle.getRadians());
     SmartDashboard.putNumber("Drive Motor "+drivePort, driveOutput);
     SmartDashboard.putNumber("Turn Motor "+turnPort, turnOutput);
-    m_driveMotor.setVoltage(driveOutput);
-    // m_turningMotor.setVoltage(turnOutput);
+    m_driveMotor.setVoltage(-driveOutput);
+    m_turningMotor.setVoltage(-turnOutput);
   }
   public void resetEncoders() {
     m_driveEncoder.setPosition(0);
     // m_turningEncoder.reset();
   }
-  @Override
-  public void periodic() {
-    // turningKp = SmartDashboard.getNumber("Turning Kp", 0.3);
-    // turningKi = SmartDashboard.getNumber("Turning Ki", 0);
-    // turningKd = SmartDashboard.getNumber("Turning Kd", 0);
+  
+  public static void putPIDDashboard() {
+    SmartDashboard.putNumber("Turning Kp", turningKp);
+    SmartDashboard.putNumber("Turning Ki", turningKi);
+    SmartDashboard.putNumber("Turning Kd", turningKd);
 
-    // driveKp = SmartDashboard.getNumber("Drive Kp", 0.3);
-    // driveKi = SmartDashboard.getNumber("Drive Ki", 0);
-    // driveKd = SmartDashboard.getNumber("Drive Kd", 0);
-
-
-    SmartDashboard.putNumber("Current Turning Kp", turningKp);
-    SmartDashboard.putNumber("Current Turning Ki", turningKi);
-    SmartDashboard.putNumber("Current Turning Kd", turningKd);
-
-    SmartDashboard.putNumber("Current Drive Kp", driveKp);
-    SmartDashboard.putNumber("Current Drive Ki", driveKi);
-    SmartDashboard.putNumber("Current Drive Kd", driveKd);
-
+    SmartDashboard.putNumber("Drive Kp", driveKp);
+    SmartDashboard.putNumber("Drive Ki", driveKi);
+    SmartDashboard.putNumber("Drive Kd", driveKd);
     // SmartDashboard.putNumber("Drive Velocity", m_driveEncoder.getVelocity());
+  }
+  public static void getPIDDashboard() { 
+    // turningKp = SmartDashboard.getNumber("Turning Kp", turningKp);
+    // turningKi = SmartDashboard.getNumber("Turning Ki", turningKi);
+    // turningKd = SmartDashboard.getNumber("Turning Kd", turningKd);
+
+    // driveKp = SmartDashboard.getNumber("Drive Kp", driveKp);
+    // driveKi = SmartDashboard.getNumber("Drive Ki", driveKi);
+    // driveKd = SmartDashboard.getNumber("Drive Kd", driveKd);
   }
 }
 

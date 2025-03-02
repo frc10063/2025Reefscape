@@ -34,6 +34,7 @@ public class RobotContainer {
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final DriveTrain m_swerve = new DriveTrain();
+  Trigger resetGyroTrigger = m_controller.a();
   // private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   // private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
@@ -48,10 +49,10 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                  0, // MathUtil.applyDeadband(m_controller.getLeftX(), 0.2) * DriveConstants.kMaxSpeedMetersPerSecond, 
                   MathUtil.applyDeadband(m_controller.getLeftY(), 0.2) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  MathUtil.applyDeadband(m_controller.getLeftX(), 0.2) * DriveConstants.kMaxSpeedMetersPerSecond, 
                   MathUtil.applyDeadband(m_controller.getRightX(), 0.2) * ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
-                  false), 
+                  true), 
                   m_swerve));
     m_elevatorSubsystem.setDefaultCommand(
         new RunCommand(
@@ -76,7 +77,9 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {}
+  private void configureBindings() {
+    //resetGyroTrigger.onTrue(m_swerve.zeroHeading());
+  }
 
     
   // Commenting this out because I don't know if the slew rate stuff is necessary

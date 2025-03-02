@@ -26,6 +26,7 @@ public class DriveTrain extends SubsystemBase {
         DriveConstants.kFrontLeftDriveMotorPort, 
         DriveConstants.kFrontLeftTurningMotorPort,
         DriveConstants.kFrontLeftTurningEncoderPorts,
+        0.935, //5
         DriveConstants.kFrontLeftDriveEncoderReversed,
         DriveConstants.kFrontLeftTurningEncoderReversed);
   private final SwerveModule m_rearLeft = 
@@ -33,26 +34,29 @@ public class DriveTrain extends SubsystemBase {
         DriveConstants.kRearLeftDriveMotorPort, 
         DriveConstants.kRearLeftTurningMotorPort,
         DriveConstants.kRearLeftTurningEncoderPorts,
+        0.754, //4
         DriveConstants.kRearLeftDriveEncoderReversed,
         DriveConstants.kRearLeftTurningEncoderReversed);
-  private final SwerveModule m_frontRight = 
-      new SwerveModule(
-        DriveConstants.kFrontRightDriveMotorPort, 
-        DriveConstants.kFrontRightTurningMotorPort,
-        DriveConstants.kFrontRightTurningEncoderPorts,
-        DriveConstants.kFrontRightDriveEncoderReversed,
-        DriveConstants.kFrontRightTurningEncoderReversed);
   private final SwerveModule m_rearRight =
       new SwerveModule(
         DriveConstants.kRearRightDriveMotorPort, 
         DriveConstants.kRearRightTurningMotorPort,
         DriveConstants.kRearRightTurningEncoderPorts,
+        0.483, //3
         DriveConstants.kRearRightDriveEncoderReversed,
         DriveConstants.kRearRightTurningEncoderReversed);
+  private final SwerveModule m_frontRight = 
+      new SwerveModule(
+        DriveConstants.kFrontRightDriveMotorPort, 
+        DriveConstants.kFrontRightTurningMotorPort,
+        DriveConstants.kFrontRightTurningEncoderPorts,
+        0.436, //6
+        DriveConstants.kFrontRightDriveEncoderReversed,
+        DriveConstants.kFrontRightTurningEncoderReversed);
 
 
 
-  private final AHRS m_gyro = new AHRS(AHRS.NavXComType.kI2C);
+  private final AHRS m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
   private final SwerveDriveOdometry m_odometry =
       new SwerveDriveOdometry(
           DriveConstants.kDriveKinematics,

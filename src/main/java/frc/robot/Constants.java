@@ -45,8 +45,8 @@ public final class Constants {
     public static final int kRearRightTurningEncoderPorts = 1; 
 
     public static final boolean kFrontLeftTurningEncoderReversed = false;
-    public static final boolean kRearLeftTurningEncoderReversed = true;
-    public static final boolean kFrontRightTurningEncoderReversed = true;
+    public static final boolean kRearLeftTurningEncoderReversed = false;
+    public static final boolean kFrontRightTurningEncoderReversed = false;
     public static final boolean kRearRightTurningEncoderReversed = false;
 
     // public static final int[] kFrontLeftDriveEncoderPorts = new int[] {8, 9};
@@ -55,8 +55,8 @@ public final class Constants {
     // public static final int[] kRearRightDriveEncoderPorts = new int[] {14, 15};
 
     public static final boolean kFrontLeftDriveEncoderReversed = false;
-    public static final boolean kRearLeftDriveEncoderReversed = true;
-    public static final boolean kFrontRightDriveEncoderReversed = true;
+    public static final boolean kRearLeftDriveEncoderReversed = false;
+    public static final boolean kFrontRightDriveEncoderReversed = false;
     public static final boolean kRearRightDriveEncoderReversed = false;
 
     public static final double kDrivePeriod = TimedRobot.kDefaultPeriod;
@@ -84,14 +84,14 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
-    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxSpeedMetersPerSecond = 2;
   }
   public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
     public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 2 * Math.PI;
 
     public static final int kturningEncoderCPR = 4096;
-    public static final int kdriveEncoderCPR = 42;
+    public static final int kdriveEncoderCPR = 4096; // 42
 
     public static final double kWheelDiameterMeters = 0.1016;
     public static final double kDriveEncoderDistancePerPulse =
@@ -108,10 +108,10 @@ public final class Constants {
   }
   // This was part of the example, not sure if we will be using these
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxSpeedMetersPerSecond = 2;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+    public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI;
+    public static final double kMaxAngularSpeedRadiansPerSecondSquared = 2 * Math.PI;
 
     public static final double kPXController = 1;
     public static final double kPYController = 1;

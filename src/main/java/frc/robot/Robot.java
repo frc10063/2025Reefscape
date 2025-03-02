@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.SwerveModule;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -77,6 +78,8 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    SwerveModule.putPIDDashboard();
+    
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -84,7 +87,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    SwerveModule.getPIDDashboard();
+  }
 
   @Override
   public void testInit() {
