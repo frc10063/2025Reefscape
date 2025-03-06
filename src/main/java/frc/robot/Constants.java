@@ -59,6 +59,11 @@ public final class Constants {
     public static final boolean kFrontRightDriveEncoderReversed = false;
     public static final boolean kRearRightDriveEncoderReversed = false;
 
+    public static final double kFrontLeftExpectedZero = 0.935;
+    public static final double kRearLeftExpectedZero = 0.754;
+    public static final double kRearRightExpectedZero = 0.483;
+    public static final double kFrontRightExpectedZero = 0.436;
+
     public static final double kDrivePeriod = TimedRobot.kDefaultPeriod;
 
     public static final double kTrackWidth = 0.5;
@@ -84,11 +89,11 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
-    public static final double kMaxSpeedMetersPerSecond = 2;
+    public static final double kMaxSpeedMetersPerSecond = 3;
   }
   public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
-    public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 2 * Math.PI;
+    public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 8 * Math.PI;
 
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 4096; // 42
@@ -105,6 +110,13 @@ public final class Constants {
     public static final double kPModuleTurningController = 1;
 
     public static final double kPModuleDriveController = 1;
+    public static final double turningKp = 10.4; // 9.6
+    public static final double turningKd = 0.27;
+    public static final double turningKi = 0.01;
+    
+    public static final double driveKp = 0.34; // 0.36
+    public static final double driveKd = 0;
+    public static final double driveKi = 0;
   }
   // This was part of the example, not sure if we will be using these
   public static final class AutoConstants {
@@ -123,17 +135,21 @@ public final class Constants {
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
   public static final class ElevatorConstants {
-    public static final int[] kElevatorPorts = new int[] {0, 1};
+    public static final int[] kElevatorPorts = new int[] {10, 11};
 
 
-    public static final int[] kElevatorEncoders1 = new int[] {0, 1};
+    public static final int[] kElevatorEncoders1 = new int[] {9, 8};
     public static final int kElevatorEncoderRes = 2048;
     public static final SparkBaseConfig LEFTELEVATOR_CONFIG = new SparkMaxConfig()
         .inverted(true)
         .idleMode(IdleMode.kBrake);
     public static final SparkBaseConfig RIGHTELEVATOR_CONFIG = new SparkMaxConfig()
-        .inverted(false)
+        .inverted(true)
         .idleMode(IdleMode.kBrake);
+    // temp
+    public static final double kSpoolDiameter = 1;
+    public static final double kElevatorDistancePerPulse = (kSpoolDiameter * Math.PI)/ (double) kElevatorEncoderRes;
+
   }
   public static final class IntakeConstants {
     public static final int[] kIntakePorts = new int[] {0, 1}; // Temp values

@@ -6,9 +6,12 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 // import edu.wpi.first.math.MathUtil;
 // import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -18,7 +21,7 @@ import frc.robot.Constants.OperatorConstants;
 // import frc.robot.commands.Autos;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
+// import frc.robot.subsystems.IntakeSubsystem;
 
 
 /**
@@ -30,15 +33,18 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
-  private final IntakeSubsystem m_elevatorSubsystem = new IntakeSubsystem();
+  // private final IntakeSubsystem m_elevatorSubsystem = new IntakeSubsystem();
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final DriveTrain m_swerve = new DriveTrain();
+  // private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   Trigger resetGyroTrigger = m_controller.a();
+  Trigger setPointTrigger = m_joystick.button(2);
+  Trigger halfSpeedTrigger = m_controller.rightTrigger();
+  Trigger runIntakeTrigger = m_joystick.button(1);
   // private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   // private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
-  // Replace with CommandPS4Controller or CommandJoystick if needed
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -49,23 +55,28 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                  MathUtil.applyDeadband(m_controller.getLeftY(), 0.2) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  MathUtil.applyDeadband(m_controller.getLeftX(), 0.2) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  MathUtil.applyDeadband(m_controller.getRightX(), 0.2) * ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
+                  MathUtil.applyDeadband(m_controller.getLeftY(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  MathUtil.applyDeadband(m_controller.getLeftX(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  MathUtil.applyDeadband(m_controller.getRightX(), 0.05) * ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
                   true), 
                   m_swerve));
-    m_elevatorSubsystem.setDefaultCommand(
+     m_elevatorSubsystem.setDefaultCommand(
         new RunCommand(
           () -> 
               m_elevatorSubsystem.moveElevator(
-                m_joystick.getY()),
+                MathUtil.applyDeadband(m_joystick.getY(), 0.1) * 0.6),
                 m_elevatorSubsystem));
-    m_intakeSubsystem.setDefaultCommand(
-        new RunCommand(
-          () ->
-              m_intakeSubsystem.runIntakeMaxSpeed(
-                m_joystick.getX()), // I'm not sure how to bind the thing so this is temporary
-                m_intakeSubsystem));
+      // m_elevatorSubsystem.setDefaultCommand(
+      //   new InstantCommand(
+      //     () -> 
+      //         m_elevatorSubsystem.setElevatorPosition(1), 
+      //         m_elevatorSubsystem));
+    // m_intakeSubsystem.setDefaultCommand(
+    //     new RunCommand(
+    //       () ->
+    //           m_intakeSubsystem.runIntakeMaxSpeed(
+    //             m_joystick.getX()), // I'm not sure how to bind the thing so this is temporary
+    //             m_intakeSubsystem));
   }
 
   /**
@@ -78,7 +89,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    //resetGyroTrigger.onTrue(m_swerve.zeroHeading());
+    resetGyroTrigger.onTrue(new InstantCommand(m_swerve::zeroHeading));
+    setPointTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0)));
+    halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::setHalfSpeed, m_swerve::setDefaultSpeed, new Subsystem[0]));
+    // runIntakeTrigger.whileTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed));
   }
 
     
