@@ -147,7 +147,10 @@ public class SwerveModule extends SubsystemBase {
    */
   // var encoderRotation = new Rotation2d(m_turningEncoder.getDistance());
   public void setDesiredState(SwerveModuleState desiredState) {
-
+    if (Math.abs(desiredState.speedMetersPerSecond) < 0.001) {
+      stop();
+      return;
+    }
     var encoderRotation = new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse);
     SmartDashboard.putNumber("Turn Encoder "+turnPort, m_turningEncoder.get());
     // Optimize the reference state to avoid spinning further than 90 degrees
@@ -175,6 +178,10 @@ public class SwerveModule extends SubsystemBase {
     SmartDashboard.putNumber("Turn Motor "+turnPort, turnOutput);
     // m_driveMotor.setVoltage(-driveOutput);
     // m_turningMotor.setVoltage(-turnOutput);
+  }
+  public void stop() {
+    m_driveMotor.set(0);
+    m_turningMotor.set(0);
   }
   public void resetEncoders() {
     m_driveEncoder.setPosition(0);

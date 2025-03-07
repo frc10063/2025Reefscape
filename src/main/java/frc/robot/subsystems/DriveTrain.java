@@ -4,17 +4,17 @@
 
 package frc.robot.subsystems;
 
+import com.studica.frc.AHRS;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-
-import com.studica.frc.AHRS;
 
 public class DriveTrain extends SubsystemBase {
   public DriveTrain() {
@@ -116,7 +116,7 @@ public class DriveTrain extends SubsystemBase {
       double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     SmartDashboard.putNumber("XSpeed", xSpeed * speedMultiplier);
     SmartDashboard.putNumber("YSpeed", ySpeed * speedMultiplier);
-    SmartDashboard.putNumber("Rotation", rot * speedMultiplier);
+    SmartDashboard.putNumber("Rotation", rot);
     xSpeed = xSpeed * speedMultiplier;
     ySpeed = ySpeed * speedMultiplier;
         var swerveModuleStates =
@@ -133,6 +133,14 @@ public class DriveTrain extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
+  }
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    m_frontLeft.setDesiredState(desiredStates[0]);
+    m_frontRight.setDesiredState(desiredStates[1]);
+    m_rearLeft.setDesiredState(desiredStates[2]);
+    m_rearRight.setDesiredState(desiredStates[3]);
   }
   /** Resets the drive encoders to currently read a position of 0. */
   public void resetEncoders() {
