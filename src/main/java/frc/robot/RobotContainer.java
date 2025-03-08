@@ -56,7 +56,10 @@ public class RobotContainer {
   private final DriveTrain m_swerve = new DriveTrain();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   Trigger resetGyroTrigger = m_controller.y();
-  Trigger setPointTrigger = m_joystick.button(2);
+  Trigger L1Trigger = m_joystick.button(2);
+  Trigger L2Trigger = m_joystick.button(3);
+  Trigger L3Trigger = m_joystick.button(4);
+  Trigger L4Trigger = m_joystick.button(5);
   Trigger halfSpeedTrigger = m_controller.rightTrigger();
   Trigger runIntakeTrigger = m_joystick.button(1);
 
@@ -78,7 +81,7 @@ public class RobotContainer {
         new RunCommand(
           () -> 
               m_elevatorSubsystem.moveElevator(
-                MathUtil.applyDeadband(m_joystick.getY(), 0.1) * 0.6),
+                MathUtil.applyDeadband(m_joystick.getY(), 0.2) * 0.6),
                 m_elevatorSubsystem));
   }
 
@@ -93,9 +96,12 @@ public class RobotContainer {
    */
   private void configureBindings() {
     resetGyroTrigger.onTrue(new InstantCommand(m_swerve::zeroHeading));
-    setPointTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1])));
+    L1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
+    L2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
+    L3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
+    L4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::setHalfSpeed, m_swerve::setDefaultSpeed, new Subsystem[0]));
-    // runIntakeTrigger.whileTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed));
+    runIntakeTrigger.whileTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed));
   }
 
   /**

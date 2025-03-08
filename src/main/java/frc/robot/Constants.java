@@ -110,7 +110,7 @@ public final class Constants {
     public static final double kPModuleTurningController = 1;
 
     public static final double kPModuleDriveController = 1;
-    public static final double turningKp = 10.4; // 9.6
+    public static final double turningKp = 10.2; // 9.6
     public static final double turningKd = 0.27;
     public static final double turningKi = 0.01;
     
@@ -148,10 +148,16 @@ public final class Constants {
         .idleMode(IdleMode.kBrake);
     // temp
     public static final double kSpoolDiameter = 1;
+    public static final double kSpoolCircumference = kSpoolDiameter * Math.PI;
     public static final double kElevatorDistancePerPulse = (kSpoolDiameter * Math.PI)/ (double) kElevatorEncoderRes;
-    public static final double kElevatorMaxPosition = 10000;
+    public static final double kElevatorMaxPosition = 28000;
     // example values
-    public static final double[] kElevatorSetpoints = new double[] {0, 2000, 4000, 6000};
+    // inch values of reef levels: L1 - 18 in, L2 - 32 in, L3 - 48 in, L4  - 72 in
+    // 22 at bottom of end effector
+    // How much to turn up for each one: L2 - 10 in, L3 - 26 in, L4 - 50 in
+    // L2: 10/circumference = how many rotations needed, then times 2048 for counts
+    // 50/circumference then times res = 
+    public static final double[] kElevatorSetpoints = new double[] {0, 6522, 16958, 32611}; 
 
   }
   public static final class IntakeConstants {
