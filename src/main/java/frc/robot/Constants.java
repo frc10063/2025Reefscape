@@ -152,6 +152,7 @@ public final class Constants {
 
   }
   public static final class IntakeConstants {
-    public static final int[] kIntakePorts = new int[] {0, 1}; // Temp values
+    // public static final int[] kIntakePorts = new int[] {0}; // Temp values
+    public static final int kIntakePort = 0; // changed to single port
   }
 }

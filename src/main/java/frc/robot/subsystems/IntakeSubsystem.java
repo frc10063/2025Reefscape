@@ -10,16 +10,18 @@ import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-    private final SparkMax m_intakeRightMotor;
-    private final SparkMax m_intakeLeftMotor;
+    // private final SparkMax m_intakeRightMotor;
+    // private final SparkMax m_intakeLeftMotor;
+    private final SparkMax m_intakeMotor;
     private final double kMaxSpeed = 1.0; // Full speed? Not sure if it's needed
 
     public IntakeSubsystem() {
-        m_intakeRightMotor = new SparkMax(IntakeConstants.kIntakePorts[1], MotorType.kBrushless);
-        m_intakeLeftMotor = new SparkMax(IntakeConstants.kIntakePorts[0], MotorType.kBrushless);
+        // m_intakeRightMotor = new SparkMax(IntakeConstants.kIntakePorts[1], MotorType.kBrushless);
+        // m_intakeLeftMotor = new SparkMax(IntakeConstants.kIntakePorts[0], MotorType.kBrushless);
+        m_intakeMotor = new SparkMax(IntakeConstants.kIntakePort, MotorType.kBrushless);
 
         // invert to spin in opposite directions prob
-        m_intakeLeftMotor.setInverted(true);
+        // m_intakeLeftMotor.setInverted(true);
     }
 
     public void runIntakeMaxSpeed() {
@@ -27,12 +29,14 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void runIntake(double intakeSpeed) {
-        m_intakeRightMotor.set(intakeSpeed);
-        m_intakeLeftMotor.set(intakeSpeed);
+        m_intakeMotor.set(intakeSpeed);
+        // m_intakeRightMotor.set(intakeSpeed);
+        // m_intakeLeftMotor.set(intakeSpeed);
     }
 
     public void stopIntake() {
-        m_intakeRightMotor.set(0);
-        m_intakeLeftMotor.set(0);
+        m_intakeMotor.set(0);
+        // m_intakeRightMotor.set(0);
+        // m_intakeLeftMotor.set(0);
     }
 }
