@@ -4,20 +4,20 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.AbsoluteEncoder;
+// import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
+// import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+// import edu.wpi.first.math.controller.ProfiledPIDController;
+// import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 // import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.PIDController;
@@ -74,15 +74,22 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void moveElevator(double elevatorSpeed) {
     double encoderValue = m_elevatorEncoder.get();
-    if (encoderValue >= 0) {
-      m_elevatorLeftMotor.set(elevatorSpeed);
-      m_elevatorRightMotor.set(elevatorSpeed);
+    double maxPosition = ElevatorConstants.kElevatorMaxPosition;
+    // if (encoderValue >= 0) {
+    //   m_elevatorLeftMotor.set(elevatorSpeed);
+    //   m_elevatorRightMotor.set(elevatorSpeed);
+    // } else {
+    //   double pidOutput = m_pidController.calculate(encoderValue, 0); // changed m_pidController to profile
+    //   m_elevatorLeftMotor.set(-pidOutput);
+    //   m_elevatorRightMotor.set(-pidOutput);
+    // }
+    if ((encoderValue <= 0 && elevatorSpeed < 0) || (encoderValue >= maxPosition && elevatorSpeed > 0)) {
+      m_elevatorRightMotor.set(0);
+      m_elevatorLeftMotor.set(0);
     } else {
-      double pidOutput = m_pidController.calculate(encoderValue, 0); // changed m_pidController to profile
-      m_elevatorLeftMotor.set(-pidOutput);
-      m_elevatorRightMotor.set(-pidOutput);
+      m_elevatorRightMotor.set(elevatorSpeed);
+      m_elevatorLeftMotor.set(elevatorSpeed);
     }
-    
   }
   
   public void setElevatorPosition(double targetPosition) {

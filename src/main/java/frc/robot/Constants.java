@@ -149,6 +149,9 @@ public final class Constants {
     // temp
     public static final double kSpoolDiameter = 1;
     public static final double kElevatorDistancePerPulse = (kSpoolDiameter * Math.PI)/ (double) kElevatorEncoderRes;
+    public static final double kElevatorMaxPosition = 10000;
+    // example values
+    public static final double[] kElevatorSetpoints = new double[] {0, 2000, 4000, 6000};
 
   }
   public static final class IntakeConstants {

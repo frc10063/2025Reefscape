@@ -7,14 +7,14 @@ package frc.robot;
 import java.util.List;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+// import edu.wpi.first.math.controller.PIDController;
+// import edu.wpi.first.math.controller.ProfiledPIDController;
+// import edu.wpi.first.math.geometry.Pose2d;
+// import edu.wpi.first.math.geometry.Rotation2d;
+// import edu.wpi.first.math.geometry.Translation2d;
+// import edu.wpi.first.math.trajectory.Trajectory;
+// import edu.wpi.first.math.trajectory.TrajectoryConfig;
+// import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -23,14 +23,18 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+// import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.LeftReefAuto;
+import frc.robot.commands.MiddleReefAuto;
+import frc.robot.commands.RightReefAuto;
 // import frc.robot.commands.Autos;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -51,13 +55,10 @@ public class RobotContainer {
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final DriveTrain m_swerve = new DriveTrain();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
-  Trigger resetGyroTrigger = m_controller.a();
+  Trigger resetGyroTrigger = m_controller.y();
   Trigger setPointTrigger = m_joystick.button(2);
   Trigger halfSpeedTrigger = m_controller.rightTrigger();
   Trigger runIntakeTrigger = m_joystick.button(1);
-  // private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -92,7 +93,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     resetGyroTrigger.onTrue(new InstantCommand(m_swerve::zeroHeading));
-    setPointTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0)));
+    setPointTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1])));
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::setHalfSpeed, m_swerve::setDefaultSpeed, new Subsystem[0]));
     // runIntakeTrigger.whileTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed));
   }
@@ -103,45 +104,18 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // Create config for trajectory
-    TrajectoryConfig config =
-        new TrajectoryConfig(
-                AutoConstants.kMaxSpeedMetersPerSecond,
-                AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-            // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(DriveConstants.kDriveKinematics);
-
-    Trajectory toReefTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            List.of(new Translation2d(0.3, 0),
-                    new Translation2d(0.7, 0)),
-            new Pose2d(1, 0, Rotation2d.fromRadians(Math.PI / 2)),
-            config);
-    PIDController xController = new PIDController(AutoConstants.kPXController, 0, 0);
-    PIDController yController = new PIDController(AutoConstants.kPYController, 0, 0);
-    ProfiledPIDController thetaController = 
-        new ProfiledPIDController(
-            AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-            toReefTrajectory,
-            m_swerve::getPose,
-            DriveConstants.kDriveKinematics,
-            xController,
-            yController,
-            thetaController,
-            m_swerve::setModuleStates,
-            m_swerve);
+    // Test left before right, then chanhge right
+    Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
+    Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
+    Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
+    return middleAutoCommand;
 
     // Reset odometry to the initial pose of the trajectory, run path following
     // command, then stop at the end.
-    return Commands.sequence(
-        new InstantCommand(() -> m_swerve.resetOdometry(toReefTrajectory.getInitialPose())),
-        swerveControllerCommand,
-        new InstantCommand(() -> m_swerve.drive(0, 0, 0, false)), 
-        new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem));
+    // return Commands.sequence(
+    //     new InstantCommand(() -> m_swerve.resetOdometry(toReefTrajectory.getInitialPose())),
+    //     swerveControllerCommand,
+    //     new InstantCommand(() -> m_swerve.drive(0, 0, 0, false)), 
+    //     new RunCommand(() -> m_intakeSubsystem.runIntake(0.5), m_intakeSubsystem));
   }
 }
