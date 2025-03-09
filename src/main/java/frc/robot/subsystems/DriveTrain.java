@@ -117,8 +117,8 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("XSpeed", xSpeed * speedMultiplier);
     SmartDashboard.putNumber("YSpeed", ySpeed * speedMultiplier);
     SmartDashboard.putNumber("Rotation", rot);
-    xSpeed = xSpeed * speedMultiplier;
-    ySpeed = ySpeed * speedMultiplier;
+    // xSpeed = xSpeed * speedMultiplier;
+    // ySpeed = ySpeed * speedMultiplier;
         var swerveModuleStates =
         DriveConstants.kDriveKinematics.toSwerveModuleStates(
             ChassisSpeeds.discretize(

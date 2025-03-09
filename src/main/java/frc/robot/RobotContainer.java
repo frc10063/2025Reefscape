@@ -66,6 +66,9 @@ public class RobotContainer {
   Trigger halfSpeedTrigger = m_controller.rightTrigger();
   Trigger runIntakeTrigger = m_joystick.button(1);
   Command offLineAutoCommand = new MoveForwardAuto(m_swerve);
+  // Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
+  // Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
+  // Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -78,16 +81,16 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                  MathUtil.applyDeadband(m_controller.getLeftY(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  MathUtil.applyDeadband(m_controller.getLeftX(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  MathUtil.applyDeadband(m_controller.getRightX(), 0.05) * ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
+                  MathUtil.applyDeadband(m_controller.getLeftY(), 0.1) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  MathUtil.applyDeadband(m_controller.getLeftX(), 0.1) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  MathUtil.applyDeadband(m_controller.getRightX(), 0.1) * ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
                   true), 
                   m_swerve));
      m_elevatorSubsystem.setDefaultCommand(
         new RunCommand(
           () -> 
               m_elevatorSubsystem.moveElevator(
-                MathUtil.applyDeadband(-m_joystick.getY(), 0.2) * 0.3),
+                MathUtil.applyDeadband(-m_joystick.getY(), 0.2) * 0.5),
                 m_elevatorSubsystem));
   }
 
@@ -118,9 +121,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // Test left before right, then chanhge right
-    // Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
-    // Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
-    // Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
+    
+    
     
     return offLineAutoCommand;
 

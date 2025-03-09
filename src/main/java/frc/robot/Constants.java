@@ -89,7 +89,7 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
-    public static final double kMaxSpeedMetersPerSecond = 4;
+    public static final double kMaxSpeedMetersPerSecond = 2;
   }
   public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
@@ -114,7 +114,7 @@ public final class Constants {
     public static final double turningKd = 0.27;
     public static final double turningKi = 0.01;
     
-    public static final double driveKp = 0.34; // 0.36
+    public static final double driveKp = 0.7; // 0.34
     public static final double driveKd = 0;
     public static final double driveKi = 0;
   }
@@ -127,7 +127,7 @@ public final class Constants {
 
     public static final double kPXController = 1;
     public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
+    public static final double kPThetaController = 2; //3
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
@@ -150,7 +150,7 @@ public final class Constants {
     public static final double kSpoolDiameter = 1;
     public static final double kSpoolCircumference = kSpoolDiameter * Math.PI;
     public static final double kElevatorDistancePerPulse = (kSpoolDiameter * Math.PI)/ (double) kElevatorEncoderRes;
-    public static final double kElevatorMaxPosition = 23000; //22000?
+    public static final double kElevatorMaxPosition = 24000; //22000?
     // example values
     // inch values of reef levels: L1 - 18 in, L2 - 32 in, L3 - 48 in, L4  - 72 in
     // 22 at bottom of end effector
@@ -158,7 +158,7 @@ public final class Constants {
     // L2: 10/circumference = how many rotations needed, then times 2048 for counts
     // 50/circumference then times res = 
     // L1 and L2 set
-    public static final double[] kElevatorSetpoints = new double[] {1744, 6148, 14000, 22800}; 
+    public static final double[] kElevatorSetpoints = new double[] {1744, 6648, 14000, 22800}; 
 
   }
   public static final class IntakeConstants {
@@ -166,5 +166,6 @@ public final class Constants {
     public static final int kIntakePort = 12; // changed to single port
     public static final SparkBaseConfig ENDEFFECTOR_CONFIG = new SparkMaxConfig()
         .inverted(true);
+    // public static double kMaxSpeed = 0.6;
   }
 }
