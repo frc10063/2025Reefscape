@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.List;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 // import edu.wpi.first.math.controller.PIDController;
 // import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -34,6 +35,7 @@ import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
+import frc.robot.commands.MoveForwardAuto;
 import frc.robot.commands.RightReefAuto;
 // import frc.robot.commands.Autos;
 import frc.robot.subsystems.DriveTrain;
@@ -57,16 +59,20 @@ public class RobotContainer {
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
   Trigger resetGyroTrigger = m_controller.y();
   Trigger L1Trigger = m_joystick.button(2);
-  Trigger L2Trigger = m_joystick.button(3);
-  Trigger L3Trigger = m_joystick.button(4);
-  Trigger L4Trigger = m_joystick.button(5);
+  Trigger L2Trigger = m_joystick.button(4);
+  Trigger L3Trigger = m_joystick.button(5);
+  Trigger L4Trigger = m_joystick.button(3);
+  Trigger OverrideElevatorSafetyTrigger = m_joystick.button(7);
   Trigger halfSpeedTrigger = m_controller.rightTrigger();
   Trigger runIntakeTrigger = m_joystick.button(1);
+  Command offLineAutoCommand = new MoveForwardAuto(m_swerve);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+
+
     configureBindings();
     m_swerve.setDefaultCommand(
         new RunCommand(
@@ -81,7 +87,7 @@ public class RobotContainer {
         new RunCommand(
           () -> 
               m_elevatorSubsystem.moveElevator(
-                MathUtil.applyDeadband(m_joystick.getY(), 0.2) * 0.6),
+                MathUtil.applyDeadband(-m_joystick.getY(), 0.2) * 0.3),
                 m_elevatorSubsystem));
   }
 
@@ -100,8 +106,9 @@ public class RobotContainer {
     L2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
     L3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
     L4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
+    OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::setHalfSpeed, m_swerve::setDefaultSpeed, new Subsystem[0]));
-    runIntakeTrigger.whileTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed));
+    runIntakeTrigger.whileTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem));
   }
 
   /**
@@ -111,10 +118,11 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // Test left before right, then chanhge right
-    Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
-    Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
-    Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
-    return middleAutoCommand;
+    // Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
+    // Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
+    // Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
+    
+    return offLineAutoCommand;
 
     // Reset odometry to the initial pose of the trajectory, run path following
     // command, then stop at the end.

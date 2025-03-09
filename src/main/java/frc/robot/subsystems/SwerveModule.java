@@ -176,8 +176,8 @@ public class SwerveModule extends SubsystemBase {
           desiredState.angle.getRadians());
     SmartDashboard.putNumber("Drive Motor "+drivePort, driveOutput);
     SmartDashboard.putNumber("Turn Motor "+turnPort, turnOutput);
-    // m_driveMotor.setVoltage(-driveOutput);
-    // m_turningMotor.setVoltage(-turnOutput);
+    m_driveMotor.setVoltage(-driveOutput);
+    m_turningMotor.setVoltage(-turnOutput);
   }
   public void stop() {
     m_driveMotor.set(0);
@@ -189,13 +189,13 @@ public class SwerveModule extends SubsystemBase {
   }
   
   public static void putPIDDashboard() {
-    SmartDashboard.putNumber("Turning Kp", ModuleConstants.turningKp);
-    SmartDashboard.putNumber("Turning Ki", ModuleConstants.turningKi);
-    SmartDashboard.putNumber("Turning Kd", ModuleConstants.turningKd);
+    // SmartDashboard.putNumber("Turning Kp", ModuleConstants.turningKp);
+    // SmartDashboard.putNumber("Turning Ki", ModuleConstants.turningKi);
+    // SmartDashboard.putNumber("Turning Kd", ModuleConstants.turningKd);
 
-    SmartDashboard.putNumber("Drive Kp", ModuleConstants.driveKp);
-    SmartDashboard.putNumber("Drive Ki", ModuleConstants.driveKi);
-    SmartDashboard.putNumber("Drive Kd", ModuleConstants.driveKd);
+    // SmartDashboard.putNumber("Drive Kp", ModuleConstants.driveKp);
+    // SmartDashboard.putNumber("Drive Ki", ModuleConstants.driveKi);
+    // SmartDashboard.putNumber("Drive Kd", ModuleConstants.driveKd);
     // SmartDashboard.putNumber("Drive Velocity", m_driveEncoder.getVelocity());
   }
   public static void getPIDDashboard() { 

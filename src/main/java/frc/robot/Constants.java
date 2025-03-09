@@ -89,11 +89,11 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
-    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxSpeedMetersPerSecond = 4;
   }
   public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
-    public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 8 * Math.PI;
+    public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 9 * Math.PI;
 
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 4096; // 42
@@ -141,27 +141,30 @@ public final class Constants {
     public static final int[] kElevatorEncoders1 = new int[] {9, 8};
     public static final int kElevatorEncoderRes = 2048;
     public static final SparkBaseConfig LEFTELEVATOR_CONFIG = new SparkMaxConfig()
-        .inverted(true)
+        .inverted(false)
         .idleMode(IdleMode.kBrake);
     public static final SparkBaseConfig RIGHTELEVATOR_CONFIG = new SparkMaxConfig()
-        .inverted(true)
+        .inverted(false)
         .idleMode(IdleMode.kBrake);
     // temp
     public static final double kSpoolDiameter = 1;
     public static final double kSpoolCircumference = kSpoolDiameter * Math.PI;
     public static final double kElevatorDistancePerPulse = (kSpoolDiameter * Math.PI)/ (double) kElevatorEncoderRes;
-    public static final double kElevatorMaxPosition = 28000;
+    public static final double kElevatorMaxPosition = 23000; //22000?
     // example values
     // inch values of reef levels: L1 - 18 in, L2 - 32 in, L3 - 48 in, L4  - 72 in
     // 22 at bottom of end effector
     // How much to turn up for each one: L2 - 10 in, L3 - 26 in, L4 - 50 in
     // L2: 10/circumference = how many rotations needed, then times 2048 for counts
     // 50/circumference then times res = 
-    public static final double[] kElevatorSetpoints = new double[] {0, 6522, 16958, 32611}; 
+    // L1 and L2 set
+    public static final double[] kElevatorSetpoints = new double[] {1744, 6148, 14000, 22800}; 
 
   }
   public static final class IntakeConstants {
     // public static final int[] kIntakePorts = new int[] {0}; // Temp values
-    public static final int kIntakePort = 0; // changed to single port
+    public static final int kIntakePort = 12; // changed to single port
+    public static final SparkBaseConfig ENDEFFECTOR_CONFIG = new SparkMaxConfig()
+        .inverted(true);
   }
 }

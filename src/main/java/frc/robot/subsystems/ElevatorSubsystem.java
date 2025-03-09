@@ -34,9 +34,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   //private final ProfiledPIDController m_profiledPIDController; // new (is currently banished to the shadow realm)
   
   // PID Constants
-  private final double kP = 0.1;
+  private final double kP = 0.0005;
   private final double kI = 0;
   private final double kD = 0;
+  private boolean elevatorSafety = true;
 
   // MotionProfiling Constants
   private final double kMaxVelocity = .5;
@@ -83,15 +84,23 @@ public class ElevatorSubsystem extends SubsystemBase {
     //   m_elevatorLeftMotor.set(-pidOutput);
     //   m_elevatorRightMotor.set(-pidOutput);
     // }
-    if ((encoderValue <= 0 && elevatorSpeed < 0) || (encoderValue >= maxPosition && elevatorSpeed > 0)) {
-      m_elevatorRightMotor.set(0);
-      m_elevatorLeftMotor.set(0);
+    // id encoder value is less thqan 0 and elevator speed 1, elevator 
+    if (elevatorSafety == true) {
+      if ((encoderValue < 0 && elevatorSpeed < 0) || (encoderValue >= maxPosition && elevatorSpeed > 0)) {
+        m_elevatorRightMotor.set(0);
+        m_elevatorLeftMotor.set(0);
+      } else {
+        m_elevatorRightMotor.set(elevatorSpeed);
+        m_elevatorLeftMotor.set(elevatorSpeed);
+      }
     } else {
-      m_elevatorRightMotor.set(elevatorSpeed);
-      m_elevatorLeftMotor.set(elevatorSpeed);
+    m_elevatorRightMotor.set(elevatorSpeed);
+    m_elevatorLeftMotor.set(elevatorSpeed);
     }
   }
-  
+  public void overrideElevatorSafety() {
+    elevatorSafety = !elevatorSafety;
+  }
   public void setElevatorPosition(double targetPosition) {
     double currentPosition = m_elevatorEncoder.get();
     double pidOutput = m_pidController.calculate(currentPosition, targetPosition); // changed m_pidController to profile
