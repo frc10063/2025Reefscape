@@ -10,11 +10,12 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -35,6 +36,9 @@ public class SwerveModule extends SubsystemBase {
   private final AnalogEncoder m_turningEncoder;
 
   private SparkBaseConfig driveConfig;
+  public double speedMultiplier = 1;
+
+  // SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(); 
   
   // This creates a PIDController object passing through the kP, kI, and kD parameters
   // We need to change these values, starting with kP and kI, then kI
@@ -108,6 +112,12 @@ public class SwerveModule extends SubsystemBase {
     // to be continuous. 
     m_turningPIDController.enableContinuousInput(0, 2*Math.PI);
   }
+  public void setHalfSpeed() {
+    speedMultiplier = 0.5;
+  }
+  public void setDefaultSpeed() {
+    speedMultiplier = 1;
+  }
 
   /**
    * Returns the current state of the module.
@@ -163,7 +173,7 @@ public class SwerveModule extends SubsystemBase {
 
     // Calculate the drive output from the drive PID controller.
     final double driveOutput =
-        m_drivePIDController.calculate(m_driveEncoder.getVelocity(), desiredState.speedMetersPerSecond);
+        m_drivePIDController.calculate(m_driveEncoder.getVelocity(), desiredState.speedMetersPerSecond) * speedMultiplier;
 
 
     // Calculate the turning motor output from the turning PID controller.
