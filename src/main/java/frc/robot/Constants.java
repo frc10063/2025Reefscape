@@ -98,6 +98,10 @@ public final class Constants {
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 4096; // 42
 
+    public static final double drivekS = 0;
+    public static final double drivekV = 2.07;
+    public static final double drivekA = 0.5;
+
     public static final double kWheelDiameterMeters = 0.1016;
     public static final double kDriveEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts

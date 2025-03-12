@@ -105,8 +105,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     double currentPosition = m_elevatorEncoder.get();
     double pidOutput = m_pidController.calculate(currentPosition, targetPosition); // changed m_pidController to profile
     SmartDashboard.putNumber("PID Output", pidOutput);
-    //double feedforwardTerm = m_feedforward.calculate(m_pidController.getSetpoint().velocity);
-    //SmartDashboard.putNumber("Feed Foward", feedforwardTerm);
+    // double feedforwardTerm = m_feedforward.calculate(m_pidController.getSetpoint().velocity);
+    // SmartDashboard.putNumber("Feed Foward", feedforwardTerm);
     double output = pidOutput;// + feedforwardTerm;
 
     moveElevator(output);

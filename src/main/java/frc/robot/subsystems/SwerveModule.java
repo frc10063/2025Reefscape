@@ -37,8 +37,10 @@ public class SwerveModule extends SubsystemBase {
 
   private SparkBaseConfig driveConfig;
   public double speedMultiplier = 1;
-
-  // SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(); 
+  // determine ks soon
+  // SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.drivekS, ModuleConstants.drivekV, ModuleConstants.drivekA); 
+  // SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(0, 2.07, 0.5); 
+  
   
   // This creates a PIDController object passing through the kP, kI, and kD parameters
   // We need to change these values, starting with kP and kI, then kI
