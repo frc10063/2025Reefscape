@@ -39,7 +39,7 @@ public class SwerveModule extends SubsystemBase {
   public double speedMultiplier = 1;
   // determine ks soon
   // SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.drivekS, ModuleConstants.drivekV, ModuleConstants.drivekA); 
-  // SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(0, 2.07, 0.5); 
+  // SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(ModuleConstants.turningkS, ModuleConstants.turningkV, ModuleConstants.turningkA); 
   
   
   // This creates a PIDController object passing through the kP, kI, and kD parameters

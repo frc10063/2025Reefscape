@@ -5,9 +5,11 @@
 package frc.robot;
 
 import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -101,6 +103,12 @@ public final class Constants {
     public static final double drivekS = 0;
     public static final double drivekV = 2.07;
     public static final double drivekA = 0.5;
+    // kV is in Volts * seconds / meter
+    // kS is in Volts * seconds^2 / meter
+    // to get rotational, divide by radius (0.5 m per radian);
+    public static final double turningkS = 0;
+    public static final double turningkV = 2.07;
+    public static final double turningkA = 0.5;
 
     public static final double kWheelDiameterMeters = 0.1016;
     public static final double kDriveEncoderDistancePerPulse =
@@ -171,5 +179,8 @@ public final class Constants {
     public static final SparkBaseConfig ENDEFFECTOR_CONFIG = new SparkMaxConfig()
         .inverted(true);
     // public static double kMaxSpeed = 0.6;
+  }
+  public static final class VisionConstants {
+    // public static final AprilTagFieldLayout APRIL_TAGS_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
   }
 }
