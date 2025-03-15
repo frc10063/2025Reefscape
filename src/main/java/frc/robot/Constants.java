@@ -197,6 +197,7 @@ public final class Constants {
   }
   public static final class VisionConstants {
     public static final AprilTagFieldLayout APRIL_TAGS_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    // where the camera is in terms of the center of the robot
     public static final Transform3d camPosition = new Transform3d(
       new Translation3d(0, 0, 0), 
       new Rotation3d(0, 0, 0));
