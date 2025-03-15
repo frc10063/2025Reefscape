@@ -10,6 +10,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -145,6 +146,20 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+    // measure this
+    public static final double robotCenterToFrontDistance = 0.0;
+
+    public static final double coralLeftOffset = -0.165;
+    public static final double coralRightOffset = 0.165;
+
+    public static final double translationkP = 1;
+    public static final double translationkI = 0;
+    public static final double translationkD = 0;
+
+    public static final double thetakP = 2;
+    public static final double thetakI = 0;
+    public static final double thetakD = 0;
+
   }
   public static final class ElevatorConstants {
     public static final int[] kElevatorPorts = new int[] {10, 11};
@@ -178,9 +193,12 @@ public final class Constants {
     public static final int kIntakePort = 12; // changed to single port
     public static final SparkBaseConfig ENDEFFECTOR_CONFIG = new SparkMaxConfig()
         .inverted(true);
-    // public static double kMaxSpeed = 0.6;
+    public static double kMaxSpeed = 0.6;
   }
   public static final class VisionConstants {
-    // public static final AprilTagFieldLayout APRIL_TAGS_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+    public static final AprilTagFieldLayout APRIL_TAGS_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    public static final Transform3d camPosition = new Transform3d(
+      new Translation3d(0, 0, 0), 
+      new Rotation3d(0, 0, 0));
   }
 }

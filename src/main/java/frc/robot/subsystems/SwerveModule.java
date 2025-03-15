@@ -45,6 +45,7 @@ public class SwerveModule extends SubsystemBase {
   // This creates a PIDController object passing through the kP, kI, and kD parameters
   // We need to change these values, starting with kP and kI, then kI
   private final PIDController m_drivePIDController = new PIDController(ModuleConstants.driveKp, ModuleConstants.driveKi, ModuleConstants.driveKd);
+  
   // private final PIDController m_turningPIDController = new PIDController(turningKp, turningKi, turningKd);
 
   // This creates a ProfiledPIDController object passing through the kP, kI, and kD parameters
@@ -86,7 +87,8 @@ public class SwerveModule extends SubsystemBase {
 
     m_driveEncoder = m_driveMotor.getEncoder(); 
     m_turningEncoder = new AnalogEncoder(turningEncoderChannel, 1, expectedEncoderZero);
-
+    
+    m_turningPIDController.setTolerance(0.01);
     // Distance per pulse is basically distance driven for each count of the encoder
     // 2*pi*radius is circumference of the wheel, divided by encoder resolution would
     // give distance per encoder count

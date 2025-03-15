@@ -106,11 +106,14 @@ public class RobotContainer {
    */
   private void configureBindings() {
     resetGyroTrigger.onTrue(new InstantCommand(m_swerve::zeroHeading));
-    L1Trigger.onTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
-    L2Trigger.onTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
-    L3Trigger.onTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
-    L4Trigger.onTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
+
+    L1Trigger.onTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
+    L2Trigger.onTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
+    L3Trigger.onTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
+    L4Trigger.onTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
+
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
+
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
     runIntakeTrigger.whileTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem));
   }
@@ -121,18 +124,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // Test left before right, then chanhge right
-    
-    
-    
+    // Test left before right, then change right
     return offLineAutoCommand;
-
-    // Reset odometry to the initial pose of the trajectory, run path following
-    // command, then stop at the end.
-    // return Commands.sequence(
-    //     new InstantCommand(() -> m_swerve.resetOdometry(toReefTrajectory.getInitialPose())),
-    //     swerveControllerCommand,
-    //     new InstantCommand(() -> m_swerve.drive(0, 0, 0, false)), 
-    //     new RunCommand(() -> m_intakeSubsystem.runIntake(0.5), m_intakeSubsystem));
   }
 }
