@@ -117,7 +117,7 @@ public class SwerveModule extends SubsystemBase {
     m_turningPIDController.enableContinuousInput(0, 2*Math.PI);
   }
   public void setHalfSpeed() {
-    speedMultiplier = 0.5;
+    speedMultiplier = 0.75;
   }
   public void setDefaultSpeed() {
     speedMultiplier = 1;

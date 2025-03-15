@@ -20,7 +20,6 @@ import frc.robot.Constants.VisionConstants;
 public class VisionSubsystem extends SubsystemBase {
   /** Creates a new VisionSubsystem. */
   private AprilTagFieldLayout apriltaglayout;
-  boolean targetVisible = false;
   private PhotonCamera camera = new PhotonCamera("cam");
   private DriveTrain m_swerve;
   private double previousPipelineTimestamp = 0;
@@ -31,7 +30,7 @@ public class VisionSubsystem extends SubsystemBase {
     for (int tagId : VisionConstants.tagIds) {
       var tagPoseOptional = apriltaglayout.getTagPose(tagId);
       if (tagPoseOptional.isPresent()) {
-        reefTagPoses.add(tagPoseOptional.get().toPose2d());
+        tagPoses.add(tagPoseOptional.get().toPose2d());
       }
     }
   }
@@ -47,14 +46,14 @@ public class VisionSubsystem extends SubsystemBase {
       // somethings prob deprecated
       var target = pipelineResult.getBestTarget();
       // var?
-      int fiducalId = target.getFiducalId();
-      if (target.getPoseAmbiguity() <= 0.2 && fiducalId >= 0 && fiducalId < tagPoses.size()) {
-        var targetPose = tagPoses.get(fiducalId);
-        Transform3d camToTarget = target.getBestCameraToTarget();
-        Pose3d camPose = targetPose.transformBy(camToTarget.inverse());
+      int fiducalId = target.getFiducialId();
+      // if (target.getPoseAmbiguity() <= 0.2 && fiducalId >= 0 && fiducalId < tagPoses.size()) {
+      //   var targetPose = tagPoses.get(fiducalId);
+      //   Transform3d camToTarget = target.getBestCameraToTarget();
+      //   Pose3d camPose = targetPose.transformBy(camToTarget.inverse());
 
-        var visionMeasure = camPose.transformBy(VisionConstants.camPosition);
-      }
+      //   var visionMeasure = camPose.transformBy(VisionConstants.camPosition);
+      // }
     }
     // This method will be called once per scheduler run
   }

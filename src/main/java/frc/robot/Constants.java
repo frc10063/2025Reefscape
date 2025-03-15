@@ -10,6 +10,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -96,7 +97,7 @@ public final class Constants {
   }
   public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
-    public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 9 * Math.PI;
+    public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 2 * Math.PI;
 
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 4096; // 42
@@ -123,12 +124,12 @@ public final class Constants {
     public static final double kPModuleTurningController = 1;
 
     public static final double kPModuleDriveController = 1;
-    public static final double turningKp = 10.2; // 9.6
-    public static final double turningKd = 0.27;
-    public static final double turningKi = 0.01;
+    public static final double turningKp = 12.5; 
+    public static final double turningKd = 0.23;
+    public static final double turningKi = 0;
     
-    public static final double driveKp = 0.7; // 0.34
-    public static final double driveKd = 0;
+    public static final double driveKp = 0.37; 
+    public static final double driveKd = 0.01;
     public static final double driveKi = 0;
   }
   // This was part of the example, not sure if we will be using these
@@ -185,7 +186,7 @@ public final class Constants {
     // L2: 10/circumference = how many rotations needed, then times 2048 for counts
     // 50/circumference then times res = 
     // L1 and L2 set
-    public static final double[] kElevatorSetpoints = new double[] {1744, 6648, 14000, 22800}; 
+    public static final double[] kElevatorSetpoints = new double[] {1744, 7148, 14000, 22800}; 
 
   }
   public static final class IntakeConstants {
@@ -197,10 +198,9 @@ public final class Constants {
   }
   public static final class VisionConstants {
     public static final AprilTagFieldLayout APRIL_TAGS_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-    // where the camera is in terms of the center of the robot
-    public static final Transform3d camPosition = new Transform3d(
-      new Translation3d(0, 0, 0), 
-      new Rotation3d(0, 0, 0));
+    // public static final Transform3d camPosition = new Transform3d(
+    //   new Pose3d(0, 0, 0), 
+    //   new Rotation3d(0, 0, 0));
     public static final int[] tagIds = {
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
       12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
