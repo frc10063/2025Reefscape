@@ -81,6 +81,8 @@ public class VisionSubsystem extends SubsystemBase {
     return tagPoses.get(currentTarget.getFiducialId())
   }
 
+  public boolean
+
   @Override
   public void periodic() {
     // this is deprecated, would need to make array and get last item
