@@ -29,25 +29,28 @@ public class AlignCommand extends Command {
     this.m_vision = m_vision;
     rotController.enableContinuousInput(-Math.PI, Math.PI);
     addRequirements(m_swerve, m_vision);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     xController.setTolerance(0.01, 0.01);
     yController.setTolerance(0.01, 0.01);
-    rotController.setTolerance(0.01, 0.01);
+    rotController.setTolerance(0.01);
+
+    targetReefTagPose = m_vision.findBestTagPose();
 
   }
+
+  // this can be a later job
   private void calculateTargetPose() {
     // make a translation for offset and add the pose of target stuff
   }
-  // Called every time the scheduler runs while the command is scheduled.
+
+  
   @Override
   public void execute() {
     Pose2d currentPose = m_swerve.getPose();
-
+    Pose2d targetPose = targetReefTagPose;
     double xSpeed = xController.calculate(currentPose.getX(), targetPose.getX());
     double ySpeed = yController.calculate(currentPose.getY(), targetPose.getY());
     double rot = rotController.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
@@ -55,18 +58,18 @@ public class AlignCommand extends Command {
     xSpeed = MathUtil.clamp(xSpeed, -AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxSpeedMetersPerSecond);
     ySpeed = MathUtil.clamp(ySpeed, -AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxSpeedMetersPerSecond);
     rot = MathUtil.clamp(rot, -AutoConstants.kMaxAngularSpeedRadiansPerSecond, AutoConstants.kMaxAngularSpeedRadiansPerSecond);
-
+    // according to the teams code im getting inspiration from this should be fieldrelative
     m_swerve.drive(xSpeed, ySpeed, rot, true);
   }
 
 
-  // Called once the command ends or is interrupted.
+ 
   @Override
   public void end(boolean interrupted) {
     m_swerve.drive(0,0,0,true);
   }
 
-  // Returns true when the command should end.
+  
   @Override
   public boolean isFinished() {
     return false;
