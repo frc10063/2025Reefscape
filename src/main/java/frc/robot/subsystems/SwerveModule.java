@@ -38,8 +38,8 @@ public class SwerveModule extends SubsystemBase {
   private SparkBaseConfig driveConfig;
   public double speedMultiplier = 1;
   // determine ks soon
-  SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.drivekS, ModuleConstants.drivekV, ModuleConstants.drivekA); 
-  SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(ModuleConstants.turningkS, ModuleConstants.turningkV, ModuleConstants.turningkA); 
+  // SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.drivekS, ModuleConstants.drivekV, ModuleConstants.drivekA); 
+  // SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(ModuleConstants.turningkS, ModuleConstants.turningkV, ModuleConstants.turningkA); 
   
   
   // This creates a PIDController object passing through the kP, kI, and kD parameters
@@ -212,7 +212,6 @@ public class SwerveModule extends SubsystemBase {
     // SmartDashboard.putNumber("Drive Kp", ModuleConstants.driveKp);
     // SmartDashboard.putNumber("Drive Ki", ModuleConstants.driveKi);
     // SmartDashboard.putNumber("Drive Kd", ModuleConstants.driveKd);
-    // SmartDashboard.putNumber("Drive Velocity", m_driveEncoder.getVelocity());
   }
   public static void getPIDDashboard() { 
     // turningKp = SmartDashboard.getNumber("Turning Kp", turningKp);
