@@ -38,8 +38,8 @@ public class SwerveModule extends SubsystemBase {
   private SparkBaseConfig driveConfig;
   public double speedMultiplier = 1;
   // determine ks soon
-  // SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.drivekS, ModuleConstants.drivekV, ModuleConstants.drivekA); 
-  // SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(ModuleConstants.turningkS, ModuleConstants.turningkV, ModuleConstants.turningkA); 
+  SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.drivekS, ModuleConstants.drivekV, ModuleConstants.drivekA); 
+  SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(ModuleConstants.turningkS, ModuleConstants.turningkV, ModuleConstants.turningkA); 
   
   
   // This creates a PIDController object passing through the kP, kI, and kD parameters
@@ -114,7 +114,7 @@ public class SwerveModule extends SubsystemBase {
     m_driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous. 
-    m_turningPIDController.enableContinuousInput(0, 2*Math.PI);
+    m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
   }
   public void setHalfSpeed() {
     speedMultiplier = 0.75;
@@ -166,7 +166,7 @@ public class SwerveModule extends SubsystemBase {
       return;
     }
     var encoderRotation = new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse);
-    SmartDashboard.putNumber("Turn Encoder "+turnPort, m_turningEncoder.get());
+    SmartDashboard.putNumber("Turn Encoder "+turnPort, m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse);
     // Optimize the reference state to avoid spinning further than 90 degrees
     desiredState.optimize(encoderRotation);
 
@@ -178,7 +178,8 @@ public class SwerveModule extends SubsystemBase {
     // Calculate the drive output from the drive PID controller.
     final double driveOutput =
         m_drivePIDController.calculate(m_driveEncoder.getVelocity(), desiredState.speedMetersPerSecond) * speedMultiplier;
-
+    SmartDashboard.putNumber("Current Velocity" + drivePort, -m_driveEncoder.getVelocity());
+    SmartDashboard.putNumber("Desired Velocity" + drivePort, desiredState.speedMetersPerSecond);
 
     // Calculate the turning motor output from the turning PID controller.
     // final double turnOutput =
@@ -188,6 +189,7 @@ public class SwerveModule extends SubsystemBase {
         m_turningPIDController.calculate(
           (m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse), 
           desiredState.angle.getRadians());
+    SmartDashboard.putNumber("Desired angle" + turnPort, desiredState.angle.getRadians());
     SmartDashboard.putNumber("Drive Motor "+drivePort, driveOutput);
     SmartDashboard.putNumber("Turn Motor "+turnPort, turnOutput);
     m_driveMotor.setVoltage(-driveOutput);

@@ -6,6 +6,9 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -75,8 +78,8 @@ public class ChaseTagCommand extends Command {
     var photonRes = photonCamera.getLatestResult();
     if (photonRes.hasTargets()) {
       var targetOpt = photonRes.getTargets().stream()
-          .filter(t -> t.getFiducialId == tagToChase)
-          .filter(t -> !t.equals(lastTarget) && t.getPoseAmbiguity() <= 0.2 && t.getPose())
+          .filter(t -> t.getFiducialId() == tagToChase)
+          .filter(t -> !t.equals(lastTarget) && t.getPoseAmbiguity() <= 0.2) // && t.getPose
           .findFirst();
       if (targetOpt.isPresent()) {
         var target = targetOpt.get();

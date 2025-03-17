@@ -37,7 +37,7 @@ public class AlignCommand extends Command {
     yController.setTolerance(0.01, 0.01);
     rotController.setTolerance(0.01);
 
-    targetReefTagPose = m_vision.findBestTagPose();
+    // targetReefTagPose = m_vision.findBestTagPose();
 
   }
 
