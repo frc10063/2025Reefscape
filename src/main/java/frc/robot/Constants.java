@@ -94,7 +94,7 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 0.8;
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
-    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxSpeedMetersPerSecond = 2;
   }
   public static final class ModuleConstants {
     public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
@@ -129,7 +129,7 @@ public final class Constants {
     public static final double turningKd = 0.23;
     public static final double turningKi = 0.01;
     
-    public static final double driveKp = 0.37; 
+    public static final double driveKp = 3; 
     public static final double driveKd = 0.01;
     public static final double driveKi = 0;
   }

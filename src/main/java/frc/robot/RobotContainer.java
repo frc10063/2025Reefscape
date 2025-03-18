@@ -33,6 +33,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.OperatorConstants;
+// import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
 import frc.robot.commands.MoveForwardAuto;
@@ -41,6 +42,7 @@ import frc.robot.commands.RightReefAuto;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+// import frc.robot.subsystems.VisionSubsystem;
 
 
 /**
@@ -57,6 +59,7 @@ public class RobotContainer {
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final DriveTrain m_swerve = new DriveTrain();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+  // private final VisionSubsystem m_vision = new VisionSubsystem();
   Trigger resetGyroTrigger = m_controller.y();
   Trigger L1Trigger = m_joystick.button(2);
   Trigger L2Trigger = m_joystick.button(4);
@@ -66,6 +69,7 @@ public class RobotContainer {
   Trigger halfSpeedTrigger = m_controller.rightTrigger();
   Trigger runIntakeTrigger = m_joystick.button(1);
   Command offLineAutoCommand = new MoveForwardAuto(m_swerve);
+  // ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
   // Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
   // Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
   // Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
