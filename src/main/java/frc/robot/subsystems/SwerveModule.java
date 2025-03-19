@@ -38,8 +38,8 @@ public class SwerveModule extends SubsystemBase {
   private SparkBaseConfig driveConfig;
   public double speedMultiplier = 1;
   // determine ks soon
-  // SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.drivekS, ModuleConstants.drivekV, ModuleConstants.drivekA); 
-  // SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(ModuleConstants.turningkS, ModuleConstants.turningkV, ModuleConstants.turningkA); 
+  SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.drivekS, ModuleConstants.drivekV, ModuleConstants.drivekA); 
+  SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(ModuleConstants.turningkS, ModuleConstants.turningkV, ModuleConstants.turningkA); 
   
   
   // This creates a PIDController object passing through the kP, kI, and kD parameters
@@ -117,7 +117,7 @@ public class SwerveModule extends SubsystemBase {
     m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
   }
   public void setHalfSpeed() {
-    speedMultiplier = 0.75;
+    speedMultiplier = 0.5;
   }
   public void setDefaultSpeed() {
     speedMultiplier = 1;
@@ -174,11 +174,12 @@ public class SwerveModule extends SubsystemBase {
     // direction of travel that can occur when modules change directions. This results in smoother
     // driving.
     desiredState.cosineScale(encoderRotation);
-
+    final double driveFeedforward = m_driveFeedforward.calculate(desiredState.speedMetersPerSecond);
+    final double turnFeedforward = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
     // Calculate the drive output from the drive PID controller.
     final double driveOutput =
-        m_drivePIDController.calculate(m_driveEncoder.getVelocity(), desiredState.speedMetersPerSecond) * speedMultiplier;
-    SmartDashboard.putNumber("Current Velocity" + drivePort, -m_driveEncoder.getVelocity());
+        m_drivePIDController.calculate(m_driveEncoder.getVelocity(), desiredState.speedMetersPerSecond);
+    SmartDashboard.putNumber("Current Velocity" + drivePort, m_driveEncoder.getVelocity());
     SmartDashboard.putNumber("Desired Velocity" + drivePort, desiredState.speedMetersPerSecond);
 
     // Calculate the turning motor output from the turning PID controller.
@@ -192,8 +193,8 @@ public class SwerveModule extends SubsystemBase {
     SmartDashboard.putNumber("Desired angle" + turnPort, desiredState.angle.getRadians());
     SmartDashboard.putNumber("Drive Motor "+drivePort, driveOutput);
     SmartDashboard.putNumber("Turn Motor "+turnPort, turnOutput);
-    m_driveMotor.setVoltage(-driveOutput);
-    m_turningMotor.setVoltage(-turnOutput);
+    m_driveMotor.setVoltage(-(driveOutput + driveFeedforward) * speedMultiplier);
+    m_turningMotor.setVoltage(-(turnOutput + turnFeedforward));
   }
   public void stop() {
     m_driveMotor.set(0);

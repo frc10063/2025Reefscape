@@ -8,6 +8,7 @@ import java.util.List;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 // import edu.wpi.first.math.controller.PIDController;
 // import edu.wpi.first.math.controller.ProfiledPIDController;
 // import edu.wpi.first.math.geometry.Pose2d;
@@ -33,16 +34,17 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.OperatorConstants;
-// import frc.robot.commands.ChaseTagCommand;
+import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
 import frc.robot.commands.MoveForwardAuto;
 import frc.robot.commands.RightReefAuto;
-// import frc.robot.commands.Autos;
+import frc.robot.commands.Autos;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-// import frc.robot.subsystems.VisionSubsystem;
+// import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
 
 /**
@@ -54,12 +56,15 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
-  // private final IntakeSubsystem m_elevatorSubsystem = new IntakeSubsystem();
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final DriveTrain m_swerve = new DriveTrain();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
-  // private final VisionSubsystem m_vision = new VisionSubsystem();
+  // private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
+  private final VisionSubsystem m_vision = new VisionSubsystem(m_swerve);
+  private final SlewRateLimiter m_xLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_yLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
   Trigger resetGyroTrigger = m_controller.y();
   Trigger L1Trigger = m_joystick.button(2);
   Trigger L2Trigger = m_joystick.button(4);
@@ -68,8 +73,10 @@ public class RobotContainer {
   Trigger OverrideElevatorSafetyTrigger = m_joystick.button(7);
   Trigger halfSpeedTrigger = m_controller.rightTrigger();
   Trigger runIntakeTrigger = m_joystick.button(1);
+  Trigger runLeftAlgaeTrigger = m_joystick.button(8);
+  Trigger runRightAlgaeTrigger = m_joystick.button(9);
   Command offLineAutoCommand = new MoveForwardAuto(m_swerve);
-  // ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
+  ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
   // Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
   // Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
   // Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
@@ -88,7 +95,7 @@ public class RobotContainer {
               m_swerve.drive(
                   MathUtil.applyDeadband(m_controller.getLeftY(), 0.1) * DriveConstants.kMaxSpeedMetersPerSecond, 
                   MathUtil.applyDeadband(m_controller.getLeftX(), 0.1) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  MathUtil.applyDeadband(m_controller.getRightX(), 0.1) * ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
+                  MathUtil.applyDeadband(m_controller.getRightX(), 0.1) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
                   true), 
                   m_swerve));
      m_elevatorSubsystem.setDefaultCommand(
@@ -120,6 +127,8 @@ public class RobotContainer {
 
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
     runIntakeTrigger.whileTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem));
+    // runLeftAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
+    // runRightAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
   }
 
   /**
@@ -129,6 +138,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // Test left before right, then change right
-    return offLineAutoCommand;
+    return chaseTagCommand;
   }
 }

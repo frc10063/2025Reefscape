@@ -95,9 +95,10 @@ public final class Constants {
     public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
     public static final double kMaxSpeedMetersPerSecond = 2;
+    public static final double kMaxRotationSpeedRadiansPerSecond = 2 * Math.PI;
   }
   public static final class ModuleConstants {
-    public static final double kMaxModuleAngularSpeedRadiansPerSecond = 2 * Math.PI;
+    public static final double kMaxModuleAngularSpeedRadiansPerSecond = 4 * Math.PI;
     public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 2 * Math.PI;
 
     public static final int kturningEncoderCPR = 4096;
@@ -129,13 +130,14 @@ public final class Constants {
     public static final double turningKd = 0.23;
     public static final double turningKi = 0.01;
     
-    public static final double driveKp = 3; 
+    public static final double driveKp = 1; 
     public static final double driveKd = 0.01;
     public static final double driveKi = 0;
   }
   // This was part of the example, not sure if we will be using these
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 2;
+    public static final double kHalfSpeedMetersPerSecond = 1;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = 2 * Math.PI;
@@ -193,6 +195,12 @@ public final class Constants {
   public static final class IntakeConstants {
     // public static final int[] kIntakePorts = new int[] {0}; // Temp values
     public static final int kIntakePort = 12; // changed to single port
+    public static final SparkBaseConfig ENDEFFECTOR_CONFIG = new SparkMaxConfig()
+        .inverted(true);
+    public static double kMaxSpeed = 0.6;
+  }
+  public static final class AlgaeConstants {
+    // public static final int kAlgaePort = 0; // temp value
     public static final SparkBaseConfig ENDEFFECTOR_CONFIG = new SparkMaxConfig()
         .inverted(true);
     public static double kMaxSpeed = 0.6;
