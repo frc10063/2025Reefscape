@@ -39,6 +39,7 @@ import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
 import frc.robot.commands.MoveForwardAuto;
 import frc.robot.commands.RightReefAuto;
+import frc.robot.commands.RotationCommand;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -76,6 +77,7 @@ public class RobotContainer {
   Trigger runLeftAlgaeTrigger = m_joystick.button(8);
   Trigger runRightAlgaeTrigger = m_joystick.button(9);
   Command offLineAutoCommand = new MoveForwardAuto(m_swerve);
+  RotationCommand rot90Command = new RotationCommand(m_swerve, -Math.PI/2);
   ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
   // Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
   // Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
@@ -93,9 +95,9 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                  MathUtil.applyDeadband(m_controller.getLeftY(), 0.1) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  MathUtil.applyDeadband(m_controller.getLeftX(), 0.1) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  MathUtil.applyDeadband(m_controller.getRightX(), 0.1) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
+                  -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  -MathUtil.applyDeadband(m_controller.getRightX(), 0.1) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
                   true), 
                   m_swerve));
      m_elevatorSubsystem.setDefaultCommand(
@@ -128,7 +130,7 @@ public class RobotContainer {
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
     runIntakeTrigger.whileTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem));
     // runLeftAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
-    // runRightAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
+    // runRightAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
   }
 
   /**

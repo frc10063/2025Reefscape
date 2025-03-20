@@ -117,7 +117,7 @@ public class SwerveModule extends SubsystemBase {
     m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
   }
   public void setHalfSpeed() {
-    speedMultiplier = 0.5;
+    speedMultiplier = 0.25;
   }
   public void setDefaultSpeed() {
     speedMultiplier = 1;
@@ -169,7 +169,7 @@ public class SwerveModule extends SubsystemBase {
     SmartDashboard.putNumber("Turn Encoder "+turnPort, m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse);
     // Optimize the reference state to avoid spinning further than 90 degrees
     desiredState.optimize(encoderRotation);
-
+    
     // Scale speed by cosine of angle error. This scales down movement perpendicular to the desired
     // direction of travel that can occur when modules change directions. This results in smoother
     // driving.
@@ -177,7 +177,7 @@ public class SwerveModule extends SubsystemBase {
     final double driveFeedforward = m_driveFeedforward.calculate(desiredState.speedMetersPerSecond);
     final double turnFeedforward = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
     // Calculate the drive output from the drive PID controller.
-    final double driveOutput =
+    double driveOutput =
         m_drivePIDController.calculate(m_driveEncoder.getVelocity(), desiredState.speedMetersPerSecond);
     SmartDashboard.putNumber("Current Velocity" + drivePort, m_driveEncoder.getVelocity());
     SmartDashboard.putNumber("Desired Velocity" + drivePort, desiredState.speedMetersPerSecond);
@@ -186,15 +186,19 @@ public class SwerveModule extends SubsystemBase {
     // final double turnOutput =
     //     m_turningPIDController.calculate(
     //         m_turningEncoder.getDistance(), desiredState.angle.getRadians());
-    final double turnOutput = 
+    double turnOutput = 
         m_turningPIDController.calculate(
           (m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse), 
           desiredState.angle.getRadians());
+
+    driveOutput = (driveOutput + driveFeedforward) * speedMultiplier;
+    turnOutput = -(turnOutput + turnFeedforward);
+
     SmartDashboard.putNumber("Desired angle" + turnPort, desiredState.angle.getRadians());
     SmartDashboard.putNumber("Drive Motor "+drivePort, driveOutput);
     SmartDashboard.putNumber("Turn Motor "+turnPort, turnOutput);
-    m_driveMotor.setVoltage(-(driveOutput + driveFeedforward) * speedMultiplier);
-    m_turningMotor.setVoltage(-(turnOutput + turnFeedforward));
+    m_driveMotor.setVoltage(driveOutput);
+    m_turningMotor.setVoltage(turnOutput);
   }
   public void stop() {
     m_driveMotor.set(0);

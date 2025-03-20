@@ -25,7 +25,7 @@
 //     runAlgae(kMaxSpeed);
 //   }
 //   public void reverseAlgaeMaxSpeed() {
-//     runAlgae(kMaxSpeed);
+//     runAlgae(-kMaxSpeed);
 //   }
 
 //   public void runAlgae(double algaeSpeed) {
