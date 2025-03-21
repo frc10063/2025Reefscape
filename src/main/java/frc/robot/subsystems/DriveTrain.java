@@ -21,6 +21,7 @@ public class DriveTrain extends SubsystemBase {
   public DriveTrain() {
     m_gyro.reset();
   }
+  double speedMultiplier = 1;
   /** Creates a new DriveTrain. */
   private final SwerveModule m_frontLeft = 
       new SwerveModule(
@@ -126,7 +127,13 @@ public class DriveTrain extends SubsystemBase {
     m_frontLeft.setDefaultSpeed();
     m_rearLeft.setDefaultSpeed();
     m_rearRight.setDefaultSpeed();
+    speedMultiplier = 1;
   }
+  // would be cool if this works
+  public void fastSpeed() {
+    speedMultiplier = 1.33;
+  }
+
   
   /**
    * Method to drive the robot using joystick info.
@@ -138,6 +145,10 @@ public class DriveTrain extends SubsystemBase {
    */
   public void drive(
       double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    xSpeed = xSpeed * speedMultiplier;
+    ySpeed = ySpeed * speedMultiplier;
+    rot = rot * speedMultiplier;
+
     SmartDashboard.putNumber("XSpeed", xSpeed);
     SmartDashboard.putNumber("YSpeed", ySpeed);
     SmartDashboard.putNumber("Rotation", rot);
@@ -158,7 +169,7 @@ public class DriveTrain extends SubsystemBase {
   }
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
-        desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
+        desiredStates, DriveConstants.kMaxSpeedMetersPerSecond * speedMultiplier);
     m_frontLeft.setDesiredState(desiredStates[0]);
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);

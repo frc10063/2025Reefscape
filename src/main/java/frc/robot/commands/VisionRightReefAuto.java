@@ -20,14 +20,14 @@ public class VisionRightReefAuto extends SequentialCommandGroup {
   VisionSubsystem m_vision;
   IntakeSubsystem m_intakeSubsystem;
   RotationCommand rotRightCommand;
-  AlignCommand rightAlignCommand;
+  AlignCommand leftAlignCommand;
   CoralPlacingAuto coralPlacingAuto;
   public VisionRightReefAuto() {
     rotRightCommand = new RotationCommand(m_swerve, -2 * Math.PI/3);
-    rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
+    leftAlignCommand = new AlignCommand(m_swerve, m_vision, false);
     coralPlacingAuto = new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2);
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(rotRightCommand, rightAlignCommand, coralPlacingAuto);
+    addCommands(rotRightCommand, leftAlignCommand, coralPlacingAuto);
   }
 }

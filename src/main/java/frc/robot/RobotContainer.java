@@ -77,7 +77,8 @@ public class RobotContainer {
   Trigger L3Trigger = m_joystick.button(5);
   Trigger L4Trigger = m_joystick.button(3);
   Trigger OverrideElevatorSafetyTrigger = m_joystick.button(7);
-  Trigger halfSpeedTrigger = m_controller.rightTrigger();
+  Trigger halfSpeedTrigger = m_controller.leftTrigger();
+  Trigger fastSpeedTrigger = m_controller.rightTrigger();
   Trigger runIntakeTrigger = m_joystick.button(1);
   Trigger runLeftAlgaeTrigger = m_joystick.button(8);
   Trigger runRightAlgaeTrigger = m_joystick.button(9);
@@ -169,7 +170,7 @@ public class RobotContainer {
     // return visionLeftReefAuto;
     // return visionRightReefAuto;
     // return VisionMiddleReefAuto;
-    
+
     // if all goes wrong use this
     // return offLineAutoCommand;
   }
