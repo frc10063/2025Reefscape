@@ -18,18 +18,23 @@ public class CoralPlacingAuto extends SequentialCommandGroup {
   /** Creates a new CoralPlacingAuto. */
   ElevatorSubsystem m_elevatorSubsystem;
   IntakeSubsystem m_intakeSubsystem;
+  int level;
   
-  public CoralPlacingAuto(ElevatorSubsystem m_elevatorSubsystem, IntakeSubsystem m_IntakeSubsystem) {
+  public CoralPlacingAuto(ElevatorSubsystem m_elevatorSubsystem, IntakeSubsystem m_intakeSubsystem, int level) {
+    this.m_elevatorSubsystem = m_elevatorSubsystem;
+    this.m_intakeSubsystem = m_intakeSubsystem;
+    this.level = level;
+    int index = level - 1;
+
     addCommands(
       Commands.race(
-      new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2])), 
-        Commands.race(
-          new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed), 
-          Commands.waitSeconds(1.5)
-        )), 
-      Commands.race(
-        new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0)),
-        Commands.waitSeconds(2)
-      ));
+      // run the elevator constantly until intake portion done
+        new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[index])), 
+        // wait for elevator to go up, run intake for 1 second
+        // when intake is done, elevator can chill
+        Commands.waitSeconds(2).andThen(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed).withTimeout(1))
+      ), 
+      new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0)).withTimeout(2)
+      );
   }
 }

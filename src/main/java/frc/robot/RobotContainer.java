@@ -35,11 +35,15 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ChaseTagCommand;
+import frc.robot.commands.CoralPlacingAuto;
 import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
 import frc.robot.commands.MoveForwardAuto;
 import frc.robot.commands.RightReefAuto;
 import frc.robot.commands.RotationCommand;
+import frc.robot.commands.VisionLeftReefAuto;
+import frc.robot.commands.VisionMiddleReefAuto;
+import frc.robot.commands.VisionRightReefAuto;
 import frc.robot.commands.AlignCommand;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.DriveTrain;
@@ -80,10 +84,18 @@ public class RobotContainer {
   Trigger alignLeftCoralTrigger = m_controller.leftBumper();
   Trigger alignRightCoralTrigger = m_controller.rightBumper();
   Command offLineAutoCommand = new MoveForwardAuto(m_swerve);
-  RotationCommand rot90Command = new RotationCommand(m_swerve, -Math.PI/2);
+  RotationCommand rotMiddle90Command = new RotationCommand(m_swerve, -Math.PI/2);
+  // for starting left side 
+  RotationCommand rotLeftCommand = new RotationCommand(m_swerve, -Math.PI/3);
+  // for right side
+  RotationCommand rotRightCommand = new RotationCommand(m_swerve, -2 * Math.PI/3);
   ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
   Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
   Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
+  Command coralPlacingCommand = new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2);
+  
+  Command visionLeftReefAuto = new VisionLeftReefAuto();
+  Command visionRightReefAuto = new VisionRightReefAuto();
 
   // Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
   // Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
@@ -149,7 +161,16 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // Test left before right, then change right
-    return chaseTagCommand;
+    // test this
+    return coralPlacingCommand;
+
+    // too much work to do chooser on dahsboard now
+    // just comment and uncomment
+    // return visionLeftReefAuto;
+    // return visionRightReefAuto;
+    // return VisionMiddleReefAuto;
+    
+    // if all goes wrong use this
+    // return offLineAutoCommand;
   }
 }

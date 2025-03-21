@@ -78,6 +78,7 @@ public class AlignCommand extends Command {
       targetTagPose.getX() + lateralOffsetTranslation.getX() + approachOffset.getX(),
       targetTagPose.getY() + lateralOffsetTranslation.getY() + approachOffset.getY(),
       targetTagPose.getRotation().rotateBy(Rotation2d.k180deg));
+    targetPose = targetPose.rotateBy(Rotation2d.fromRadians(Math.PI/2));
   }
 
   
@@ -96,8 +97,8 @@ public class AlignCommand extends Command {
     // var targetPose = cameraPose.transformBy(camToTarget);
     
    
-    Pose2d currentPose = m_swerve.getPose();
-    // Pose2d currentPose = m_vision.getPoseEstimate();
+    // Pose2d currentPose = m_swerve.getPose();
+    Pose2d currentPose = m_vision.getPoseEstimate();
     
     double xSpeed = xController.calculate(currentPose.getX(), targetPose.getX());
     double ySpeed = yController.calculate(currentPose.getY(), targetPose.getY());
