@@ -40,6 +40,7 @@ import frc.robot.commands.MiddleReefAuto;
 import frc.robot.commands.MoveForwardAuto;
 import frc.robot.commands.RightReefAuto;
 import frc.robot.commands.RotationCommand;
+import frc.robot.commands.AlignCommand;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -76,9 +77,14 @@ public class RobotContainer {
   Trigger runIntakeTrigger = m_joystick.button(1);
   Trigger runLeftAlgaeTrigger = m_joystick.button(8);
   Trigger runRightAlgaeTrigger = m_joystick.button(9);
+  Trigger alignLeftCoralTrigger = m_controller.leftBumper();
+  Trigger alignRightCoralTrigger = m_controller.rightBumper();
   Command offLineAutoCommand = new MoveForwardAuto(m_swerve);
   RotationCommand rot90Command = new RotationCommand(m_swerve, -Math.PI/2);
   ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
+  Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
+  Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
+
   // Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
   // Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
   // Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
@@ -129,6 +135,10 @@ public class RobotContainer {
 
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
     runIntakeTrigger.whileTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem));
+
+    alignRightCoralTrigger.whileTrue(rightAlignCommand);
+    alignLeftCoralTrigger.whileTrue(leftAlignCommand);
+
     // runLeftAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
     // runRightAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
   }

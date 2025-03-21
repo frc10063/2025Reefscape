@@ -71,10 +71,10 @@ public final class Constants {
 
     public static final double kDrivePeriod = TimedRobot.kDefaultPeriod;
 
-    public static final double kTrackWidth = 0.5;
+    public static final double kTrackWidth = 0.7;
     // Distance between centers of right and left wheels on robot
     // we need to measure this out
-    public static final double kWheelBase = 0.5;
+    public static final double kWheelBase = 0.7;
     // Distance between front and back wheels on robot
     // Also measure this out
     public static final SwerveDriveKinematics kDriveKinematics =
@@ -118,6 +118,7 @@ public final class Constants {
     public static final double kDriveEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
         (kWheelDiameterMeters * Math.PI) / (double) kdriveEncoderCPR;
+    public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR) / 60.0;
 
     public static final double kTurningEncoderDistancePerPulse =
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
@@ -136,8 +137,8 @@ public final class Constants {
   }
   // This was part of the example, not sure if we will be using these
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 2;
-    public static final double kHalfSpeedMetersPerSecond = 1;
+    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kHalfSpeedMetersPerSecond = 1.5;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = 2 * Math.PI;
@@ -151,7 +152,7 @@ public final class Constants {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     // measure this
-    public static final double robotCenterToFrontDistance = 0.0;
+    public static final double robotCenterToFrontDistance = 0.813;
 
     public static final double coralLeftOffset = -0.165;
     public static final double coralRightOffset = 0.165;

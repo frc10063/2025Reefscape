@@ -107,7 +107,9 @@ public class SwerveModule extends SubsystemBase {
         .idleMode(IdleMode.kBrake);
     driveConfig.encoder
         .positionConversionFactor(ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) 
-        .velocityConversionFactor((ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) / 60);
+        .velocityConversionFactor(ModuleConstants.kDriveVelocityConversionFactor);
+        // (ModuleConstants.kDriveEncoderDistancePerPulse * (double) ModuleConstants.kdriveEncoderCPR) / 60.0
+    
         // .inverted(driveEncoderReversed);
     // driveConfig.inverted(driveEncoderReversed); 
     // Idk what these parameters are
