@@ -81,7 +81,7 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public Pose3d findBestTagPose() {
-    return tagPoses.get(currentTarget.getFiducialId());
+    return tagPoses.get(currentTarget.getFiducialId() - 1);
   }
   public Transform3d findCameraRelativeTagPose() {
     return currentTarget.getBestCameraToTarget();

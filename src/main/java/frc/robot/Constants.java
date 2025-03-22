@@ -154,10 +154,10 @@ public final class Constants {
     // measure this
     public static final double robotCenterToFrontDistance = 0.813;
 
-    public static final double coralLeftOffset = -0.165;
-    public static final double coralRightOffset = 0.165;
+    public static final double coralLeftOffset = -0.171;
+    public static final double coralRightOffset = -0.425;
 
-    public static final double translationkP = 1;
+    public static final double translationkP = 3;
     public static final double translationkI = 0;
     public static final double translationkD = 0;
 

@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -37,6 +38,7 @@ public class AlignCommand extends Command {
   private Transform3d targetTagTransform3d;
   private Pose2d targetPose;
   private Pose2d robotPose;
+  private Pose2d goalPoseV2;
   public AlignCommand(DriveTrain m_swerve, VisionSubsystem m_vision, boolean targetRightCoral) {
     this.m_swerve = m_swerve;
     this.m_vision = m_vision;
@@ -61,12 +63,15 @@ public class AlignCommand extends Command {
 
   // this can be a later job
   private void calculateTargetPose() {
-    // make a translation for offset and add the pose of target stuff
-    // var cameraPose = robotPose.transformBy(VisionConstants.camPosition);
-    // 
-    // var camToTarget = target.getBestCameraToTarget();
-    // 
-    // var targetPose = cameraPose.transformBy(targetTagTransform3d).toPose2d();
+    // make a translation for offset and add the pose of target stuf
+    // THIS STUFF IS BACK UP
+    var robotPose3d = new Pose3d(robotPose.getX(), robotPose.getY(), 0,
+      new Rotation3d(0, 0, robotPose.getRotation().getRadians()));
+    var cameraPose = robotPose3d.transformBy(VisionConstants.camPosition);
+    var camToTarget = targetTagTransform3d;
+    // the tag pose relative to camera
+    var targetPoseV2 = cameraPose.transformBy(camToTarget).toPose2d();
+    // UP TO HERE
     double lateralOffset = targetRightCoral ? AutoConstants.coralRightOffset : AutoConstants.coralLeftOffset;
     Translation2d lateralOffsetTranslation = new Translation2d(0, lateralOffset);
     lateralOffsetTranslation = lateralOffsetTranslation.rotateBy(targetTagPose.getRotation());
@@ -79,6 +84,13 @@ public class AlignCommand extends Command {
       targetTagPose.getY() + lateralOffsetTranslation.getY() + approachOffset.getY(),
       targetTagPose.getRotation().rotateBy(Rotation2d.k180deg));
     targetPose = targetPose.rotateBy(Rotation2d.fromRadians(Math.PI/2));
+
+
+    goalPoseV2 = new Pose2d(
+      targetPoseV2.getX() + lateralOffsetTranslation.getX() + approachOffset.getX(),
+      targetPoseV2.getY() + lateralOffsetTranslation.getY() + approachOffset.getY(),
+      targetPoseV2.getRotation().rotateBy(Rotation2d.k180deg));
+    goalPoseV2 = goalPoseV2.rotateBy(Rotation2d.fromRadians(Math.PI/2));
   }
 
   
@@ -99,7 +111,7 @@ public class AlignCommand extends Command {
    
     // Pose2d currentPose = m_swerve.getPose();
     Pose2d currentPose = m_vision.getPoseEstimate();
-    
+    // if all goes wrong, replace targetPose with goalPoseV2
     double xSpeed = xController.calculate(currentPose.getX(), targetPose.getX());
     double ySpeed = yController.calculate(currentPose.getY(), targetPose.getY());
     double rot = rotController.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
