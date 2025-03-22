@@ -152,7 +152,7 @@ public final class Constants {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     // measure this
-    public static final double robotCenterToFrontDistance = 0.813;
+    public static final double robotCenterToFrontDistance = 0.425;
 
     public static final double coralLeftOffset = -0.171;
     public static final double coralRightOffset = -0.425;
