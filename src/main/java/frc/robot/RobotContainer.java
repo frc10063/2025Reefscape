@@ -34,23 +34,25 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.ChaseTagCommand;
+// import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.CoralPlacingAuto;
 import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
 import frc.robot.commands.MoveForwardAuto;
 import frc.robot.commands.RightReefAuto;
 import frc.robot.commands.RotationCommand;
-import frc.robot.commands.VisionLeftReefAuto;
-import frc.robot.commands.VisionMiddleReefAuto;
-import frc.robot.commands.VisionRightReefAuto;
-import frc.robot.commands.AlignCommand;
+import frc.robot.commands.TaxiAuto;
+// import frc.robot.commands.VisionLeftReefAuto;
+// import frc.robot.commands.VisionMiddleReefAuto;
+// import frc.robot.commands.VisionRightReefAuto;
+// import frc.robot.commands.AlignCommand;
 import frc.robot.commands.Autos;
+import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 // import frc.robot.subsystems.AlgaeSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
+// import frc.robot.subsystems.VisionSubsystem;
 
 
 /**
@@ -66,8 +68,8 @@ public class RobotContainer {
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final DriveTrain m_swerve = new DriveTrain();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
-  // private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
-  private final VisionSubsystem m_vision = new VisionSubsystem(m_swerve);
+  private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
+  // private final VisionSubsystem m_vision = new VisionSubsystem(m_swerve);
   private final SlewRateLimiter m_xLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
@@ -76,32 +78,36 @@ public class RobotContainer {
   Trigger L2Trigger = m_joystick.button(4);
   Trigger L3Trigger = m_joystick.button(5);
   Trigger L4Trigger = m_joystick.button(3);
-  Trigger OverrideElevatorSafetyTrigger = m_joystick.button(7);
+  Trigger OverrideElevatorSafetyTrigger = m_joystick.button(9);
   Trigger halfSpeedTrigger = m_controller.leftTrigger();
   Trigger fastSpeedTrigger = m_controller.rightTrigger();
   Trigger runIntakeTrigger = m_joystick.button(1);
-  Trigger runLeftAlgaeTrigger = m_joystick.button(8);
-  Trigger runRightAlgaeTrigger = m_joystick.button(9);
+  Trigger forwardAlgaeTrigger = m_joystick.button(6);
+  Trigger reverseAlgaeTrigger = m_joystick.button(7);
   Trigger alignLeftCoralTrigger = m_controller.leftBumper();
   Trigger alignRightCoralTrigger = m_controller.rightBumper();
+  Trigger fieldRelativeTrigger = m_controller.b();
   Command offLineAutoCommand = new MoveForwardAuto(m_swerve);
   RotationCommand rotMiddle90Command = new RotationCommand(m_swerve, -Math.PI/2);
   // for starting left side 
   RotationCommand rotLeftCommand = new RotationCommand(m_swerve, -Math.PI/3);
   // for right side
   RotationCommand rotRightCommand = new RotationCommand(m_swerve, -2 * Math.PI/3);
-  ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
-  Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
-  Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
+  // ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
+  // Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
+  // Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
   Command coralPlacingCommand = new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2);
-  
-  Command visionLeftReefAuto = new VisionLeftReefAuto();
-  Command visionRightReefAuto = new VisionRightReefAuto();
+  Command taxiAutoCommand = new TaxiAuto(m_swerve);
+  boolean fieldRelative = true;
+  // Command visionLeftReefAuto = new VisionLeftReefAuto();
+  // Command visionRightReefAuto = new VisionRightReefAuto();
 
   // Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
   // Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
   // Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
-
+  public void fieldRelativeToggle() {
+    fieldRelative = !fieldRelative;
+  }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -114,11 +120,20 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                  -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  -MathUtil.applyDeadband(m_controller.getRightX(), 0.1) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
-                  true), 
+                  -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  -MathUtil.applyDeadband(m_controller.getRightX(), 0.05) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
+                  fieldRelative), 
                   m_swerve));
+    // m_swerve.setDefaultCommand(
+    //     new RunCommand(
+    //       () ->
+    //           m_swerve.drive(
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
+    //               fieldRelative), 
+    //               m_swerve));
      m_elevatorSubsystem.setDefaultCommand(
         new RunCommand(
           () -> 
@@ -138,7 +153,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     resetGyroTrigger.onTrue(new InstantCommand(m_swerve::zeroHeading));
-
+    fieldRelativeTrigger.onTrue(new InstantCommand(this::fieldRelativeToggle));
     L1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
     L2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
     L3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
@@ -147,13 +162,14 @@ public class RobotContainer {
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
+    fastSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::fastSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
     runIntakeTrigger.whileTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem));
 
-    alignRightCoralTrigger.whileTrue(rightAlignCommand);
-    alignLeftCoralTrigger.whileTrue(leftAlignCommand);
+    // alignRightCoralTrigger.whileTrue(rightAlignCommand);
+    // alignLeftCoralTrigger.whileTrue(leftAlignCommand);
 
-    // runLeftAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
-    // runRightAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
+    forwardAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
+    reverseAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
   }
 
   /**
@@ -163,7 +179,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // test this
-    return coralPlacingCommand;
+    // return coralPlacingCommand;
 
     // too much work to do chooser on dahsboard now
     // just comment and uncomment
@@ -172,6 +188,7 @@ public class RobotContainer {
     // return VisionMiddleReefAuto;
 
     // if all goes wrong use this
-    // return offLineAutoCommand;
+    return taxiAutoCommand.withTimeout(2);
+    // return new RunCommand(() -> m_swerve.drive(-5, 0, 0, true)).withTimeout(2);
   }
 }

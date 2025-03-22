@@ -124,6 +124,9 @@ public class SwerveModule extends SubsystemBase {
   public void setDefaultSpeed() {
     speedMultiplier = 1;
   }
+  public void setFastSpeed() {
+    speedMultiplier = 2;
+  }
 
   /**
    * Returns the current state of the module.
@@ -193,8 +196,9 @@ public class SwerveModule extends SubsystemBase {
           (m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse), 
           desiredState.angle.getRadians());
 
+    // driveOutput = (driveOutput) * speedMultiplier;
     driveOutput = (driveOutput + driveFeedforward) * speedMultiplier;
-    turnOutput = -(turnOutput + turnFeedforward);
+    turnOutput = -(turnOutput);
 
     SmartDashboard.putNumber("Desired angle" + turnPort, desiredState.angle.getRadians());
     SmartDashboard.putNumber("Drive Motor "+drivePort, driveOutput);

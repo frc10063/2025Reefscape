@@ -22,6 +22,7 @@ public class DriveTrain extends SubsystemBase {
     m_gyro.reset();
   }
   double speedMultiplier = 1;
+  boolean fieldRelativeSwitch = true;
   /** Creates a new DriveTrain. */
   private final SwerveModule m_frontLeft = 
       new SwerveModule(
@@ -117,22 +118,31 @@ public class DriveTrain extends SubsystemBase {
       pose);
   }
   public void slowSpeed() {
-    m_frontRight.setHalfSpeed();
-    m_frontLeft.setHalfSpeed();
-    m_rearLeft.setHalfSpeed();
-    m_rearRight.setHalfSpeed();
+    // m_frontRight.setHalfSpeed();
+    // m_frontLeft.setHalfSpeed();
+    // m_rearLeft.setHalfSpeed();
+    // m_rearRight.setHalfSpeed();
+    speedMultiplier = 0.15;
+    SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
   public void defaultSpeed() {
-    m_frontRight.setDefaultSpeed();
-    m_frontLeft.setDefaultSpeed();
-    m_rearLeft.setDefaultSpeed();
-    m_rearRight.setDefaultSpeed();
+    // m_frontRight.setDefaultSpeed();
+    // m_frontLeft.setDefaultSpeed();
+    // m_rearLeft.setDefaultSpeed();
+    // m_rearRight.setDefaultSpeed();
     speedMultiplier = 1;
+    SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
   // would be cool if this works
   public void fastSpeed() {
-    speedMultiplier = 1.33;
+    // m_frontRight.setFastSpeed();
+    // m_frontLeft.setFastSpeed();
+    // m_rearLeft.setFastSpeed();
+    // m_rearRight.setFastSpeed();
+    speedMultiplier = 2;
+    SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
+  
 
   
   /**
@@ -145,13 +155,18 @@ public class DriveTrain extends SubsystemBase {
    */
   public void drive(
       double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    xSpeed = xSpeed * speedMultiplier;
-    ySpeed = ySpeed * speedMultiplier;
-    rot = rot * speedMultiplier;
 
     SmartDashboard.putNumber("XSpeed", xSpeed);
     SmartDashboard.putNumber("YSpeed", ySpeed);
     SmartDashboard.putNumber("Rotation", rot);
+    SmartDashboard.putBoolean("Field Relative", fieldRelative);
+
+    xSpeed = xSpeed * speedMultiplier;
+    ySpeed = ySpeed * speedMultiplier;
+    rot = rot * speedMultiplier;
+   
+    var maxSpeed = DriveConstants.kMaxSpeedMetersPerSecond * speedMultiplier;
+
         var swerveModuleStates =
         DriveConstants.kDriveKinematics.toSwerveModuleStates(
             ChassisSpeeds.discretize(
@@ -161,7 +176,7 @@ public class DriveTrain extends SubsystemBase {
                     : new ChassisSpeeds(xSpeed, ySpeed, rot),
                 DriveConstants.kDrivePeriod));
     SwerveDriveKinematics.desaturateWheelSpeeds(
-        swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
+        swerveModuleStates, maxSpeed);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
@@ -169,7 +184,7 @@ public class DriveTrain extends SubsystemBase {
   }
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
-        desiredStates, DriveConstants.kMaxSpeedMetersPerSecond * speedMultiplier);
+        desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
     m_frontLeft.setDesiredState(desiredStates[0]);
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);
@@ -210,7 +225,7 @@ public class DriveTrain extends SubsystemBase {
   }
   @Override
   public void periodic() {
-    
+    SmartDashboard.putNumber("Gyro Heading", getHeading());
   }
 }
 

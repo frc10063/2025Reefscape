@@ -14,7 +14,7 @@ public class IntakeSubsystem extends SubsystemBase {
     // private final SparkMax m_intakeLeftMotor;
     private final SparkMax m_intakeMotor;
 
-    private final double kMaxSpeed = 0.5; // Full speed? Not sure if it's needed
+    private final double kMaxSpeed = 0.4; // Full speed? Not sure if it's needed
     // public double L4SpeedMultiplier = 1;
 
     public IntakeSubsystem() {

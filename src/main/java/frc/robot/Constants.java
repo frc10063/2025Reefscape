@@ -98,19 +98,19 @@ public final class Constants {
     public static final double kMaxRotationSpeedRadiansPerSecond = 2 * Math.PI;
   }
   public static final class ModuleConstants {
-    public static final double kMaxModuleAngularSpeedRadiansPerSecond = 3 * Math.PI;
-    public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 14 * Math.PI;
+    public static final double kMaxModuleAngularSpeedRadiansPerSecond = 4 * Math.PI;
+    public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 40 * Math.PI;
 
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 42; // 4096
 
-    public static final double drivekS = 0.2;
+    public static final double drivekS = 0.1;
     public static final double drivekV = 2.07;
     public static final double drivekA = 0.5;
     // kV is in Volts * seconds / meter
     // kS is in Volts * seconds^2 / meter
     // to get rotational, divide by radius (0.5 m per radian);
-    public static final double turningkS = 0.5;
+    public static final double turningkS = 0.2;
     public static final double turningkV = 0.5;
     public static final double turningkA = 0;
 
@@ -127,13 +127,13 @@ public final class Constants {
     public static final double kPModuleTurningController = 1;
 
     public static final double kPModuleDriveController = 1;
-    public static final double turningKp = 12.5; //12.5
-    public static final double turningKd = 0.23;
+    public static final double turningKp = 8; //12.5
+    public static final double turningKd = 0.28;
     public static final double turningKi = 0.01;
     
-    public static final double driveKp = 0.5; //1 
-    public static final double driveKd = 0.01875;
-    public static final double driveKi = 0;
+    public static final double driveKp = 0.5; //0.5 
+    public static final double driveKd = 0.01875; // 0.01875
+    public static final double driveKi = 0.01; //0.01
   }
   // This was part of the example, not sure if we will be using these
   public static final class AutoConstants {
@@ -201,10 +201,10 @@ public final class Constants {
     public static double kMaxSpeed = 0.6;
   }
   public static final class AlgaeConstants {
-    // public static final int kAlgaePort = 0; // temp value
-    public static final SparkBaseConfig ENDEFFECTOR_CONFIG = new SparkMaxConfig()
+    public static final int kAlgaePort = 14; 
+    public static final SparkBaseConfig ALGAE_CONFIG = new SparkMaxConfig()
         .inverted(true);
-    public static double kMaxSpeed = 0.6;
+    public static double kMaxSpeed = 0.3;
   }
   public static final class VisionConstants {
     public static final AprilTagFieldLayout APRIL_TAGS_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
