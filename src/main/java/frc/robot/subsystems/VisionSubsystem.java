@@ -44,9 +44,9 @@ public class VisionSubsystem extends SubsystemBase {
 
   // it tells me to import numbers and hcange to N1 or N3 when they all in smae import?
   // this is benson work idk how to do statistics and determine values
-  private static final edu.wpi.first.math.Vector<N3> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
+  private static final edu.wpi.first.math.Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
   // private static final edu.wpi.first.math.Vector<N3> localMeasurementStdDevs = VecBuilder.fill(Units.degreesToRadians(0.01), 0.01, 0);
-  private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
+  private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 0.9);
 
   
   private final SwerveDrivePoseEstimator poseEstimator; // should be SwerveDrivePoseEstimator<N7, N7, N5>
