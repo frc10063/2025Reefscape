@@ -36,6 +36,7 @@ import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.OperatorConstants;
 // import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.CoralPlacingAuto;
+import frc.robot.commands.DeAlgaeCommand;
 import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
 import frc.robot.commands.MoveForwardAuto;
@@ -87,6 +88,8 @@ public class RobotContainer {
   Trigger alignLeftCoralTrigger = m_controller.leftBumper();
   Trigger alignRightCoralTrigger = m_controller.rightBumper();
   Trigger fieldRelativeTrigger = m_controller.b();
+  Trigger deAlgaeL2Trigger = m_joystick.button(10);
+  Trigger deAlgaeL3Trigger = m_joystick.button(11);
   Command offLineAutoCommand = new MoveForwardAuto(m_swerve);
   RotationCommand rotMiddle90Command = new RotationCommand(m_swerve, -Math.PI/2);
   // for starting left side 
@@ -96,6 +99,8 @@ public class RobotContainer {
   // ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
   // Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
   // Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
+  Command L2DeAlgaeCommand = new DeAlgaeCommand(m_algaeSubsystem, m_elevatorSubsystem, 0);
+  Command L3DeAlgaeCommand = new DeAlgaeCommand(m_algaeSubsystem, m_elevatorSubsystem, 1);
   Command coralPlacingCommand = new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2);
   Command taxiAutoCommand = new TaxiAuto(m_swerve);
   boolean fieldRelative = true;
@@ -158,7 +163,7 @@ public class RobotContainer {
     L2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
     L3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
     L4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
-
+    
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
@@ -170,6 +175,8 @@ public class RobotContainer {
 
     forwardAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
     reverseAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
+    deAlgaeL2Trigger.onTrue(L2DeAlgaeCommand);
+    deAlgaeL3Trigger.onTrue(L3DeAlgaeCommand);
   }
 
   /**

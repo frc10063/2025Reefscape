@@ -191,6 +191,7 @@ public final class Constants {
     // 50/circumference then times res = 
     // L1 and L2 set
     public static final double[] kElevatorSetpoints = new double[] {1744, 7148, 14000, 22800}; 
+    public static final double[] kElevatorDeAlgaeSetpoints = new double[] {9300, 15000};
 
   }
   public static final class IntakeConstants {
@@ -204,7 +205,12 @@ public final class Constants {
     public static final int kAlgaePort = 14; 
     public static final SparkBaseConfig ALGAE_CONFIG = new SparkMaxConfig()
         .inverted(true);
-    public static double kMaxSpeed = 0.3;
+    // comlpete guess, in inches
+    public static final double kSpoolDiamater = 2.5;
+    public static final double kSpoolCircumference = kSpoolDiamater * Math.PI;
+    public static final double kAlgaeEncoderCPR = 42;
+    public static final int[] kAlgaeSetpoints = new int[] {0, (int) ((8 / kSpoolCircumference) * kAlgaeEncoderCPR)};
+    public static double kMaxSpeed = 0.4;
   }
   public static final class VisionConstants {
     public static final AprilTagFieldLayout APRIL_TAGS_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
