@@ -117,7 +117,8 @@ public final class Constants {
     public static final double kWheelDiameterMeters = 0.1016;
     public static final double kDriveEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
-        (kWheelDiameterMeters * Math.PI) / (double) kdriveEncoderCPR;
+        // 6.75 is rotations per wheel rotation
+        (kWheelDiameterMeters * Math.PI) / (double) (kdriveEncoderCPR * 6.75);
     public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR) / 60.0;
 
     public static final double kTurningEncoderDistancePerPulse =
@@ -205,12 +206,13 @@ public final class Constants {
     public static final int kAlgaePort = 14; 
     public static final SparkBaseConfig ALGAE_CONFIG = new SparkMaxConfig()
         .inverted(true);
+    
     // comlpete guess, in inches
     public static final double kSpoolDiamater = 2.5;
     public static final double kSpoolCircumference = kSpoolDiamater * Math.PI;
     public static final double kAlgaeEncoderCPR = 42;
-    public static final int[] kAlgaeSetpoints = new int[] {0, (int) ((8 / kSpoolCircumference) * kAlgaeEncoderCPR)};
-    public static double kMaxSpeed = 0.4;
+    public static final int[] kAlgaeSetpoints = new int[] {4, 26};
+    public static double kMaxSpeed = 0.3;
   }
   public static final class VisionConstants {
     public static final AprilTagFieldLayout APRIL_TAGS_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);

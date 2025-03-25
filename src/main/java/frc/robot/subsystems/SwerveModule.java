@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -88,7 +89,7 @@ public class SwerveModule extends SubsystemBase {
     m_driveEncoder = m_driveMotor.getEncoder(); 
     m_turningEncoder = new AnalogEncoder(turningEncoderChannel, 1, expectedEncoderZero);
     
-    m_turningPIDController.setTolerance(0.01);
+    m_turningPIDController.setTolerance(Units.degreesToRadians(1));
     // Distance per pulse is basically distance driven for each count of the encoder
     // 2*pi*radius is circumference of the wheel, divided by encoder resolution would
     // give distance per encoder count

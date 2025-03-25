@@ -4,14 +4,13 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeConstants;
 
@@ -61,6 +60,11 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   public void stopAlgae() {
     m_algaeMotor.set(0);
+  }
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Algae Position", m_algaeEncoder.getPosition());
+    SmartDashboard.putNumber("Algae Motor", m_algaeMotor.get());
   }
   
 }

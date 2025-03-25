@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 // import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -85,11 +86,12 @@ public class RobotContainer {
   Trigger runIntakeTrigger = m_joystick.button(1);
   Trigger forwardAlgaeTrigger = m_joystick.button(6);
   Trigger reverseAlgaeTrigger = m_joystick.button(7);
-  Trigger alignLeftCoralTrigger = m_controller.leftBumper();
-  Trigger alignRightCoralTrigger = m_controller.rightBumper();
-  Trigger fieldRelativeTrigger = m_controller.b();
-  Trigger deAlgaeL2Trigger = m_joystick.button(10);
-  Trigger deAlgaeL3Trigger = m_joystick.button(11);
+  // Trigger alignLeftCoralTrigger = m_controller.leftBumper();
+  Trigger fieldRelativeHoldTrigger = m_controller.rightBumper();
+  // Trigger alignRightCoralTrigger = m_controller.rightBumper();
+  Trigger fieldRelativeToggleTrigger = m_controller.b();
+  Trigger deAlgaeL2Trigger = m_joystick.button(11);
+  Trigger deAlgaeL3Trigger = m_joystick.button(10);
   Command offLineAutoCommand = new MoveForwardAuto(m_swerve);
   RotationCommand rotMiddle90Command = new RotationCommand(m_swerve, -Math.PI/2);
   // for starting left side 
@@ -112,6 +114,12 @@ public class RobotContainer {
   // Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
   public void fieldRelativeToggle() {
     fieldRelative = !fieldRelative;
+  }
+  public void enableFieldRelative() {
+    fieldRelative = true;
+  }
+  public void disableFieldRelative() {
+    fieldRelative = false;
   }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -158,7 +166,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     resetGyroTrigger.onTrue(new InstantCommand(m_swerve::zeroHeading));
-    fieldRelativeTrigger.onTrue(new InstantCommand(this::fieldRelativeToggle));
+    fieldRelativeToggleTrigger.onTrue(new InstantCommand(this::fieldRelativeToggle));
+    fieldRelativeHoldTrigger.whileTrue(new StartEndCommand(this::disableFieldRelative, this::enableFieldRelative, new Subsystem[0]));
     L1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
     L2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
     L3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
@@ -175,8 +184,8 @@ public class RobotContainer {
 
     forwardAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
     reverseAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
-    deAlgaeL2Trigger.onTrue(L2DeAlgaeCommand);
-    deAlgaeL3Trigger.onTrue(L3DeAlgaeCommand);
+    deAlgaeL2Trigger.onTrue(new RunCommand(m_algaeSubsystem::extendAlgae, m_algaeSubsystem).withTimeout(1.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    deAlgaeL3Trigger.onTrue(new RunCommand(m_algaeSubsystem::retractAlgae, m_algaeSubsystem).withTimeout(1.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
   }
 
   /**
@@ -186,7 +195,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // test this
-    // return coralPlacingCommand;
+    return coralPlacingCommand;
 
     // too much work to do chooser on dahsboard now
     // just comment and uncomment
@@ -195,7 +204,7 @@ public class RobotContainer {
     // return VisionMiddleReefAuto;
 
     // if all goes wrong use this
-    return taxiAutoCommand.withTimeout(2);
+    // return taxiAutoCommand.withTimeout(2);
     // return new RunCommand(() -> m_swerve.drive(-5, 0, 0, true)).withTimeout(2);
   }
 }

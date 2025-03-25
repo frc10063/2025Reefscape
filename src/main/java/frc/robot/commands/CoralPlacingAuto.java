@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -29,12 +30,12 @@ public class CoralPlacingAuto extends SequentialCommandGroup {
     addCommands(
       Commands.race(
       // run the elevator constantly until intake portion done
-        new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[index])), 
+        new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[index]), m_elevatorSubsystem), 
         // wait for elevator to go up, run intake for 1 second
         // when intake is done, elevator can chill
-        Commands.waitSeconds(2).andThen(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed).withTimeout(1))
+        Commands.waitSeconds(1).andThen(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(1))
       ), 
-      new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0)).withTimeout(2)
+      new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0), m_elevatorSubsystem).withTimeout(2)
       );
   }
 }
