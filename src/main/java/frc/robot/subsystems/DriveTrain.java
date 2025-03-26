@@ -23,7 +23,6 @@ public class DriveTrain extends SubsystemBase {
     m_gyro.reset();
   }
   double speedMultiplier = 1;
-  boolean fieldRelativeSwitch = true;
   private Field2d field2d = new Field2d();
   /** Creates a new DriveTrain. */
   private final SwerveModule m_frontLeft = 
@@ -124,7 +123,7 @@ public class DriveTrain extends SubsystemBase {
     // m_frontLeft.setHalfSpeed();
     // m_rearLeft.setHalfSpeed();
     // m_rearRight.setHalfSpeed();
-    speedMultiplier = 0.15;
+    speedMultiplier = 0.20;
     SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
   public void defaultSpeed() {

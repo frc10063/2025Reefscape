@@ -29,10 +29,12 @@ import edu.wpi.first.wpilibj.TimedRobot;
  */
 // we have to go thorugh these once our robot is done
 public final class Constants {
+
   public static final class OperatorConstants {
     public static final int kXBoxControllerPort = 0;
     public static final int kJoystickControllerPort = 1;
   }
+
   public static final class DriveConstants {
     public static final int kFrontLeftDriveMotorPort = 2;
     public static final int kRearLeftDriveMotorPort = 3;
@@ -54,11 +56,6 @@ public final class Constants {
     public static final boolean kFrontRightTurningEncoderReversed = false;
     public static final boolean kRearRightTurningEncoderReversed = false;
 
-    // public static final int[] kFrontLeftDriveEncoderPorts = new int[] {8, 9};
-    // public static final int[] kRearLeftDriveEncoderPorts = new int[] {10, 11};
-    // public static final int[] kFrontRightDriveEncoderPorts = new int[] {12, 13};
-    // public static final int[] kRearRightDriveEncoderPorts = new int[] {14, 15};
-
     public static final boolean kFrontLeftDriveEncoderReversed = false;
     public static final boolean kRearLeftDriveEncoderReversed = false;
     public static final boolean kFrontRightDriveEncoderReversed = false;
@@ -73,26 +70,20 @@ public final class Constants {
 
     public static final double kTrackWidth = 0.7;
     // Distance between centers of right and left wheels on robot
-    // we need to measure this out
+
     public static final double kWheelBase = 0.7;
     // Distance between front and back wheels on robot
-    // Also measure this out
+    
     public static final SwerveDriveKinematics kDriveKinematics =
         new SwerveDriveKinematics(
             new Translation2d(kWheelBase / 2, kTrackWidth / 2),
             new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
             new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
             new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
+    
     public static final boolean kGyroReversed = false;
 
-    // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
-    // These characterization values MUST be determined either experimentally or theoretically
-    // for *your* robot's drive.
     // The SysId tool provides a convenient method for obtaining these values for your robot.
-    // Help pls
-    public static final double ksVolts = 1;
-    public static final double kvVoltSecondsPerMeter = 0.8;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.15;
 
     public static final double kMaxSpeedMetersPerSecond = 3;
     public static final double kMaxRotationSpeedRadiansPerSecond = 2 * Math.PI;
@@ -104,20 +95,17 @@ public final class Constants {
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 42; // 4096
 
-    public static final double drivekS = 0.1;
-    public static final double drivekV = 2.07;
-    public static final double drivekA = 0.5;
-    // kV is in Volts * seconds / meter
-    // kS is in Volts * seconds^2 / meter
-    // to get rotational, divide by radius (0.5 m per radian);
+    public static final double drivekS = 0.1; // default 1
+    public static final double drivekV = 2.07; // default 0.8
+    public static final double drivekA = 0.5; // default 0.15
+    
     public static final double turningkS = 0.2;
     public static final double turningkV = 0.5;
     public static final double turningkA = 0;
 
     public static final double kWheelDiameterMeters = 0.1016;
     public static final double kDriveEncoderDistancePerPulse =
-        // Assumes the encoders are directly mounted on the wheel shafts
-        // 6.75 is rotations per wheel rotation
+        // 6.75 is rotations of motor per wheel rotation
         (kWheelDiameterMeters * Math.PI) / (double) (kdriveEncoderCPR * 6.75/1.3); // divided by 1.3?
     public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR) / 60.0;
 
@@ -125,9 +113,6 @@ public final class Constants {
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
         (2 * Math.PI) / (double) kturningEncoderCPR;
 
-    public static final double kPModuleTurningController = 1;
-
-    public static final double kPModuleDriveController = 1;
     public static final double turningKp = 8; //12.5
     public static final double turningKd = 0.28;
     public static final double turningKi = 0.01;
@@ -136,10 +121,8 @@ public final class Constants {
     public static final double driveKd = 0.01875; // 0.01875
     public static final double driveKi = 0.01; //0.01
   }
-  // This was part of the example, not sure if we will be using these
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kHalfSpeedMetersPerSecond = 1.5;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = 2 * Math.PI;
@@ -165,11 +148,10 @@ public final class Constants {
     public static final double thetakP = 2;
     public static final double thetakI = 0;
     public static final double thetakD = 0;
-
   }
+
   public static final class ElevatorConstants {
     public static final int[] kElevatorPorts = new int[] {10, 11};
-
 
     public static final int[] kElevatorEncoders1 = new int[] {9, 8};
     public static final int kElevatorEncoderRes = 2048;
@@ -179,18 +161,12 @@ public final class Constants {
     public static final SparkBaseConfig RIGHTELEVATOR_CONFIG = new SparkMaxConfig()
         .inverted(false)
         .idleMode(IdleMode.kBrake);
-    // temp
+    
+    
     public static final double kSpoolDiameter = 1;
     public static final double kSpoolCircumference = kSpoolDiameter * Math.PI;
     public static final double kElevatorDistancePerPulse = (kSpoolDiameter * Math.PI)/ (double) kElevatorEncoderRes;
     public static final double kElevatorMaxPosition = 24000; //22000?
-    // example values
-    // inch values of reef levels: L1 - 18 in, L2 - 32 in, L3 - 48 in, L4  - 72 in
-    // 22 at bottom of end effector
-    // How much to turn up for each one: L2 - 10 in, L3 - 26 in, L4 - 50 in
-    // L2: 10/circumference = how many rotations needed, then times 2048 for counts
-    // 50/circumference then times res = 
-    // L1 and L2 set
     public static final double[] kElevatorSetpoints = new double[] {1744, 7148, 14000, 22800}; 
     public static final double[] kElevatorDeAlgaeSetpoints = new double[] {9300, 15000};
 
