@@ -129,24 +129,24 @@ public class RobotContainer {
 
     configureBindings();
     
-    m_swerve.setDefaultCommand(
-        new RunCommand(
-          () ->
-              m_swerve.drive(
-                  -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  -MathUtil.applyDeadband(m_controller.getRightX(), 0.05) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
-                  fieldRelative), 
-                  m_swerve));
     // m_swerve.setDefaultCommand(
     //     new RunCommand(
     //       () ->
     //           m_swerve.drive(
-    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
-    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
-    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
+    //               -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
+    //               -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
+    //               -MathUtil.applyDeadband(m_controller.getRightX(), 0.05) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
     //               fieldRelative), 
     //               m_swerve));
+    m_swerve.setDefaultCommand(
+        new RunCommand(
+          () ->
+              m_swerve.drive(
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
+                  fieldRelative), 
+                  m_swerve));
      m_elevatorSubsystem.setDefaultCommand(
         new RunCommand(
           () -> 

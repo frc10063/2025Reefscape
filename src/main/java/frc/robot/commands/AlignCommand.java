@@ -51,7 +51,7 @@
 //   public void initialize() {
 //     xController.setTolerance(0.01, 0.01);
 //     yController.setTolerance(0.01, 0.01);
-//     rotController.setTolerance(0.01);
+//     rotController.setTolerance(Units.degreesToRadians(1));
 //     robotPose = m_vision.getPoseEstimate();
 //     rotController.reset(robotPose.getRotation().getRadians());
 //     xController.reset(robotPose.getX());

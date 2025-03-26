@@ -118,7 +118,7 @@ public final class Constants {
     public static final double kDriveEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
         // 6.75 is rotations per wheel rotation
-        (kWheelDiameterMeters * Math.PI) / (double) (kdriveEncoderCPR * 6.75);
+        (kWheelDiameterMeters * Math.PI) / (double) (kdriveEncoderCPR * 6.75/1.3); // divided by 1.3?
     public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR) / 60.0;
 
     public static final double kTurningEncoderDistancePerPulse =

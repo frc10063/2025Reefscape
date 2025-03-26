@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
@@ -23,6 +24,7 @@ public class DriveTrain extends SubsystemBase {
   }
   double speedMultiplier = 1;
   boolean fieldRelativeSwitch = true;
+  private Field2d field2d = new Field2d();
   /** Creates a new DriveTrain. */
   private final SwerveModule m_frontLeft = 
       new SwerveModule(
@@ -227,6 +229,8 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Gyro Heading", getHeading());
+    SmartDashboard.putData("Field", field2d);
+    field2d.setRobotPose(m_odometry.getPoseMeters());
   }
 }
 
