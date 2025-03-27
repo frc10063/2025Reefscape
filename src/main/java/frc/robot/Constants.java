@@ -113,13 +113,13 @@ public final class Constants {
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
         (2 * Math.PI) / (double) kturningEncoderCPR;
 
-    public static final double turningKp = 8; //12.5
-    public static final double turningKd = 0.28;
-    public static final double turningKi = 0.01;
+    public static double turningKp = 8; //12.5
+    public static double turningKd = 0.28;
+    public static double turningKi = 0.01;
     
-    public static final double driveKp = 0.5; //0.5 
-    public static final double driveKd = 0.01875; // 0.01875
-    public static final double driveKi = 0.01; //0.01
+    public static double driveKp = 0.5; //0.5 
+    public static double driveKd = 0.01875; // 0.01875
+    public static double driveKi = 0.01; //0.01
   }
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 3;

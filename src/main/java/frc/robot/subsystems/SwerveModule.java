@@ -38,24 +38,32 @@ public class SwerveModule extends SubsystemBase {
 
   private SparkBaseConfig driveConfig;
   public double speedMultiplier = 1;
-  // determine ks soon
+
+  public static double driveKp = ModuleConstants.driveKp;
+  public static double driveKi = ModuleConstants.driveKi;
+  public static double driveKd = ModuleConstants.driveKd;
+
+  public static double turningKp = ModuleConstants.turningKp;
+  public static double turningKi = ModuleConstants.turningKi;
+  public static double turningKd = ModuleConstants.turningKd;
+
   SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.drivekS, ModuleConstants.drivekV, ModuleConstants.drivekA); 
   SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(ModuleConstants.turningkS, ModuleConstants.turningkV, ModuleConstants.turningkA); 
-  
-  
+    
+    
   // This creates a PIDController object passing through the kP, kI, and kD parameters
   // We need to change these values, starting with kP and kI, then kI
-  private final PIDController m_drivePIDController = new PIDController(ModuleConstants.driveKp, ModuleConstants.driveKi, ModuleConstants.driveKd);
+  private PIDController m_drivePIDController = new PIDController(ModuleConstants.driveKp, ModuleConstants.driveKi, ModuleConstants.driveKd);
   
   // private final PIDController m_turningPIDController = new PIDController(turningKp, turningKi, turningKd);
 
   // This creates a ProfiledPIDController object passing through the kP, kI, and kD parameters
   // hte kp, kd, ki values should be in constants, I am testing this with smartdhasboard getNumber functions
-  private final ProfiledPIDController m_turningPIDController =
+  private ProfiledPIDController m_turningPIDController =
       new ProfiledPIDController(
-          ModuleConstants.turningKp,
-          ModuleConstants.turningKi,
-          ModuleConstants.turningKd,
+          /*ModuleConstants.*/turningKp,
+          /*ModuleConstants.*/turningKi,
+          /*ModuleConstants.*/turningKd,
           new TrapezoidProfile.Constraints(
               ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
               ModuleConstants.kMaxModuleAngularAccelerationRadiansPerSecondSquared));
@@ -81,8 +89,8 @@ public class SwerveModule extends SubsystemBase {
       double expectedEncoderZero,
       boolean driveEncoderReversed,
       boolean turningEncoderReversed) {
-        drivePort = driveMotorChannel;
-        turnPort = turningMotorChannel;
+    drivePort = driveMotorChannel;
+    turnPort = turningMotorChannel;
     m_driveMotor = new SparkMax(driveMotorChannel, MotorType.kBrushless);
     m_turningMotor = new SparkMax(turningMotorChannel, MotorType.kBrushless);
 
@@ -217,22 +225,29 @@ public class SwerveModule extends SubsystemBase {
   }
   
   public static void putPIDDashboard() {
-    // SmartDashboard.putNumber("Turning Kp", ModuleConstants.turningKp);
-    // SmartDashboard.putNumber("Turning Ki", ModuleConstants.turningKi);
-    // SmartDashboard.putNumber("Turning Kd", ModuleConstants.turningKd);
+    SmartDashboard.putNumber("Turning Kp", turningKp);
+    SmartDashboard.putNumber("Turning Ki", turningKi);
+    SmartDashboard.putNumber("Turning Kd", turningKd);
 
-    // SmartDashboard.putNumber("Drive Kp", ModuleConstants.driveKp);
-    // SmartDashboard.putNumber("Drive Ki", ModuleConstants.driveKi);
-    // SmartDashboard.putNumber("Drive Kd", ModuleConstants.driveKd);
+    SmartDashboard.putNumber("Drive Kp", driveKp);
+    SmartDashboard.putNumber("Drive Ki", driveKi);
+    SmartDashboard.putNumber("Drive Kd", driveKd);
   }
   public static void getPIDDashboard() { 
-    // turningKp = SmartDashboard.getNumber("Turning Kp", turningKp);
-    // turningKi = SmartDashboard.getNumber("Turning Ki", turningKi);
-    // turningKd = SmartDashboard.getNumber("Turning Kd", turningKd);
+    turningKp = SmartDashboard.getNumber("Turning Kp", turningKp);
+    turningKi = SmartDashboard.getNumber("Turning Ki", turningKi);
+    turningKd = SmartDashboard.getNumber("Turning Kd", turningKd);
 
-    // driveKp = SmartDashboard.getNumber("Drive Kp", driveKp);
-    // driveKi = SmartDashboard.getNumber("Drive Ki", driveKi);
-    // driveKd = SmartDashboard.getNumber("Drive Kd", driveKd);
+    driveKp = SmartDashboard.getNumber("Drive Kp", driveKp);
+    driveKi = SmartDashboard.getNumber("Drive Ki", driveKi);
+    driveKd = SmartDashboard.getNumber("Drive Kd", driveKd);
   }
-}
+  @Override
+  public void periodic() {
+    getPIDDashboard();
+
+    m_turningPIDController.setPID(turningKp, turningKi, turningKd);
+    m_drivePIDController.setPID(driveKp, driveKi, driveKd);
+  }
+  }
 
