@@ -43,11 +43,11 @@ public class RightReefAuto extends SequentialCommandGroup {
             List.of(new Translation2d(1.5, 0)),
             new Pose2d(3, 1.64, Rotation2d.fromRadians(Math.PI * 4 / 3)),
             config);
-    PIDController xController = new PIDController(AutoConstants.kPXController, 0, 0);
-    PIDController yController = new PIDController(AutoConstants.kPYController, 0, 0);
+    PIDController xController = new PIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD);
+    PIDController yController = new PIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD);
     ProfiledPIDController thetaController = 
         new ProfiledPIDController(
-            AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+            AutoConstants.thetakP, AutoConstants.thetakI, AutoConstants.thetakD, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(

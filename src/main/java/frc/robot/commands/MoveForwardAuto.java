@@ -41,11 +41,11 @@ public class MoveForwardAuto extends SequentialCommandGroup {
         new Pose2d(0, 0, new Rotation2d(0)),
         config);
 
-    PIDController xController = new PIDController(AutoConstants.kPXController, 0, 0);
-    PIDController yController = new PIDController(AutoConstants.kPYController, 0, 0);
+    PIDController xController = new PIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD);
+    PIDController yController = new PIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD);
     ProfiledPIDController thetaController = 
         new ProfiledPIDController(
-            AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+            AutoConstants.thetakP, AutoConstants.thetakI, AutoConstants.thetakD, AutoConstants.kThetaControllerConstraints);
 
   /** Creates a new MoveForwardAuto. */
   public MoveForwardAuto(DriveTrain m_swerve) {

@@ -17,7 +17,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -44,11 +43,11 @@ public class MiddleReefAuto extends SequentialCommandGroup {
             List.of(new Translation2d(1.21, 0)), // 1.21
             new Pose2d(2.5, 0, Rotation2d.fromRadians(Math.PI / 2)), //2.24
             config);
-    PIDController xController = new PIDController(AutoConstants.kPXController, 0, 0);
-    PIDController yController = new PIDController(AutoConstants.kPYController, 0, 0);
+    PIDController xController = new PIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD);
+    PIDController yController = new PIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD);
     ProfiledPIDController thetaController = 
         new ProfiledPIDController(
-            AutoConstants.kPThetaController, 0, 0.3, AutoConstants.kThetaControllerConstraints);
+            AutoConstants.thetakP, AutoConstants.thetakI, AutoConstants.thetakD, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(

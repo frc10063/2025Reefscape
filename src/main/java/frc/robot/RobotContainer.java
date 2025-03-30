@@ -35,6 +35,7 @@ import frc.robot.commands.MoveForwardAuto;
 import frc.robot.commands.RotationCommand;
 import frc.robot.commands.TaxiAuto;
 import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.Bongo;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -52,7 +53,7 @@ public class RobotContainer {
   // OI
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
-
+  private final Bongo m_bongoController = new Bongo(2);
   // slew rate limiters (optional)
   // private final SlewRateLimiter m_xLimiter = new SlewRateLimiter(3);
   // private final SlewRateLimiter m_yLimiter = new SlewRateLimiter(3);
@@ -93,6 +94,17 @@ public class RobotContainer {
   Trigger fieldRelativeToggleTrigger = m_controller.b();
   Trigger resetGyroTrigger = m_controller.y();
 
+  // Bongo Triggers for fun
+  Trigger L1BongoTrigger = m_bongoController.getBottomLeft();
+  Trigger L2BongoTrigger = m_bongoController.getTopLeft();
+  Trigger L3BongoTrigger = m_bongoController.getBottomRight();
+  // Leave this out so Max wont break the ceiling
+  // Trigger L4BongoTrigger = m_bongoController.getTopRight();
+
+  Trigger bongoPlaceL2Trigger = m_bongoController.getLeftFullBongo();
+  Trigger bongoPlaceL3Trigger = m_bongoController.getRightFullBongo();
+
+  Trigger clapIntakeTrigger = m_bongoController.getClap();
   // Vision align buttons, not tested
   // Trigger alignLeftCoralTrigger = m_controller.leftBumper();
   // Trigger alignRightCoralTrigger = m_controller.rightBumper();
@@ -211,6 +223,17 @@ public class RobotContainer {
     deAlgaeL3Trigger.onTrue(new RunCommand(m_algaeSubsystem::retractAlgae, m_algaeSubsystem).withTimeout(1.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
+
+    // Bongo
+    L1BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
+    L2BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
+    L3BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
+
+    bongoPlaceL2Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2));
+    bongoPlaceL3Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 3));
+
+    clapIntakeTrigger.onTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem).withTimeout(0.5));
+    // L4BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
   }
 
   /**
