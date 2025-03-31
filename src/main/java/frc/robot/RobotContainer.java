@@ -176,22 +176,23 @@ public class RobotContainer {
     // Tangent line applied to make smaller movements smaller, but maintain same max speed
     // As by default up is -y on a joystick and left is +x, joystick inputs must be inverted
 
+    // m_swerve.setDefaultCommand(
+    //     new RunCommand(
+    //       () ->
+    //           m_swerve.drive(
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
+    //               fieldRelative), 
+    //               m_swerve));
     m_swerve.setDefaultCommand(
         new RunCommand(
           () ->
               m_swerve.drive(
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
-                  fieldRelative), 
-                  m_swerve));
-    m_swerve.setDefaultCommand(
-        new RunCommand(
-          () ->
-              m_swerve.drive(m_ddrController.getMatYValue() * 0.1, 
-              0, 
-              0,
-              fieldRelative),
+                m_ddrController.getMatYValue() * 0.7, 
+                m_ddrController.getMatXValue() * 0.7, 
+                m_ddrController.getMatRotValue() * 0.7,
+                fieldRelative),
               m_swerve));
     
     m_elevatorSubsystem.setDefaultCommand(
@@ -250,7 +251,7 @@ public class RobotContainer {
     bongoPlaceL2Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2));
     bongoPlaceL3Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 3));
 
-    clapIntakeTrigger.onTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem).withTimeout(0.5));
+    clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5));
     // L4BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
 
     // DDRMat (was originally gonna make it drive but scared)
@@ -258,7 +259,7 @@ public class RobotContainer {
     // DDRL2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
     // DDRL3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
 
-    DDRIntakeTrigger.onTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem).withTimeout(0.5));
+    // DDRIntakeTrigger.onTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem).withTimeout(0.5));
     // DDRL4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
   }
 
