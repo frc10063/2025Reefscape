@@ -40,10 +40,23 @@ public class DDRMat extends CommandJoystick {
         return button(16);
     }
     
-    public Trigger getUpArrow() {
-        return button(14||8);
-    }
-    public Trigger getDownArrow() {
-        return button(10||3);
+    // public Trigger getUpArrow() {
+    //     return button(14||8);
+    // }
+    // public Trigger getDownArrow() {
+    //     return button(10||3);
+    // }
+    public int getMatYValue() {
+        int y = 0;
+        if (getBlueUpArrow().getAsBoolean() && getBlueDownArrow().getAsBoolean()) {
+            y = 0;
+        } else if (getBlueUpArrow().getAsBoolean()) {
+            y = 1;
+        } else if (getBlueDownArrow().getAsBoolean()) {
+            y = -1;
+        } else {
+            y = 0;
+        }
+        return y;
     }
 }
