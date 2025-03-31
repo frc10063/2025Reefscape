@@ -36,6 +36,7 @@ import frc.robot.commands.RotationCommand;
 import frc.robot.commands.TaxiAuto;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.Bongo;
+import frc.robot.subsystems.DDRMat;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -54,6 +55,7 @@ public class RobotContainer {
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final Bongo m_bongoController = new Bongo(2);
+  private final DDRMat m_ddrController = new DDRMat(3);
   // slew rate limiters (optional)
   // private final SlewRateLimiter m_xLimiter = new SlewRateLimiter(3);
   // private final SlewRateLimiter m_yLimiter = new SlewRateLimiter(3);
@@ -105,6 +107,14 @@ public class RobotContainer {
   Trigger bongoPlaceL3Trigger = m_bongoController.getRightFullBongo();
 
   Trigger clapIntakeTrigger = m_bongoController.getClap();
+
+  // DDRMat Triggers for Elevator / Intake
+  Trigger L1DDRTrigger = m_ddrController.getLeftArrow();
+  Trigger L2DDRTrigger = m_ddrController.getBlueUpArrow();
+  Trigger L3DDRTrigger = m_ddrController.getOrangeUpArrow();
+  // Trigger L4DDR = m_ddrController.getRightArrow(); NO
+  Trigger DDRIntakeTrigger = m_ddrController.getRightArrow();
+
   // Vision align buttons, not tested
   // Trigger alignLeftCoralTrigger = m_controller.leftBumper();
   // Trigger alignRightCoralTrigger = m_controller.rightBumper();
@@ -234,6 +244,14 @@ public class RobotContainer {
 
     clapIntakeTrigger.onTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem).withTimeout(0.5));
     // L4BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
+
+    // DDRMat (was originally gonna make it drive but scared)
+    DDRL1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
+    DDRL2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
+    DDRL3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
+
+    DDRIntakeTrigger.onTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem).withTimeout(0.5));
+    // DDRL4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
   }
 
   /**
