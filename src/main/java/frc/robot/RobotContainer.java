@@ -34,6 +34,9 @@ import frc.robot.commands.DeAlgaeCommand;
 import frc.robot.commands.MoveForwardAuto;
 import frc.robot.commands.RotationCommand;
 import frc.robot.commands.TaxiAuto;
+import frc.robot.commands.LeftReefAuto;
+import frc.robot.commands.MiddleReefAuto;
+import frc.robot.commands.RightReefAuto;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.Bongo;
 import frc.robot.subsystems.DDRMat;
@@ -145,14 +148,6 @@ public class RobotContainer {
   // chooser for autos
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
-  m_chooser.setDefaultOption("Taxi Auto", taxiAutoCommand);
-  m_chooser.addOption("Middle Reef Auto", middleAutoCommand);
-  m_chooser.addOption("Left Reef Auto", leftAutoCommand);
-  m_chooser.addOption("Right Reef Auto", rightAutoCommand);
-
-  SmartDashboard.putData(m_chooser);
-
-
   // methods for enabling/disabling field relative from controller
   public void fieldRelativeToggle() {
     fieldRelative = !fieldRelative;
@@ -166,8 +161,16 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    
+    // options for sendable auto chooser
+    m_chooser.setDefaultOption("Taxi Auto", taxiAutoCommand);
+    m_chooser.addOption("Middle Reef Auto", middleAutoCommand);
+    m_chooser.addOption("Left Reef Auto", leftAutoCommand);
+    m_chooser.addOption("Right Reef Auto", rightAutoCommand);
+  
+    SmartDashboard.putData(m_chooser);
+    
     // Configure the trigger bindings
-
 
     configureBindings();
     
