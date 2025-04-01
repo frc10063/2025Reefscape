@@ -37,7 +37,6 @@ public class SwerveModule extends SubsystemBase {
   private final AnalogEncoder m_turningEncoder;
 
   private SparkBaseConfig driveConfig;
-  public double speedMultiplier = 1;
 
   public static double driveKp = ModuleConstants.driveKp;
   public static double driveKi = ModuleConstants.driveKi;
@@ -127,16 +126,6 @@ public class SwerveModule extends SubsystemBase {
     // to be continuous. 
     m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
   }
-  public void setHalfSpeed() {
-    speedMultiplier = 0.25;
-  }
-  public void setDefaultSpeed() {
-    speedMultiplier = 1;
-  }
-  public void setFastSpeed() {
-    speedMultiplier = 2;
-  }
-
   /**
    * Returns the current state of the module.
    *
@@ -206,7 +195,7 @@ public class SwerveModule extends SubsystemBase {
           desiredState.angle.getRadians());
 
     // driveOutput = (driveOutput) * speedMultiplier;
-    driveOutput = (driveOutput + driveFeedforward) * speedMultiplier;
+    driveOutput = (driveOutput + driveFeedforward);
     turnOutput = -(turnOutput);
 
     SmartDashboard.putNumber("Desired angle" + turnPort, desiredState.angle.getRadians());

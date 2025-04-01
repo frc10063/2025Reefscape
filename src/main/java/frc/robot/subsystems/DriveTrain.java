@@ -119,27 +119,15 @@ public class DriveTrain extends SubsystemBase {
       pose);
   }
   public void slowSpeed() {
-    // m_frontRight.setHalfSpeed();
-    // m_frontLeft.setHalfSpeed();
-    // m_rearLeft.setHalfSpeed();
-    // m_rearRight.setHalfSpeed();
     speedMultiplier = 0.20;
     SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
   public void defaultSpeed() {
-    // m_frontRight.setDefaultSpeed();
-    // m_frontLeft.setDefaultSpeed();
-    // m_rearLeft.setDefaultSpeed();
-    // m_rearRight.setDefaultSpeed();
     speedMultiplier = 1;
     SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
-  // would be cool if this works
+  
   public void fastSpeed() {
-    // m_frontRight.setFastSpeed();
-    // m_frontLeft.setFastSpeed();
-    // m_rearLeft.setFastSpeed();
-    // m_rearRight.setFastSpeed();
     speedMultiplier = 2;
     SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
@@ -227,6 +215,7 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Gyro Heading", getHeading());
+    updateOdometry();
     SmartDashboard.putData("Field", field2d);
     field2d.setRobotPose(m_odometry.getPoseMeters());
   }
