@@ -138,9 +138,19 @@ public class RobotContainer {
   // Command visionLeftReefAuto = new VisionLeftReefAuto();
   // Command visionRightReefAuto = new VisionRightReefAuto();
 
-  // Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
-  // Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
-  // Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
+  Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
+  Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
+  Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
+
+  // chooser for autos
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
+
+  m_chooser.setDefaultOption("Taxi Auto", taxiAutoCommand);
+  m_chooser.addOption("Middle Reef Auto", middleAutoCommand);
+  m_chooser.addOption("Left Reef Auto", leftAutoCommand);
+  m_chooser.addOption("Right Reef Auto", rightAutoCommand);
+
+  SmartDashboard.putData(m_chooser);
 
 
   // methods for enabling/disabling field relative from controller
@@ -269,8 +279,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // test this
-    return coralPlacingCommand;
+    return m_chooser.getSelected();
+    // test this (commented out for now -b)
+    // return coralPlacingCommand;
 
     // too much work to do chooser on dahsboard now
     // just comment and uncomment
