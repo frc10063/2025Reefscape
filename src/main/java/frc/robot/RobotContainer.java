@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.math.controller.PIDController;
 // import edu.wpi.first.math.controller.ProfiledPIDController;
 // import edu.wpi.first.math.geometry.Pose2d;
@@ -111,12 +113,16 @@ public class RobotContainer {
 
   Trigger clapIntakeTrigger = m_bongoController.getClap();
 
+  Trigger algaeToggleTrigger = m_bongoController.getMiddleButton();
+
   // DDRMat Triggers for Elevator / Intake
   Trigger L1DDRTrigger = m_ddrController.getLeftArrow();
   Trigger L2DDRTrigger = m_ddrController.getBlueUpArrow();
   Trigger L3DDRTrigger = m_ddrController.getOrangeUpArrow();
   // Trigger L4DDR = m_ddrController.getRightArrow(); NO
   Trigger DDRIntakeTrigger = m_ddrController.getRightArrow();
+  Trigger DDRIncreaseSpeedTrigger = m_ddrController.getPlusButton();
+  Trigger DDRDecreaseSpeedTrigger = m_ddrController.getMinusButton();
 
   // Vision align buttons, not tested
   // Trigger alignLeftCoralTrigger = m_controller.leftBumper();
@@ -137,7 +143,6 @@ public class RobotContainer {
   Command L3DeAlgaeCommand = new DeAlgaeCommand(m_algaeSubsystem, m_elevatorSubsystem, 1);
   Command coralPlacingCommand = new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2);
   Command taxiAutoCommand = new TaxiAuto(m_swerve);
-  boolean fieldRelative = true;
   // Command visionLeftReefAuto = new VisionLeftReefAuto();
   // Command visionRightReefAuto = new VisionRightReefAuto();
 
@@ -148,6 +153,9 @@ public class RobotContainer {
   // chooser for autos
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
+  boolean fieldRelative = true;
+  double DDRSpeedMultiplier = 0.5;
+
   // methods for enabling/disabling field relative from controller
   public void fieldRelativeToggle() {
     fieldRelative = !fieldRelative;
@@ -157,6 +165,17 @@ public class RobotContainer {
   }
   public void disableFieldRelative() {
     fieldRelative = false;
+  }
+  // ddr speed changing
+  public void addDDRSpeed() {
+    if (DDRSpeedMultiplier < 3) {
+      DDRSpeedMultiplier = DDRSpeedMultiplier + 0.5;
+    }
+  }
+  public void lowerDDRSpeed() {
+    if (DDRSpeedMultiplier > 0.5) {
+      DDRSpeedMultiplier = DDRSpeedMultiplier - 0.5;
+    }
   }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -202,9 +221,9 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                m_ddrController.getMatYValue() * 0.7, 
-                m_ddrController.getMatXValue() * 0.7, 
-                m_ddrController.getMatRotValue() * 0.7,
+                m_ddrController.getMatYValue() * DDRSpeedMultiplier, 
+                m_ddrController.getMatXValue() * DDRSpeedMultiplier, 
+                m_ddrController.getMatRotValue() * DDRSpeedMultiplier,
                 fieldRelative),
               m_swerve));
     
@@ -251,8 +270,8 @@ public class RobotContainer {
     forwardAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
     reverseAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
 
-    deAlgaeL2Trigger.onTrue(new RunCommand(m_algaeSubsystem::extendAlgae, m_algaeSubsystem).withTimeout(1.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-    deAlgaeL3Trigger.onTrue(new RunCommand(m_algaeSubsystem::retractAlgae, m_algaeSubsystem).withTimeout(1.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    deAlgaeL2Trigger.onTrue(new RunCommand(m_algaeSubsystem::extendAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    deAlgaeL3Trigger.onTrue(new RunCommand(m_algaeSubsystem::retractAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
@@ -265,6 +284,7 @@ public class RobotContainer {
     bongoPlaceL3Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 3));
 
     clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5));
+    algaeToggleTrigger.onTrue(new RunCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     // L4BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
 
     // DDRMat (was originally gonna make it drive but scared)
@@ -274,6 +294,8 @@ public class RobotContainer {
 
     // DDRIntakeTrigger.onTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem).withTimeout(0.5));
     // DDRL4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
+    DDRIncreaseSpeedTrigger.onTrue(new InstantCommand(this::addDDRSpeed));
+    DDRDecreaseSpeedTrigger.onTrue(new InstantCommand(this::lowerDDRSpeed));
   }
 
   /**
@@ -286,7 +308,6 @@ public class RobotContainer {
     // test this (commented out for now -b)
     // return coralPlacingCommand;
 
-    // too much work to do chooser on dahsboard now
     // just comment and uncomment
     // return visionLeftReefAuto;
     // return visionRightReefAuto;

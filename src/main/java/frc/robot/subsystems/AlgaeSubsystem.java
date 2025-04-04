@@ -17,7 +17,8 @@ import frc.robot.Constants.AlgaeConstants;
 public class AlgaeSubsystem extends SubsystemBase {
   private final SparkMax m_algaeMotor;
   private final RelativeEncoder m_algaeEncoder;
-  private final double maxSpeed = AlgaeConstants.kMaxSpeed; // super slow just to be safe
+  private boolean isExtended = false;
+  private final double maxSpeed = AlgaeConstants.kMaxSpeed; 
   /** Creates a new AlgaeSubsystem. */
   public AlgaeSubsystem() {
     m_algaeMotor = new SparkMax(AlgaeConstants.kAlgaePort, MotorType.kBrushless);
@@ -27,7 +28,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   public void runAlgaeMaxSpeed() {
-    if (m_algaeEncoder.getPosition() > AlgaeConstants.kAlgaeSetpoints[1]) {
+    if (m_algaeEncoder.getPosition() >= AlgaeConstants.kAlgaeSetpoints[1]) {
       stopAlgae();
     } else {
       runAlgae(maxSpeed);
@@ -35,7 +36,7 @@ public class AlgaeSubsystem extends SubsystemBase {
     
   }
   public void reverseAlgaeMaxSpeed() {
-    if (m_algaeEncoder.getPosition() < AlgaeConstants.kAlgaeSetpoints[0]) {
+    if (m_algaeEncoder.getPosition() <= AlgaeConstants.kAlgaeSetpoints[0]) {
       stopAlgae();
     } else {
       runAlgae(-maxSpeed);
@@ -50,21 +51,37 @@ public class AlgaeSubsystem extends SubsystemBase {
       runAlgaeMaxSpeed();
     }
     stopAlgae();
+    if (m_algaeEncoder.getPosition() > 12) {
+      isExtended = true;
+    }
   }
   public void retractAlgae() {
     while (m_algaeEncoder.getPosition() > AlgaeConstants.kAlgaeSetpoints[0]) {
       reverseAlgaeMaxSpeed();
     }
     stopAlgae();
+    if (m_algaeEncoder.getPosition() < 12) {
+      isExtended = false;
+    }
   }
-
+  public boolean algaeIsExtended() {
+    return isExtended;
+  }
   public void stopAlgae() {
     m_algaeMotor.set(0);
+  }
+  public void toggleAlgae() {
+    if (isExtended) {
+      retractAlgae();
+    } else {
+      extendAlgae();
+    }
   }
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Algae Position", m_algaeEncoder.getPosition());
     SmartDashboard.putNumber("Algae Motor", m_algaeMotor.get());
+    SmartDashboard.putBoolean("Algae Is Extended?", isExtended);
   }
   
 }
