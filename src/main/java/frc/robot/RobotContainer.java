@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 // import edu.wpi.first.math.MathUtil;
 // import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -105,11 +106,11 @@ public class RobotContainer {
   Trigger L1BongoTrigger = m_bongoController.getBottomLeft();
   Trigger L2BongoTrigger = m_bongoController.getTopLeft();
   Trigger L3BongoTrigger = m_bongoController.getBottomRight();
-  // Leave this out so Max wont break the ceiling
-  // Trigger L4BongoTrigger = m_bongoController.getTopRight();
+  Trigger L4BongoTrigger = m_bongoController.getTopRight();
 
   Trigger bongoPlaceL2Trigger = m_bongoController.getLeftFullBongo();
   Trigger bongoPlaceL3Trigger = m_bongoController.getRightFullBongo();
+  Trigger bongoPlaceL4Trigger = m_bongoController.getLeftFullBongo().and(m_bongoController.getRightFullBongo());
 
   Trigger clapIntakeTrigger = m_bongoController.getClap();
 
@@ -154,7 +155,7 @@ public class RobotContainer {
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   boolean fieldRelative = true;
-  double DDRSpeedMultiplier = 0.5;
+  double DDRSpeedMultiplier = 1;
 
   // methods for enabling/disabling field relative from controller
   public void fieldRelativeToggle() {
@@ -168,13 +169,13 @@ public class RobotContainer {
   }
   // ddr speed changing
   public void addDDRSpeed() {
-    if (DDRSpeedMultiplier < 3) {
-      DDRSpeedMultiplier = DDRSpeedMultiplier + 0.5;
+    if (DDRSpeedMultiplier < 4) {
+      DDRSpeedMultiplier = DDRSpeedMultiplier + 1;
     }
   }
   public void lowerDDRSpeed() {
-    if (DDRSpeedMultiplier > 0.5) {
-      DDRSpeedMultiplier = DDRSpeedMultiplier - 0.5;
+    if (DDRSpeedMultiplier > 1) {
+      DDRSpeedMultiplier = DDRSpeedMultiplier - 1;
     }
   }
 
@@ -186,6 +187,7 @@ public class RobotContainer {
     m_chooser.addOption("Middle Reef Auto", middleAutoCommand);
     m_chooser.addOption("Left Reef Auto", leftAutoCommand);
     m_chooser.addOption("Right Reef Auto", rightAutoCommand);
+    m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 3)));
   
     SmartDashboard.putData(m_chooser);
     
@@ -276,15 +278,17 @@ public class RobotContainer {
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
     // Bongo
-    L1BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
+    L1BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0), m_elevatorSubsystem));
     L2BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
     L3BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
-
+    // L4BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
+    
     bongoPlaceL2Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2));
     bongoPlaceL3Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 3));
+    //bongoPlaceL4Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 4).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
-    clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5));
-    algaeToggleTrigger.onTrue(new RunCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    algaeToggleTrigger.onTrue(new StartEndCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem::stopAlgae, m_algaeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     // L4BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
 
     // DDRMat (was originally gonna make it drive but scared)

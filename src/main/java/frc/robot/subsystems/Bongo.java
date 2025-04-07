@@ -28,7 +28,7 @@ public class Bongo extends CommandJoystick {
         return this.button(2);
     }
     public Trigger getClap() {
-        return this.axisGreaterThan(4, -0.4);
+        return this.axisGreaterThan(4, -0.09);
     }
     public Trigger getMiddleButton() {
         return this.button(10);

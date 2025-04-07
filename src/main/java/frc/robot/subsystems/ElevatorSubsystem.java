@@ -21,6 +21,8 @@ import frc.robot.Constants.ElevatorConstants;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 // import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ElevatorSubsystem. */
@@ -31,17 +33,17 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final Encoder m_elevatorEncoder;
   private final ElevatorFeedforward m_feedforward;
   private final PIDController m_pidController; // --> OLD (is now NEW!)
-  //private final ProfiledPIDController m_profiledPIDController; // new (is currently banished to the shadow realm)
+  private final ProfiledPIDController m_profiledPIDController; // new (is currently banished to the shadow realm)
   
   // PID Constants
-  private final double kP = 0.0005;
+  private final double kP = 0.0005; //0.0005
   private final double kI = 0;
   private final double kD = 0;
   private boolean elevatorSafety = true;
 
   // MotionProfiling Constants
-  private final double kMaxVelocity = .5;
-  private final double kMaxAcceleration = 0.375;
+  private final double kMaxVelocity = 0.5;
+  private final double kMaxAcceleration = 0.375; //0.375
 
   // Feed Forward Constants
   private final double kS = 0;
@@ -68,8 +70,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     m_pidController = new PIDController(kP, kI, kD);
 
-    /*m_profiledPIDController = new ProfiledPIDController(kP, kI, kD, 
-        new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));*/
+    m_profiledPIDController = new ProfiledPIDController(kP, kI, kD, 
+        new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
     m_feedforward = new ElevatorFeedforward(kS, kG, kV);
   }
 
@@ -104,12 +106,15 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setElevatorPosition(double targetPosition) {
     double currentPosition = m_elevatorEncoder.get();
     double pidOutput = m_pidController.calculate(currentPosition, targetPosition); // changed m_pidController to profile
+    // double pidOutput = m_profiledPIDController.calculate(currentPosition, targetPosition);
     SmartDashboard.putNumber("PID Output", pidOutput);
     // double feedforwardTerm = m_feedforward.calculate(m_pidController.getSetpoint().velocity);
     // SmartDashboard.putNumber("Feed Foward", feedforwardTerm);
     double output = pidOutput;// + feedforwardTerm;
 
     moveElevator(output);
+    // m_elevatorLeftMotor.setVoltage(output);
+    // m_elevatorRightMotor.setVoltage(output);
   }
 
   public void SetGoal(double targetPosition) {

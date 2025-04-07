@@ -11,6 +11,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeConstants;
 
@@ -51,18 +53,15 @@ public class AlgaeSubsystem extends SubsystemBase {
       runAlgaeMaxSpeed();
     }
     stopAlgae();
-    if (m_algaeEncoder.getPosition() > 12) {
-      isExtended = true;
-    }
+    isExtended = true;
+    
   }
   public void retractAlgae() {
     while (m_algaeEncoder.getPosition() > AlgaeConstants.kAlgaeSetpoints[0]) {
       reverseAlgaeMaxSpeed();
     }
     stopAlgae();
-    if (m_algaeEncoder.getPosition() < 12) {
-      isExtended = false;
-    }
+    isExtended = false;
   }
   public boolean algaeIsExtended() {
     return isExtended;
