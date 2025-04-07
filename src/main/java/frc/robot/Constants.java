@@ -106,12 +106,12 @@ public final class Constants {
     public static final double kWheelDiameterMeters = 0.1016;
     public static final double kDriveEncoderDistancePerPulse =
         // 6.75 is rotations of motor per wheel rotation
-        (kWheelDiameterMeters * Math.PI) / (double) (kdriveEncoderCPR * 6.75/1.3); // divided by 1.3?
+        ((kWheelDiameterMeters * Math.PI) / (double) (kdriveEncoderCPR)) / 6.75; // 6.75 divided by 1.3?
     public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR) / 60.0;
 
     public static final double kTurningEncoderDistancePerPulse =
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
-        (2 * Math.PI) / (double) kturningEncoderCPR;
+        (2 * Math.PI) / ((double) kturningEncoderCPR);
 
     public static double turningKp = 8; //12.5
     public static double turningKd = 0.28;

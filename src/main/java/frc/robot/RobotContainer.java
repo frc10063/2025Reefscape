@@ -60,8 +60,8 @@ public class RobotContainer {
   // OI
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
-  private final Bongo m_bongoController = new Bongo(2);
-  private final DDRMat m_ddrController = new DDRMat(3);
+  // private final Bongo m_bongoController = new Bongo(2);
+  // private final DDRMat m_ddrController = new DDRMat(3);
   // slew rate limiters (optional)
   // private final SlewRateLimiter m_xLimiter = new SlewRateLimiter(3);
   // private final SlewRateLimiter m_yLimiter = new SlewRateLimiter(3);
@@ -103,27 +103,27 @@ public class RobotContainer {
   Trigger resetGyroTrigger = m_controller.y();
 
   // Bongo Triggers for fun
-  Trigger L1BongoTrigger = m_bongoController.getBottomLeft();
-  Trigger L2BongoTrigger = m_bongoController.getTopLeft();
-  Trigger L3BongoTrigger = m_bongoController.getBottomRight();
-  Trigger L4BongoTrigger = m_bongoController.getTopRight();
+  // Trigger L1BongoTrigger = m_bongoController.getBottomLeft();
+  // Trigger L2BongoTrigger = m_bongoController.getTopLeft();
+  // Trigger L3BongoTrigger = m_bongoController.getBottomRight();
+  // Trigger L4BongoTrigger = m_bongoController.getTopRight();
 
-  Trigger bongoPlaceL2Trigger = m_bongoController.getLeftFullBongo();
-  Trigger bongoPlaceL3Trigger = m_bongoController.getRightFullBongo();
-  Trigger bongoPlaceL4Trigger = m_bongoController.getLeftFullBongo().and(m_bongoController.getRightFullBongo());
+  // Trigger bongoPlaceL2Trigger = m_bongoController.getLeftFullBongo();
+  // Trigger bongoPlaceL3Trigger = m_bongoController.getRightFullBongo();
+  // Trigger bongoPlaceL4Trigger = m_bongoController.getLeftFullBongo().and(m_bongoController.getRightFullBongo());
 
-  Trigger clapIntakeTrigger = m_bongoController.getClap();
+  // Trigger clapIntakeTrigger = m_bongoController.getClap();
 
-  Trigger algaeToggleTrigger = m_bongoController.getMiddleButton();
+  // Trigger algaeToggleTrigger = m_bongoController.getMiddleButton();
 
   // DDRMat Triggers for Elevator / Intake
-  Trigger L1DDRTrigger = m_ddrController.getLeftArrow();
-  Trigger L2DDRTrigger = m_ddrController.getBlueUpArrow();
-  Trigger L3DDRTrigger = m_ddrController.getOrangeUpArrow();
+  // Trigger L1DDRTrigger = m_ddrController.getLeftArrow();
+  // Trigger L2DDRTrigger = m_ddrController.getBlueUpArrow();
+  // Trigger L3DDRTrigger = m_ddrController.getOrangeUpArrow();
   // Trigger L4DDR = m_ddrController.getRightArrow(); NO
-  Trigger DDRIntakeTrigger = m_ddrController.getRightArrow();
-  Trigger DDRIncreaseSpeedTrigger = m_ddrController.getPlusButton();
-  Trigger DDRDecreaseSpeedTrigger = m_ddrController.getMinusButton();
+  // Trigger DDRIntakeTrigger = m_ddrController.getRightArrow();
+  // Trigger DDRIncreaseSpeedTrigger = m_ddrController.getPlusButton();
+  // Trigger DDRDecreaseSpeedTrigger = m_ddrController.getMinusButton();
 
   // Vision align buttons, not tested
   // Trigger alignLeftCoralTrigger = m_controller.leftBumper();
@@ -210,24 +210,24 @@ public class RobotContainer {
     // Tangent line applied to make smaller movements smaller, but maintain same max speed
     // As by default up is -y on a joystick and left is +x, joystick inputs must be inverted
 
-    // m_swerve.setDefaultCommand(
-    //     new RunCommand(
-    //       () ->
-    //           m_swerve.drive(
-    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
-    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
-    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
-    //               fieldRelative), 
-    //               m_swerve));
     m_swerve.setDefaultCommand(
         new RunCommand(
           () ->
               m_swerve.drive(
-                m_ddrController.getMatYValue() * DDRSpeedMultiplier, 
-                m_ddrController.getMatXValue() * DDRSpeedMultiplier, 
-                m_ddrController.getMatRotValue() * DDRSpeedMultiplier,
-                fieldRelative),
-              m_swerve));
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
+                  fieldRelative), 
+                  m_swerve));
+    // m_swerve.setDefaultCommand(
+    //     new RunCommand(
+    //       () ->
+    //           m_swerve.drive(
+    //             m_ddrController.getMatYValue() * DDRSpeedMultiplier, 
+    //             m_ddrController.getMatXValue() * DDRSpeedMultiplier, 
+    //             m_ddrController.getMatRotValue() * DDRSpeedMultiplier,
+    //             fieldRelative),
+    //           m_swerve));
     
     m_elevatorSubsystem.setDefaultCommand(
         new RunCommand(
@@ -278,17 +278,17 @@ public class RobotContainer {
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
     // Bongo
-    L1BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0), m_elevatorSubsystem));
-    L2BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
-    L3BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
+    // L1BongoTri?gger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0), m_elevatorSubsystem));
+    // L2BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
+    // L3BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
     // L4BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
     
-    bongoPlaceL2Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2));
-    bongoPlaceL3Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 3));
+    // bongoPlaceL2Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2));
+    // bongoPlaceL3Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 3));
     //bongoPlaceL4Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 4).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
-    clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-    algaeToggleTrigger.onTrue(new StartEndCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem::stopAlgae, m_algaeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    // clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    // algaeToggleTrigger.onTrue(new StartEndCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem::stopAlgae, m_algaeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     // L4BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
 
     // DDRMat (was originally gonna make it drive but scared)
@@ -298,8 +298,8 @@ public class RobotContainer {
 
     // DDRIntakeTrigger.onTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem).withTimeout(0.5));
     // DDRL4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
-    DDRIncreaseSpeedTrigger.onTrue(new InstantCommand(this::addDDRSpeed));
-    DDRDecreaseSpeedTrigger.onTrue(new InstantCommand(this::lowerDDRSpeed));
+    // DDRIncreaseSpeedTrigger.onTrue(new InstantCommand(this::addDDRSpeed));
+    // DDRDecreaseSpeedTrigger.onTrue(new InstantCommand(this::lowerDDRSpeed));
   }
 
   /**
