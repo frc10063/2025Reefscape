@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -160,13 +162,24 @@ public final class Constants {
         .inverted(false)
         .idleMode(IdleMode.kBrake);
     
-    public static final double kSpoolDiameter = 1;
+    public static final double kSpoolDiameter = 1.5;
     public static final double kSpoolCircumference = kSpoolDiameter * Math.PI;
     public static final double kElevatorDistancePerPulse = (kSpoolDiameter * Math.PI)/ (double) kElevatorEncoderRes;
     public static final double kElevatorMaxPosition = 24000; //22000?
     public static final double[] kElevatorSetpoints = new double[] {1744, 7148, 14000, 22800}; 
     public static final double[] kElevatorDeAlgaeSetpoints = new double[] {9300, 15000};
 
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+
+    public static final double kG = 0;
+    public static final double kA = 0;
+    public static final double kV = 0;
+    public static final double kS = 0;
+
+    public static final double kMaxVelocity = 0.3;
+    public static final double kMaxAcceleration = 0.3;
   }
   public static final class IntakeConstants {
     

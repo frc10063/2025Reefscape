@@ -234,7 +234,7 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     getPIDDashboard();
-
+    
     m_turningPIDController.setPID(turningKp, turningKi, turningKd);
     m_drivePIDController.setPID(driveKp, driveKi, driveKd);
   }

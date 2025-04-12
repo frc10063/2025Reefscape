@@ -94,8 +94,9 @@ public class RobotContainer {
   Trigger deAlgaeL2Trigger = m_joystick.button(11);
 
   // Controller triggers
-  Trigger halfSpeedTrigger = m_controller.leftTrigger();
-  Trigger fastSpeedTrigger = m_controller.rightTrigger();
+  Trigger halfSpeedTrigger = m_controller.leftTrigger(0.01);
+  Trigger fastSpeedTrigger = m_controller.rightTrigger(0.01);
+  Trigger speedChangeTrigger = m_controller.leftTrigger(0.01).or(m_controller.rightTrigger(0.01));
   
   Trigger fieldRelativeHoldTrigger = m_controller.rightBumper();
   
@@ -156,6 +157,7 @@ public class RobotContainer {
 
   boolean fieldRelative = true;
   double DDRSpeedMultiplier = 1;
+  double speedMultiplier = 1;
 
   // methods for enabling/disabling field relative from controller
   public void fieldRelativeToggle() {
@@ -178,12 +180,18 @@ public class RobotContainer {
       DDRSpeedMultiplier = DDRSpeedMultiplier - 1;
     }
   }
+  public double calculateSpeedMultiplier() {
+    double slowSpeedInput = (-0.8 * m_controller.getLeftTriggerAxis()) + 1;
+    double fastSpeedInput = (0.66 * m_controller.getRightTriggerAxis()) + 1;
+    return slowSpeedInput * fastSpeedInput;
+  }
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+
+
   public RobotContainer() {
     
     // options for sendable auto chooser
-    m_chooser.setDefaultOption("Taxi Auto", taxiAutoCommand);
+    m_chooser.setDefaultOption("Taxi Auto", taxiAutoCommand.withTimeout(2));
     m_chooser.addOption("Middle Reef Auto", middleAutoCommand);
     m_chooser.addOption("Left Reef Auto", leftAutoCommand);
     m_chooser.addOption("Right Reef Auto", rightAutoCommand);
@@ -219,6 +227,7 @@ public class RobotContainer {
                   Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
                   fieldRelative), 
                   m_swerve));
+
     // m_swerve.setDefaultCommand(
     //     new RunCommand(
     //       () ->
@@ -236,6 +245,7 @@ public class RobotContainer {
                 MathUtil.applyDeadband(-m_joystick.getY(), 0.2) * 0.5),
                 m_elevatorSubsystem));
   }
+
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -255,9 +265,12 @@ public class RobotContainer {
     fieldRelativeToggleTrigger.onTrue(new InstantCommand(this::fieldRelativeToggle));
     fieldRelativeHoldTrigger.whileTrue(new StartEndCommand(this::disableFieldRelative, this::enableFieldRelative, new Subsystem[0]));
 
-    halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
-    fastSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::fastSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
+    // halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
+    // fastSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::fastSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
 
+    // idk if this works
+    // I coulda been on team 6969 if i stayed in ny but now im stuck here
+    speedChangeTrigger.whileTrue(new StartEndCommand(() -> m_swerve.setSpeedMultiplier(calculateSpeedMultiplier()), m_swerve::defaultSpeed, new Subsystem[0]));
     // alignRightCoralTrigger.whileTrue(rightAlignCommand);
     // alignLeftCoralTrigger.whileTrue(leftAlignCommand);
 
@@ -267,18 +280,22 @@ public class RobotContainer {
     L3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
     L4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
 
+
     runIntakeTrigger.whileTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem));
+
 
     forwardAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
     reverseAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
 
+
     deAlgaeL2Trigger.onTrue(new RunCommand(m_algaeSubsystem::extendAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     deAlgaeL3Trigger.onTrue(new RunCommand(m_algaeSubsystem::retractAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     
+
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
     // Bongo
-    // L1BongoTri?gger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0), m_elevatorSubsystem));
+    // L1BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0), m_elevatorSubsystem));
     // L2BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
     // L3BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
     // L4BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
