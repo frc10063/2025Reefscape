@@ -140,6 +140,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("PID Output", pidOutput);
     SmartDashboard.putNumber("Feed Foward", feedforwardTerm);
+    SmartDashboard.putNumber("Elevator Desired Pos", targetPosition);
   }
 
 
@@ -153,7 +154,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     
-    SmartDashboard.putNumber("Elevator Speed", m_elevatorLeftMotor.getBusVoltage());
+    SmartDashboard.putNumber("Elevator Speed", m_elevatorLeftMotor.get());
     SmartDashboard.putNumber("Position", m_elevatorEncoder.get());
 
     m_profiledPIDController.setP(SmartDashboard.getNumber("Elev kP", m_profiledPIDController.getP()));
