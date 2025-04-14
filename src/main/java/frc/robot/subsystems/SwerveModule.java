@@ -97,15 +97,9 @@ public class SwerveModule extends SubsystemBase {
     m_turningEncoder = new AnalogEncoder(turningEncoderChannel, 1, expectedEncoderZero);
     
     m_turningPIDController.setTolerance(Units.degreesToRadians(1));
-    // Distance per pulse is basically distance driven for each count of the encoder
-    // 2*pi*radius is circumference of the wheel, divided by encoder resolution would
-    // give distance per encoder count
 
     // m_driveEncoder.setDistancePerPulse(ModuleConstants.kDriveEncoderDistancePerPulse);
     // m_driveEncoder.setReverseDirection(driveEncoderReversed); 
-    
-    // 2pi represents 360 degrees in radians, then divided by resolution to give
-    // radians per count of encoder
 
     // this method doesnt exist for analogencoders
     //m_turningEncoder.setDistancePerPulse(ModuleConstants.kTurningEncoderDistancePerPulse);
@@ -177,8 +171,8 @@ public class SwerveModule extends SubsystemBase {
     // direction of travel that can occur when modules change directions. This results in smoother
     // driving.
     desiredState.cosineScale(encoderRotation);
-    final double driveFeedforward = m_driveFeedforward.calculate(desiredState.speedMetersPerSecond);
-    final double turnFeedforward = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
+    double driveFeedforward = m_driveFeedforward.calculate(desiredState.speedMetersPerSecond);
+    double turnFeedforward = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
     // Calculate the drive output from the drive PID controller.
     double driveOutput =
         m_drivePIDController.calculate(m_driveEncoder.getVelocity(), desiredState.speedMetersPerSecond);
@@ -234,9 +228,9 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     getPIDDashboard();
-    
+
     m_turningPIDController.setPID(turningKp, turningKi, turningKd);
     m_drivePIDController.setPID(driveKp, driveKi, driveKd);
   }
-  }
+}
 

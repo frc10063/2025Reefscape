@@ -57,11 +57,14 @@ import frc.robot.subsystems.IntakeSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
   // OI
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   // private final Bongo m_bongoController = new Bongo(2);
   // private final DDRMat m_ddrController = new DDRMat(3);
+
+
   // slew rate limiters (optional)
   // private final SlewRateLimiter m_xLimiter = new SlewRateLimiter(3);
   // private final SlewRateLimiter m_yLimiter = new SlewRateLimiter(3);
@@ -75,15 +78,18 @@ public class RobotContainer {
   private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
   // private final VisionSubsystem m_vision = new VisionSubsystem(m_swerve);
   
-  // Defining triggers
+
+
 
   // Joystick triggers
   Trigger runIntakeTrigger = m_joystick.button(1);
+  
   // setpoints
   Trigger L1Trigger = m_joystick.button(2);
   Trigger L2Trigger = m_joystick.button(4);
   Trigger L3Trigger = m_joystick.button(5);
   Trigger L4Trigger = m_joystick.button(3);
+
   // Override for if elevator encoder readings are bad
   Trigger OverrideElevatorSafetyTrigger = m_joystick.button(9);
 
