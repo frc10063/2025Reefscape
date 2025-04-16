@@ -107,19 +107,23 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void moveElevator(double elevatorSpeed) {
     double encoderValue = m_elevatorEncoder.get();
     double maxPosition = ElevatorConstants.kElevatorMaxPosition;
-
-    if (elevatorSafety == true) {
-      if ((encoderValue < 0 && elevatorSpeed < 0) || (encoderValue >= maxPosition && elevatorSpeed > 0)) {
-        m_elevatorRightMotor.set(0);
-        m_elevatorLeftMotor.set(0);
+    if (elevatorSpeed == 0) {
+      m_elevatorLeftMotor.setVoltage(ElevatorConstants.kG);
+      m_elevatorRightMotor.setVoltage(ElevatorConstants.kG);
+    } else {
+      if (elevatorSafety == true) {
+        if ((encoderValue < 0 && elevatorSpeed < 0) || (encoderValue >= maxPosition && elevatorSpeed > 0)) {
+          m_elevatorRightMotor.set(0);
+          m_elevatorLeftMotor.set(0);
+        } else {
+          m_elevatorRightMotor.set(elevatorSpeed);
+          m_elevatorLeftMotor.set(elevatorSpeed);
+        }
       } else {
         m_elevatorRightMotor.set(elevatorSpeed);
         m_elevatorLeftMotor.set(elevatorSpeed);
       }
-    } else {
-    m_elevatorRightMotor.set(elevatorSpeed);
-    m_elevatorLeftMotor.set(elevatorSpeed);
-    }
+    } 
   }
 
   public void overrideElevatorSafety() {
@@ -141,6 +145,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("PID Output", pidOutput);
     SmartDashboard.putNumber("Feed Foward", feedforwardTerm);
     SmartDashboard.putNumber("Elevator Desired Pos", targetPosition);
+  }
+  public void stop() {
+    m_elevatorLeftMotor.setVoltage(ElevatorConstants.kG);
+    m_elevatorRightMotor.setVoltage(ElevatorConstants.kG);
   }
 
 
