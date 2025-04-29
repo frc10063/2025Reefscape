@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -228,9 +231,9 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.LINEAR_SPEED.magnitude(), 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.LINEAR_SPEED.magnitude(), 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.MAX_ANGULAR_VELOCITY.magnitude(), 
                   fieldRelative), 
                   m_swerve));
 

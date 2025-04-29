@@ -4,7 +4,11 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -12,12 +16,16 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.TimedRobot;
 
 
@@ -70,29 +78,30 @@ public final class Constants {
 
     public static final double kDrivePeriod = TimedRobot.kDefaultPeriod;
 
-    public static final double kTrackWidth = 0.7;
+    public static final Distance kTrackWidth = Meters.of(0.7);
     // Distance between centers of right and left wheels on robot
 
-    public static final double kWheelBase = 0.7;
+    public static final Distance kWheelBase = Meters.of(0.7);
     // Distance between front and back wheels on robot
     
     public static final SwerveDriveKinematics kDriveKinematics =
         new SwerveDriveKinematics(
-            new Translation2d(kWheelBase / 2, kTrackWidth / 2),
-            new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
-            new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
-            new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
+            new Translation2d(kWheelBase.in(Meters) / 2, kTrackWidth.in(Meters) / 2),
+            new Translation2d(kWheelBase.in(Meters) / 2, -kTrackWidth.in(Meters) / 2),
+            new Translation2d(-kWheelBase.in(Meters) / 2, kTrackWidth.in(Meters) / 2),
+            new Translation2d(-kWheelBase.in(Meters) / 2, -kTrackWidth.in(Meters) / 2));
     
     public static final boolean kGyroReversed = false;
 
     // The SysId tool provides a convenient method for obtaining these values for your robot.
 
-    public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kMaxRotationSpeedRadiansPerSecond = 2 * Math.PI;
+    public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(3.5);
+    public static final LinearVelocity LINEAR_SPEED = MetersPerSecond.of(3);
+    public static final AngularVelocity MAX_ANGULAR_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
   }
   public static final class ModuleConstants {
-    public static final double kMaxModuleAngularSpeedRadiansPerSecond = 4 * Math.PI;
-    public static final double kMaxModuleAngularAccelerationRadiansPerSecondSquared = 40 * Math.PI;
+    public static final AngularVelocity MAX_ANGULAR_VELOCITY = RadiansPerSecond.of(4 * Math.PI);
+    public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RadiansPerSecondPerSecond.of(40 * Math.PI);
 
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 42; // 4096
@@ -105,11 +114,14 @@ public final class Constants {
     public static final double turningkV = 0.5;
     public static final double turningkA = 0;
 
-    public static final double kWheelDiameterMeters = 0.1016;
-    public static final double kDriveEncoderDistancePerPulse =
+    public static final double DRIVE_GEAR_RATIO = 6.75;
+    public static final double STEER_GEAR_RATIO =  150.0 / 7.0;
+    public static final Distance WHEEL_DIAMETER = Inches.of(4);
+
+    public static final Distance kDriveEncoderDistancePerPulse = ((WHEEL_DIAMETER.times(Math.PI)).div(kdriveEncoderCPR)).div(DRIVE_GEAR_RATIO);
         // 6.75 is rotations of motor per wheel rotation
-        ((kWheelDiameterMeters * Math.PI) / (double) (kdriveEncoderCPR)) / 6.75; // 6.75 divided by 1.3?
-    public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR) / 60.0;
+        //((kWheelDiameterMeters * Math.PI) / (double) (kdriveEncoderCPR)) / 6.75; // 6.75 divided by 1.3?
+    public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse.magnitude() * (double) kdriveEncoderCPR) / 60.0;
 
     public static final double kTurningEncoderDistancePerPulse =
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
@@ -152,7 +164,7 @@ public final class Constants {
   public static final class ElevatorConstants {
     public static final int[] kElevatorPorts = new int[] {10, 11};
 
-    public static final int[] kElevatorEncoders1 = new int[] {9, 8};
+    public static final int[] kElevatorEncoders = new int[] {9, 8};
     public static final int kElevatorEncoderRes = 2048;
 
     public static final SparkBaseConfig LEFTELEVATOR_CONFIG = new SparkMaxConfig()
@@ -162,9 +174,19 @@ public final class Constants {
         .inverted(false)
         .idleMode(IdleMode.kBrake);
     
-    public static final double kSpoolDiameter = 1.5;
-    public static final double kSpoolCircumference = kSpoolDiameter * Math.PI;
-    public static final double kElevatorDistancePerPulse = (kSpoolDiameter * Math.PI)/ (double) kElevatorEncoderRes;
+    public static final double GEAR_RATIO = 12.75;
+    
+    public static final Distance SPOOL_DIAMETER = Inches.of(1.25);
+    public static final Distance BASE_PLATE_HEIGHT = Inches.of(1.7);
+    public static final Distance END_EFFECTOR_HEIGHT = Inches.of(20.3).plus(BASE_PLATE_HEIGHT);
+    public static final Distance STARTING_HEIGHT = Inches.of(41);
+
+
+
+
+    public static final double kSpoolCircumference = SPOOL_DIAMETER.magnitude() * Math.PI;
+
+    public static final Distance kElevatorDistancePerPulse = ((SPOOL_DIAMETER.times(Math.PI)).div((double) kElevatorEncoderRes)).div(GEAR_RATIO);
     public static final double kElevatorMaxPosition = 24000; //22000?
     public static final double[] kElevatorSetpoints = new double[] {1744, 7148, 14000, 22800}; 
     public static final double[] kElevatorDeAlgaeSetpoints = new double[] {9300, 15000};

@@ -64,8 +64,8 @@ public class SwerveModule extends SubsystemBase {
           /*ModuleConstants.*/turningKi,
           /*ModuleConstants.*/turningKd,
           new TrapezoidProfile.Constraints(
-              ModuleConstants.kMaxModuleAngularSpeedRadiansPerSecond, 
-              ModuleConstants.kMaxModuleAngularAccelerationRadiansPerSecondSquared));
+              ModuleConstants.MAX_ANGULAR_VELOCITY.magnitude(), 
+              ModuleConstants.MAX_ANGULAR_ACCELERATION.magnitude()));
     
 
   /**
@@ -108,7 +108,7 @@ public class SwerveModule extends SubsystemBase {
         .inverted(driveEncoderReversed)
         .idleMode(IdleMode.kBrake);
     driveConfig.encoder
-        .positionConversionFactor(ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) 
+        .positionConversionFactor(ModuleConstants.kDriveEncoderDistancePerPulse.magnitude() * ModuleConstants.kdriveEncoderCPR) 
         .velocityConversionFactor(ModuleConstants.kDriveVelocityConversionFactor);
         // (ModuleConstants.kDriveEncoderDistancePerPulse * (double) ModuleConstants.kdriveEncoderCPR) / 60.0
     

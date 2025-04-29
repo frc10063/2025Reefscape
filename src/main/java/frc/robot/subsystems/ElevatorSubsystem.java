@@ -21,7 +21,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ElevatorConstants;
+import static frc.robot.Constants.ElevatorConstants.*;
 
 public class ElevatorSubsystem extends SubsystemBase {
   
@@ -32,17 +32,17 @@ public class ElevatorSubsystem extends SubsystemBase {
   // intialize the encoder objects
   private final Encoder m_elevatorEncoder;
   private static PIDController m_pidController; // --> OLD (is now NEW!)
-  private static ProfiledPIDController m_profiledPIDController = new ProfiledPIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, 
-        new TrapezoidProfile.Constraints(ElevatorConstants.kMaxVelocity, ElevatorConstants.kMaxAcceleration));
+  private static ProfiledPIDController m_profiledPIDController = new ProfiledPIDController(kP, kI, kD, 
+        new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
         
-  private static ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
+  private static ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
   public static double[] prevFeedGains;
   public static double[] DBFeedGains;
   public static double[] prevConstraints;
   public static double[] DBConstraints;
 
   // PID Constants
-  // private double kP = ElevatorConstants.kP; //0.0005
+  // private double kP = kP; //0.0005
   // private double kI = ElevatorConstants.kI;
   // private double kD = ElevatorConstants.kD;
   private boolean elevatorSafety = true;
@@ -65,22 +65,22 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public ElevatorSubsystem() {
     // define motor and encoder objects -- I'm not sure what encoders they are
-    m_elevatorRightMotor = new SparkMax(ElevatorConstants.kElevatorPorts[1], MotorType.kBrushless);
-    m_elevatorLeftMotor = new SparkMax(ElevatorConstants.kElevatorPorts[0], MotorType.kBrushless);
-    m_elevatorEncoder = new Encoder(ElevatorConstants.kElevatorEncoders1[0], ElevatorConstants.kElevatorEncoders1[1]);
+    m_elevatorRightMotor = new SparkMax(kElevatorPorts[1], MotorType.kBrushless);
+    m_elevatorLeftMotor = new SparkMax(kElevatorPorts[0], MotorType.kBrushless);
+    m_elevatorEncoder = new Encoder(kElevatorEncoders[0], kElevatorEncoders[1]);
     m_elevatorEncoder.setReverseDirection(false);;
     // m_elevatorEncoder = new Encoder(ElevatorConstants.kElevatorEncoders1[0], ElevatorConstants.kElevatorEncoders1[1]);
 
-    m_elevatorRightMotor.configure(ElevatorConstants.RIGHTELEVATOR_CONFIG, 
+    m_elevatorRightMotor.configure(RIGHTELEVATOR_CONFIG, 
         ResetMode.kNoResetSafeParameters, 
         PersistMode.kPersistParameters);
-    m_elevatorLeftMotor.configure(ElevatorConstants.LEFTELEVATOR_CONFIG, 
+    m_elevatorLeftMotor.configure(LEFTELEVATOR_CONFIG, 
         ResetMode.kNoResetSafeParameters, 
         PersistMode.kPersistParameters);
     m_elevatorEncoder.reset();
-    m_elevatorEncoder.setDistancePerPulse(ElevatorConstants.kElevatorDistancePerPulse); // idk if necessary
+    m_elevatorEncoder.setDistancePerPulse(kElevatorDistancePerPulse.magnitude()); // idk if necessary
 
-    m_pidController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
+    m_pidController = new PIDController(kP, kI, kD);
 
 
     SmartDashboard.putNumber("Elev kP", m_profiledPIDController.getP());
@@ -106,7 +106,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       
   public void moveElevator(double elevatorSpeed) {
     double encoderValue = m_elevatorEncoder.get();
-    double maxPosition = ElevatorConstants.kElevatorMaxPosition;
+    double maxPosition = kElevatorMaxPosition;
 
     if (elevatorSafety == true) {
       if ((encoderValue < 0 && elevatorSpeed < 0) || (encoderValue >= maxPosition && elevatorSpeed > 0)) {
@@ -140,6 +140,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("PID Output", pidOutput);
     SmartDashboard.putNumber("Feed Foward", feedforwardTerm);
+    SmartDashboard.putNumber("Elevator Desired Position", m_profiledPIDController.getSetpoint().position);
   }
 
 

@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -158,7 +160,7 @@ public class DriveTrain extends SubsystemBase {
     ySpeed = ySpeed * speedMultiplier;
     rot = rot * speedMultiplier;
    
-    var maxSpeed = DriveConstants.kMaxSpeedMetersPerSecond * speedMultiplier;
+    var maxSpeed = DriveConstants.MAX_LINEAR_SPEED.in(MetersPerSecond);
 
         var swerveModuleStates =
         DriveConstants.kDriveKinematics.toSwerveModuleStates(
@@ -177,7 +179,7 @@ public class DriveTrain extends SubsystemBase {
   }
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
-        desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
+        desiredStates, DriveConstants.MAX_LINEAR_SPEED.in(MetersPerSecond));
     m_frontLeft.setDesiredState(desiredStates[0]);
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);
