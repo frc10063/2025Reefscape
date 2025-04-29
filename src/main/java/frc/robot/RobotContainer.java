@@ -200,7 +200,7 @@ public class RobotContainer {
   public RobotContainer() {
     
     // options for sendable auto chooser
-    m_chooser.setDefaultOption("Taxi Auto", taxiAutoCommand.withTimeout(2));
+    m_chooser.setDefaultOption("Taxi Auto", taxiAutoCommand);
     m_chooser.addOption("Middle Reef Auto", middleAutoCommand);
     m_chooser.addOption("Left Reef Auto", leftAutoCommand);
     m_chooser.addOption("Right Reef Auto", rightAutoCommand);
@@ -274,20 +274,20 @@ public class RobotContainer {
     fieldRelativeToggleTrigger.onTrue(new InstantCommand(this::fieldRelativeToggle));
     fieldRelativeHoldTrigger.whileTrue(new StartEndCommand(this::disableFieldRelative, this::enableFieldRelative, new Subsystem[0]));
 
-    // halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
-    // fastSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::fastSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
+    halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
+    fastSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::fastSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
 
     // idk if this works
     // I coulda been on team 6969 if i stayed in ny but now im stuck here
-    speedChangeTrigger.whileTrue(new StartEndCommand(() -> m_swerve.setSpeedMultiplier(calculateSpeedMultiplier()), m_swerve::defaultSpeed, new Subsystem[0]));
+    // speedChangeTrigger.whileTrue(new StartEndCommand(() -> m_swerve.setSpeedMultiplier(calculateSpeedMultiplier()), m_swerve::defaultSpeed, new Subsystem[0]));
     // alignRightCoralTrigger.whileTrue(rightAlignCommand);
     // alignLeftCoralTrigger.whileTrue(leftAlignCommand);
 
     // Joystick bindings
-    L1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
-    L2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
-    L3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
-    L4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
+    L1Trigger.whileTrue(new StartEndCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem::stop, m_elevatorSubsystem));
+    L2Trigger.whileTrue(new StartEndCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem::stop, m_elevatorSubsystem));
+    L3Trigger.whileTrue(new StartEndCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem::stop, m_elevatorSubsystem));
+    L4Trigger.whileTrue(new StartEndCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem::stop, m_elevatorSubsystem));
 
 
     runIntakeTrigger.whileTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem));
