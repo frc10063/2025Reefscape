@@ -32,8 +32,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // intialize the encoder objects
   private final Encoder m_elevatorEncoder;
   private static PIDController m_pidController; // --> OLD (is now NEW!)
-  private static ProfiledPIDController m_profiledPIDController = new ProfiledPIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, 
-        new TrapezoidProfile.Constraints(ElevatorConstants.kMaxVelocity, ElevatorConstants.kMaxAcceleration));
+  private static ProfiledPIDController m_profiledPIDController;
         
   private static ElevatorFeedforward m_feedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
   public static double[] prevFeedGains;
@@ -81,7 +80,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevatorEncoder.setDistancePerPulse(ElevatorConstants.kElevatorDistancePerPulse); // idk if necessary
 
     m_pidController = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
-
+    m_profiledPIDController = new ProfiledPIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD, 
+        new TrapezoidProfile.Constraints(ElevatorConstants.kMaxVelocity, ElevatorConstants.kMaxAcceleration));
 
     SmartDashboard.putNumber("Elev kP", m_profiledPIDController.getP());
     SmartDashboard.putNumber("Elev kI", m_profiledPIDController.getI());
@@ -133,19 +133,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void setElevatorPosition(double targetPosition) {
     double currentPosition = m_elevatorEncoder.get();
-    // double pidOutput = m_pidController.calculate(currentPosition, targetPosition); // changed m_pidController to profile
-    double pidOutput = m_profiledPIDController.calculate(currentPosition, targetPosition);
+    double pidOutput = m_pidController.calculate(currentPosition, targetPosition); // changed m_pidController to profile
+    // double pidOutput = m_profiledPIDController.calculate(currentPosition, targetPosition);
     double feedforwardTerm = m_feedforward.calculate(m_profiledPIDController.getSetpoint().velocity);
-    double output = pidOutput + feedforwardTerm;
+    double output = pidOutput;
 
-    // moveElevator(output);
-    m_elevatorLeftMotor.setVoltage(output);
-    m_elevatorRightMotor.setVoltage(output);
+    moveElevator(output);
+    // m_elevatorLeftMotor.setVoltage(output);
+    // m_elevatorRightMotor.setVoltage(output);
 
     SmartDashboard.putNumber("PID Output", pidOutput);
     SmartDashboard.putNumber("Feed Foward", feedforwardTerm);
     SmartDashboard.putNumber("Elevator Desired Pos", targetPosition);
   }
+
   public void stop() {
     m_elevatorLeftMotor.setVoltage(ElevatorConstants.kG);
     m_elevatorRightMotor.setVoltage(ElevatorConstants.kG);
