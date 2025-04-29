@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -228,9 +231,9 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.kMaxSpeedMetersPerSecond, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.LINEAR_SPEED.magnitude(), 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.LINEAR_SPEED.magnitude(), 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.MAX_ANGULAR_VELOCITY.magnitude(), 
                   fieldRelative), 
                   m_swerve));
 
@@ -281,10 +284,10 @@ public class RobotContainer {
     // alignLeftCoralTrigger.whileTrue(leftAlignCommand);
 
     // Joystick bindings
-    L1Trigger.whileTrue(new StartEndCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem::stop, m_elevatorSubsystem));
-    L2Trigger.whileTrue(new StartEndCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem::stop, m_elevatorSubsystem));
-    L3Trigger.whileTrue(new StartEndCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem::stop, m_elevatorSubsystem));
-    L4Trigger.whileTrue(new StartEndCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem::stop, m_elevatorSubsystem));
+    L1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), /*m_elevatorSubsystem::stop,*/ m_elevatorSubsystem));
+    L2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]),/* m_elevatorSubsystem::stop,*/ m_elevatorSubsystem));
+    L3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), /*m_elevatorSubsystem::stop,*/ m_elevatorSubsystem));
+    L4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), /*m_elevatorSubsystem::stop,*/ m_elevatorSubsystem));
 
 
     runIntakeTrigger.whileTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem));
