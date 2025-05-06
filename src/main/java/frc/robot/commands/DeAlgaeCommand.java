@@ -18,9 +18,9 @@ public class DeAlgaeCommand extends SequentialCommandGroup {
   /** Creates a new DeAlgaeCommand. */
   AlgaeSubsystem m_algaeSubsystem;
   ElevatorSubsystem m_elevatorSubsystem;
-  int level;
+  String level;
 
-  public DeAlgaeCommand(AlgaeSubsystem m_algaeSubsystem, ElevatorSubsystem m_elevatorSubsystem, int level) {
+  public DeAlgaeCommand(AlgaeSubsystem m_algaeSubsystem, ElevatorSubsystem m_elevatorSubsystem, String level) {
     this.m_algaeSubsystem = m_algaeSubsystem;
     this.m_elevatorSubsystem = m_elevatorSubsystem;
     this.level = level;

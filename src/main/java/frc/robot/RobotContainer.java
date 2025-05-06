@@ -150,9 +150,9 @@ public class RobotContainer {
   // ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
   // Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
   // Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
-  Command L2DeAlgaeCommand = new DeAlgaeCommand(m_algaeSubsystem, m_elevatorSubsystem, 0);
-  Command L3DeAlgaeCommand = new DeAlgaeCommand(m_algaeSubsystem, m_elevatorSubsystem, 1);
-  Command coralPlacingCommand = new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2);
+  Command L2DeAlgaeCommand = new DeAlgaeCommand(m_algaeSubsystem, m_elevatorSubsystem, "L3");
+  Command L3DeAlgaeCommand = new DeAlgaeCommand(m_algaeSubsystem, m_elevatorSubsystem, "L2");
+  Command coralPlacingCommand = new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L2");
   Command taxiAutoCommand = new TaxiAuto(m_swerve);
   // Command visionLeftReefAuto = new VisionLeftReefAuto();
   // Command visionRightReefAuto = new VisionRightReefAuto();
@@ -204,7 +204,7 @@ public class RobotContainer {
     m_chooser.addOption("Middle Reef Auto", middleAutoCommand);
     m_chooser.addOption("Left Reef Auto", leftAutoCommand);
     m_chooser.addOption("Right Reef Auto", rightAutoCommand);
-    m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 3)));
+    m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L3")));
   
     SmartDashboard.putData(m_chooser);
     
@@ -283,11 +283,17 @@ public class RobotContainer {
     // alignRightCoralTrigger.whileTrue(rightAlignCommand);
     // alignLeftCoralTrigger.whileTrue(leftAlignCommand);
 
+
+
     // Joystick bindings
-    L1Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo(1));
-    L2Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo(2));
-    L3Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo(3));
-    L4Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo(4));
+    L1Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L1"));
+    L2Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L2"));
+    L3Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L3"));
+    L4Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L4"));
+
+
+
+
 
     runIntakeTrigger.whileTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem));
 
@@ -303,10 +309,10 @@ public class RobotContainer {
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
     // Bongo
-    // L1BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo(1));
-    // L2BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo(2));
-    // L3BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo(3));
-    // L4BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo(4));
+    // L1BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L1"));
+    // L2BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L2"));
+    // L3BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L3"));
+    // L4BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L4"));
     
     // bongoPlaceL2Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2));
     // bongoPlaceL3Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 3));
@@ -314,7 +320,6 @@ public class RobotContainer {
 
     // clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     // algaeToggleTrigger.onTrue(new StartEndCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem::stopAlgae, m_algaeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-    // L4BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
 
     // DDRMat (was originally gonna make it drive but scared)
     // DDRL1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));

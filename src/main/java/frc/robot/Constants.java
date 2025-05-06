@@ -181,6 +181,7 @@ public final class Constants {
     public static final Distance END_EFFECTOR_HEIGHT = Inches.of(20.3).plus(BASE_PLATE_HEIGHT);
     public static final Distance STARTING_HEIGHT = Inches.of(41);
 
+    public static final int TOLERANCE = 75;
 
 
 
@@ -188,7 +189,7 @@ public final class Constants {
 
     public static final Distance kElevatorDistancePerPulse = ((SPOOL_DIAMETER.times(Math.PI)).div((double) kElevatorEncoderRes)).div(GEAR_RATIO);
     public static final double kElevatorMaxPosition = 24000; //22000?
-    public static final double[] kElevatorSetpoints = new double[] {1744, 7148, 14000, 22800}; 
+    public static final double[] kElevatorSetpoints = new double[] {0, 800, 2544, 7948, 14800, 22800}; 
     public static final double[] kElevatorDeAlgaeSetpoints = new double[] {9300, 15000};
 
     public static final double kP = 0.0025; // 0.0025

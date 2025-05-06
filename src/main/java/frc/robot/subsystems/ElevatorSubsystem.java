@@ -9,7 +9,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 // import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
-
+import edu.wpi.first.math.MathUtil;
 // import edu.wpi.first.math.controller.ProfiledPIDController;
 // import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -86,7 +86,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_pidController = new PIDController(kP, kI, kD);
     m_profiledPIDController = new ProfiledPIDController(kP, kI, kD, 
         new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
-    m_profiledPIDController.setTolerance(75);
+    m_profiledPIDController.setTolerance(TOLERANCE);
 
     SmartDashboard.putNumber("Elev kP", m_profiledPIDController.getP());
     SmartDashboard.putNumber("Elev kI", m_profiledPIDController.getI());
@@ -136,26 +136,25 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void overrideElevatorSafety() {
     elevatorSafety = !elevatorSafety;
   }
-  public void setElevatorPositionV2(double targetPosition) {
+  public void PIDControlToGoal() {
     double currentPosition = m_elevatorEncoder.get();
-    // m_profiledPIDController.setGoal(targetPosition);
     double pidOutput = m_profiledPIDController.calculate(currentPosition); // , m_profiledPIDController.getSetpoint().position
     double feedforwardTerm = m_feedforward.calculate(m_profiledPIDController.getSetpoint().velocity);
     double output = pidOutput + feedforwardTerm;
-    // moveElevator(output);
+    
     m_elevatorLeftMotor.setVoltage(output);
     m_elevatorRightMotor.setVoltage(output);
 
     SmartDashboard.putNumber("PID Output", pidOutput);
     SmartDashboard.putNumber("Feed Foward", feedforwardTerm);
     SmartDashboard.putNumber("Elev encoder speed", m_elevatorEncoder.getRate());
-    SmartDashboard.putNumber("Elevator Desired Pos", targetPosition);
+    SmartDashboard.putNumber("Elevator Desired Pos", m_profiledPIDController.getGoal().position);
     SmartDashboard.putNumber("Desired Motion", m_profiledPIDController.getSetpoint().position);
   }
-  public Command moveElevatorTo(int level) {
+  public Command moveElevatorTo(String level) {
     // return Commands.runOnce(SetGoal(kElevatorSetpoints[level - 1]), this).run(setElevatorPositionV2(kElevatorSetpoints[level - 1]));
-    return Commands.sequence(Commands.runOnce(() -> this.SetGoal(kElevatorSetpoints[level - 1]), this), 
-      Commands.run(() -> this.setElevatorPositionV2(kElevatorSetpoints[level - 1])).until(this::reachedGoal));
+    return Commands.sequence(Commands.runOnce(() -> this.setGoalLevel(level), this), 
+      Commands.run(() -> this.PIDControlToGoal()).until(this::reachedGoal));
   }
 
   public void stop() {
@@ -163,13 +162,49 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevatorRightMotor.setVoltage(kG);
   }
 
-  public void SetGoal(double targetPosition) {
+  public void setGoalLevel(String level) {
     // resets start position profiledPID to current position 
     m_profiledPIDController.reset(m_elevatorEncoder.get());
-    m_profiledPIDController.setGoal(targetPosition);
+    m_profiledPIDController.setGoal(getPositionOf(level));
   }
   public boolean reachedGoal() {
     return m_profiledPIDController.atGoal();
+  }
+
+  public boolean isAtLevel(String level) {
+    if (MathUtil.isNear(m_elevatorEncoder.get(), getPositionOf(level), TOLERANCE)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public double getPositionOf(String level) {
+    double position;
+    int index;
+    switch(level) {
+      case "ZERO":
+        index = 0;
+      case "FEEDER":
+        index = 1;
+        break;
+      case "L1":
+        index = 2;
+        break;
+      case "L2":
+        index = 3;
+        break;
+      case "L3":
+        index = 4;
+        break;
+      case "L4":
+        index = 5;
+        break;
+      default:
+        index = 0;
+    }
+    position = kElevatorSetpoints[index];
+    return position;
   }
   
 
