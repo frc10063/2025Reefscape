@@ -20,7 +20,11 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 // import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ElevatorConstants;
+
 import static frc.robot.Constants.ElevatorConstants.*;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -174,6 +178,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elev encoder speed", m_elevatorEncoder.getRate());
     SmartDashboard.putNumber("Elevator Desired Pos", targetPosition);
     SmartDashboard.putNumber("Desired Motion", m_profiledPIDController.getSetpoint().position);
+  }
+  public Command moveElevatorTo(int level) {
+    // return Commands.runOnce(SetGoal(kElevatorSetpoints[level - 1]), this).run(setElevatorPositionV2(kElevatorSetpoints[level - 1]));
+    return Commands.none();
   }
 
   public void stop() {
