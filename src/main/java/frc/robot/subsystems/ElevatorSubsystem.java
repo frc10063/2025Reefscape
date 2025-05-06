@@ -39,9 +39,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private static ProfiledPIDController m_profiledPIDController;
         
   private static ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
-  private TrapezoidProfile m_profile;
-  private TrapezoidProfile.State m_goal;
-  private TrapezoidProfile.State m_setpoint;
   public static double[] prevFeedGains;
   public static double[] DBFeedGains;
   public static double[] prevConstraints;
@@ -76,9 +73,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevatorEncoder = new Encoder(kElevatorEncoders[0], kElevatorEncoders[1]);
     m_elevatorEncoder.setReverseDirection(false);;
     // m_elevatorEncoder = new Encoder(ElevatorConstants.kElevatorEncoders1[0], ElevatorConstants.kElevatorEncoders1[1]);
-    m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
-    m_goal = new TrapezoidProfile.State();
-    m_setpoint = new TrapezoidProfile.State();
     m_elevatorRightMotor.configure(RIGHTELEVATOR_CONFIG, 
         ResetMode.kNoResetSafeParameters, 
         PersistMode.kPersistParameters);
@@ -86,11 +80,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         ResetMode.kNoResetSafeParameters, 
         PersistMode.kPersistParameters);
     m_elevatorEncoder.reset();
+    
     // m_elevatorEncoder.setDistancePerPulse(kElevatorDistancePerPulse.magnitude()); // idk if necessary
 
     m_pidController = new PIDController(kP, kI, kD);
     m_profiledPIDController = new ProfiledPIDController(kP, kI, kD, 
         new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
+    m_profiledPIDController.setTolerance(75);
 
     SmartDashboard.putNumber("Elev kP", m_profiledPIDController.getP());
     SmartDashboard.putNumber("Elev kI", m_profiledPIDController.getI());
@@ -140,33 +136,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void overrideElevatorSafety() {
     elevatorSafety = !elevatorSafety;
   }
-  public void resetTrapezoid() {
-    m_setpoint = new TrapezoidProfile.State(m_elevatorEncoder.get(), 0);
-  }
-
-
-  public void setElevatorPosition(double targetPosition) {
-    double currentPosition = m_elevatorEncoder.get();
-    m_goal = new TrapezoidProfile.State(targetPosition, 0);
-    // double pidOutput = m_profiledPIDController.calculate(currentPosition, targetPosition);
-    double feedforwardTerm = m_feedforward.calculate(m_setpoint.velocity);
-    m_setpoint = m_profile.calculate(0.02, m_setpoint, m_goal);
-    double pidOutput = m_pidController.calculate(currentPosition, m_setpoint.position); // changed m_pidController to profile
-    double output = pidOutput + feedforwardTerm;
-    // moveElevator(output);
-    m_elevatorLeftMotor.setVoltage(output);
-    m_elevatorRightMotor.setVoltage(output);
-
-    SmartDashboard.putNumber("PID Output", pidOutput);
-    SmartDashboard.putNumber("Feed Foward", feedforwardTerm);
-    SmartDashboard.putNumber("Elev encoder speed", m_elevatorEncoder.getRate());
-    SmartDashboard.putNumber("Elevator Desired Pos", targetPosition);
-    SmartDashboard.putNumber("Desired Motion", m_setpoint.position);
-  }
   public void setElevatorPositionV2(double targetPosition) {
     double currentPosition = m_elevatorEncoder.get();
-    m_profiledPIDController.setGoal(targetPosition);
-    double pidOutput = m_profiledPIDController.calculate(currentPosition, m_profiledPIDController.getSetpoint());
+    // m_profiledPIDController.setGoal(targetPosition);
+    double pidOutput = m_profiledPIDController.calculate(currentPosition); // , m_profiledPIDController.getSetpoint().position
     double feedforwardTerm = m_feedforward.calculate(m_profiledPIDController.getSetpoint().velocity);
     double output = pidOutput + feedforwardTerm;
     // moveElevator(output);
@@ -181,7 +154,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
   public Command moveElevatorTo(int level) {
     // return Commands.runOnce(SetGoal(kElevatorSetpoints[level - 1]), this).run(setElevatorPositionV2(kElevatorSetpoints[level - 1]));
-    return Commands.none();
+    return Commands.sequence(Commands.runOnce(() -> this.SetGoal(kElevatorSetpoints[level - 1]), this), 
+      Commands.run(() -> this.setElevatorPositionV2(kElevatorSetpoints[level - 1])).until(this::reachedGoal));
   }
 
   public void stop() {
@@ -193,9 +167,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     // resets start position profiledPID to current position 
     m_profiledPIDController.reset(m_elevatorEncoder.get());
     m_profiledPIDController.setGoal(targetPosition);
-  }
-  public void resetProfile() {
-    m_setpoint = new TrapezoidProfile.State(m_elevatorEncoder.get(), 0);
   }
   public boolean reachedGoal() {
     return m_profiledPIDController.atGoal();
@@ -232,7 +203,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     if (DBConstraints != prevConstraints) {
       m_profiledPIDController.setConstraints(new TrapezoidProfile.Constraints(DBConstraints[0], DBConstraints[1]));
-      m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(DBConstraints[0], DBConstraints[1]));
       prevConstraints = DBConstraints;
     }
   }

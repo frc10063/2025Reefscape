@@ -191,8 +191,8 @@ public final class Constants {
     public static final double[] kElevatorSetpoints = new double[] {1744, 7148, 14000, 22800}; 
     public static final double[] kElevatorDeAlgaeSetpoints = new double[] {9300, 15000};
 
-    public static final double kP = 0; // 0.0025
-    public static final double kI = 0;
+    public static final double kP = 0.0025; // 0.0025
+    public static final double kI = 0.0002;
     public static final double kD = 0;
 
     public static final double kG = 0.28;
@@ -200,8 +200,8 @@ public final class Constants {
     public static final double kV = 0.00071;
     public static final double kS = 0;
 
-    public static final double kMaxVelocity = 1500;
-    public static final double kMaxAcceleration = 1000;
+    public static final double kMaxVelocity = 22000;
+    public static final double kMaxAcceleration = 12000;
   }
   public static final class IntakeConstants {
     

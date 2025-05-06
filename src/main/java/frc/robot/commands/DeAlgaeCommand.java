@@ -24,17 +24,10 @@ public class DeAlgaeCommand extends SequentialCommandGroup {
     this.m_algaeSubsystem = m_algaeSubsystem;
     this.m_elevatorSubsystem = m_elevatorSubsystem;
     this.level = level;
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+    
     addRequirements(m_algaeSubsystem, m_elevatorSubsystem);
     addCommands(new RunCommand(m_algaeSubsystem::extendAlgae).withTimeout(2)
-    .andThen(
-      Commands.race(
-        // run these in parallel
-        // move elevator up and hold
-        new RunCommand(
-          () -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorDeAlgaeSetpoints[level]), m_elevatorSubsystem),
-        // while elevator up, we get 2 seconds to move back before retracting
-        Commands.waitSeconds(3).andThen(new RunCommand(m_algaeSubsystem::retractAlgae).withTimeout(1.5)))));
+    .andThen(m_elevatorSubsystem.moveElevatorTo(level),
+        Commands.waitSeconds(3).andThen(new RunCommand(m_algaeSubsystem::retractAlgae).withTimeout(1.5))));
   }
 }

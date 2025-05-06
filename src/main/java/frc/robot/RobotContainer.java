@@ -284,11 +284,10 @@ public class RobotContainer {
     // alignLeftCoralTrigger.whileTrue(leftAlignCommand);
 
     // Joystick bindings
-    L1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPositionV2(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
-    L2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPositionV2(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
-    L3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPositionV2(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
-    L4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPositionV2(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
-
+    L1Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo(1));
+    L2Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo(2));
+    L3Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo(3));
+    L4Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo(4));
 
     runIntakeTrigger.whileTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem));
 
@@ -304,10 +303,10 @@ public class RobotContainer {
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
     // Bongo
-    // L1BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(0), m_elevatorSubsystem));
-    // L2BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
-    // L3BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
-    // L4BongoTrigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
+    // L1BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo(1));
+    // L2BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo(2));
+    // L3BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo(3));
+    // L4BongoTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo(4));
     
     // bongoPlaceL2Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 2));
     // bongoPlaceL3Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 3));
