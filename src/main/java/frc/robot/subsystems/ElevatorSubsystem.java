@@ -204,7 +204,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         index = 0;
     }
     position = kElevatorSetpoints[index];
-    return position;
+    // return position;
+    return ELEVATOR_HEIGHTS.get(level);
   }
   
 

@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -190,6 +193,14 @@ public final class Constants {
     public static final Distance kElevatorDistancePerPulse = ((SPOOL_DIAMETER.times(Math.PI)).div((double) kElevatorEncoderRes)).div(GEAR_RATIO);
     public static final double kElevatorMaxPosition = 24000; //22000?
     public static final double[] kElevatorSetpoints = new double[] {0, 800, 2544, 7948, 14800, 22800}; 
+    public static final Map<String, Integer> ELEVATOR_HEIGHTS = 
+      Map.of(
+        "ZERO", 0, 
+        "FEEDER", 800, 
+        "L1", 2544, 
+        "L2", 7948, 
+        "L3", 14800, 
+        "L4", 22800);
     public static final double[] kElevatorDeAlgaeSetpoints = new double[] {9300, 15000};
 
     public static final double kP = 0.0025; // 0.0025
