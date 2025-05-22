@@ -26,7 +26,8 @@ public class CoralPlacingAuto extends SequentialCommandGroup {
     this.m_intakeSubsystem = m_intakeSubsystem;
     this.level = level;
 
-    addCommands(m_elevatorSubsystem.moveElevatorTo(level), new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(1),
+    addCommands(m_elevatorSubsystem.moveElevatorTo(level),
+      m_intakeSubsystem.runEndEffector(),
       m_elevatorSubsystem.moveElevatorTo("ZERO"));
   }
 }

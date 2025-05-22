@@ -27,6 +27,8 @@ import frc.robot.Constants.ElevatorConstants;
 
 import static frc.robot.Constants.ElevatorConstants.*;
 
+import java.util.function.BooleanSupplier;
+
 public class ElevatorSubsystem extends SubsystemBase {
   
   private final SparkMax m_elevatorRightMotor;
@@ -86,7 +88,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_pidController = new PIDController(kP, kI, kD);
     m_profiledPIDController = new ProfiledPIDController(kP, kI, kD, 
         new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
-    m_profiledPIDController.setTolerance(TOLERANCE);
+    m_profiledPIDController.setTolerance(75);
 
     SmartDashboard.putNumber("Elev kP", m_profiledPIDController.getP());
     SmartDashboard.putNumber("Elev kI", m_profiledPIDController.getI());
@@ -153,8 +155,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
   public Command moveElevatorTo(String level) {
     // return Commands.runOnce(SetGoal(kElevatorSetpoints[level - 1]), this).run(setElevatorPositionV2(kElevatorSetpoints[level - 1]));
-    return Commands.sequence(Commands.runOnce(() -> this.setGoalLevel(level), this), 
-      Commands.run(() -> this.PIDControlToGoal()).until(this::reachedGoal));
+    return Commands.sequence(Commands.runOnce(() -> setGoalLevel(level), this), 
+      Commands.run(() -> PIDControlToGoal()).until(this::reachedGoal)).finallyDo(this::stop);
   }
 
   public void stop() {
@@ -172,45 +174,17 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean isAtLevel(String level) {
-    if (MathUtil.isNear(m_elevatorEncoder.get(), getPositionOf(level), TOLERANCE)) {
-      return true;
-    } else {
-      return false;
-    }
+    return MathUtil.isNear(getPositionOf(level), m_elevatorEncoder.get(), TOLERANCE);
   }
 
   public double getPositionOf(String level) {
-    double position;
-    int index;
-    switch(level) {
-      case "ZERO":
-        index = 0;
-      case "FEEDER":
-        index = 1;
-        break;
-      case "L1":
-        index = 2;
-        break;
-      case "L2":
-        index = 3;
-        break;
-      case "L3":
-        index = 4;
-        break;
-      case "L4":
-        index = 5;
-        break;
-      default:
-        index = 0;
-    }
-    position = kElevatorSetpoints[index];
-    // return position;
     return ELEVATOR_HEIGHTS.get(level);
   }
   
 
   @Override
   public void periodic() {
+    SmartDashboard.putBoolean("is at L1?", MathUtil.isNear(getPositionOf("L1"), m_elevatorEncoder.get(), TOLERANCE));
     
     SmartDashboard.putNumber("Elevator Speed", m_elevatorLeftMotor.get());
     SmartDashboard.putNumber("Position", m_elevatorEncoder.get());

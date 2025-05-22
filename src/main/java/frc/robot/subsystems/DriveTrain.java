@@ -160,7 +160,7 @@ public class DriveTrain extends SubsystemBase {
     ySpeed = ySpeed * speedMultiplier;
     rot = rot * speedMultiplier;
    
-    var maxSpeed = DriveConstants.MAX_LINEAR_SPEED.in(MetersPerSecond);
+    var maxSpeed = DriveConstants.MAX_LINEAR_SPEED;
 
         var swerveModuleStates =
         DriveConstants.kDriveKinematics.toSwerveModuleStates(
@@ -179,7 +179,7 @@ public class DriveTrain extends SubsystemBase {
   }
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
-        desiredStates, DriveConstants.MAX_LINEAR_SPEED.in(MetersPerSecond));
+        desiredStates, DriveConstants.MAX_LINEAR_SPEED);
     m_frontLeft.setDesiredState(desiredStates[0]);
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);

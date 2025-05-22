@@ -89,22 +89,22 @@ public final class Constants {
     
     public static final SwerveDriveKinematics kDriveKinematics =
         new SwerveDriveKinematics(
-            new Translation2d(kWheelBase.in(Meters) / 2, kTrackWidth.in(Meters) / 2),
-            new Translation2d(kWheelBase.in(Meters) / 2, -kTrackWidth.in(Meters) / 2),
-            new Translation2d(-kWheelBase.in(Meters) / 2, kTrackWidth.in(Meters) / 2),
-            new Translation2d(-kWheelBase.in(Meters) / 2, -kTrackWidth.in(Meters) / 2));
+            new Translation2d(kWheelBase.magnitude() / 2, kTrackWidth.magnitude() / 2),
+            new Translation2d(kWheelBase.magnitude() / 2, -kTrackWidth.magnitude() / 2),
+            new Translation2d(-kWheelBase.magnitude() / 2, kTrackWidth.magnitude() / 2),
+            new Translation2d(-kWheelBase.magnitude() / 2, -kTrackWidth.magnitude() / 2));
     
     public static final boolean kGyroReversed = false;
 
     // The SysId tool provides a convenient method for obtaining these values for your robot.
 
-    public static final LinearVelocity MAX_LINEAR_SPEED = MetersPerSecond.of(3.5);
-    public static final LinearVelocity LINEAR_SPEED = MetersPerSecond.of(3);
-    public static final AngularVelocity MAX_ANGULAR_VELOCITY = RadiansPerSecond.of(2 * Math.PI);
+    public static final double MAX_LINEAR_SPEED = 3.5;
+    public static final double LINEAR_SPEED = 3;
+    public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
   }
   public static final class ModuleConstants {
-    public static final AngularVelocity MAX_ANGULAR_VELOCITY = RadiansPerSecond.of(4 * Math.PI);
-    public static final AngularAcceleration MAX_ANGULAR_ACCELERATION = RadiansPerSecondPerSecond.of(40 * Math.PI);
+    public static final double MAX_ANGULAR_VELOCITY = 4 * Math.PI;
+    public static final double MAX_ANGULAR_ACCELERATION = 40 * Math.PI;
 
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 42; // 4096
@@ -119,12 +119,10 @@ public final class Constants {
 
     public static final double DRIVE_GEAR_RATIO = 6.75;
     public static final double STEER_GEAR_RATIO =  150.0 / 7.0;
-    public static final Distance WHEEL_DIAMETER = Inches.of(4);
+    public static final double WHEEL_DIAMETER = 0.1016;
 
-    public static final Distance kDriveEncoderDistancePerPulse = ((WHEEL_DIAMETER.times(Math.PI)).div(kdriveEncoderCPR)).div(DRIVE_GEAR_RATIO);
-        // 6.75 is rotations of motor per wheel rotation
-        //((kWheelDiameterMeters * Math.PI) / (double) (kdriveEncoderCPR)) / 6.75; // 6.75 divided by 1.3?
-    public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse.magnitude() * (double) kdriveEncoderCPR) / 60.0;
+    public static final double kDriveEncoderDistancePerPulse = (WHEEL_DIAMETER * Math.PI) / (double) (kdriveEncoderCPR) / 6.75; // 6.75 divided by 1.3?
+    public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR) / 60.0;
 
     public static final double kTurningEncoderDistancePerPulse =
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
@@ -184,7 +182,7 @@ public final class Constants {
     public static final Distance END_EFFECTOR_HEIGHT = Inches.of(20.3).plus(BASE_PLATE_HEIGHT);
     public static final Distance STARTING_HEIGHT = Inches.of(41);
 
-    public static final int TOLERANCE = 75;
+    public static final int TOLERANCE = 250;
 
 
 
@@ -212,8 +210,8 @@ public final class Constants {
     public static final double kV = 0.00071;
     public static final double kS = 0;
 
-    public static final double kMaxVelocity = 22000;
-    public static final double kMaxAcceleration = 12000;
+    public static final double kMaxVelocity = 25000;
+    public static final double kMaxAcceleration = 25000;
   }
   public static final class IntakeConstants {
     
