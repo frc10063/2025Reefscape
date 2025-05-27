@@ -61,11 +61,13 @@ import frc.robot.subsystems.IntakeSubsystem;
  */
 public class RobotContainer {
 
+  
+
   // OI
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
-  private final Bongo m_bongoController = new Bongo(2);
-  // private final DDRMat m_ddrController = new DDRMat(3);
+  private final Bongo m_bongoController = new Bongo(OperatorConstants.kBongoControllerPort);
+  private final DDRMat m_ddrController = new DDRMat(OperatorConstants.kDDRControllerPort);
 
 
   // slew rate limiters (optional)
@@ -87,7 +89,7 @@ public class RobotContainer {
   // Joystick triggers
   Trigger runIntakeTrigger = m_joystick.button(1);
   
-  // setpoints
+  // Setpoints
   Trigger L1Trigger = m_joystick.button(2);
   Trigger L2Trigger = m_joystick.button(4);
   Trigger L3Trigger = m_joystick.button(5);
@@ -209,7 +211,6 @@ public class RobotContainer {
     SmartDashboard.putData(m_chooser);
     
     // Configure the trigger bindings
-
     configureBindings();
     
 
@@ -236,15 +237,6 @@ public class RobotContainer {
                   Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
                   fieldRelative), 
                   m_swerve));
-    // m_swerve.setDefaultCommand(
-    //     new RunCommand(
-    //       () ->
-    //           m_swerve.drive(
-    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_joystick.getY(), 0.2)) * DriveConstants.LINEAR_SPEED, 
-    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_joystick.getX(), 0.2)) * DriveConstants.LINEAR_SPEED,
-    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(0, 0.2)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
-    //               fieldRelative), 
-    //               m_swerve));
 
     // m_swerve.setDefaultCommand(
     //     new RunCommand(

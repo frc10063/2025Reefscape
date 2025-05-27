@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -24,48 +25,41 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ModuleConstants;
+import static frc.robot.Constants.ModuleConstants.*;
 
 public class SwerveModule extends SubsystemBase {
 
   int drivePort, turnPort;
 
-  private final SparkMax m_driveMotor;
-  private final SparkMax m_turningMotor;
+  private final TalonFX m_driveMotor;
+  private final TalonFX m_turningMotor;
 
-  private final RelativeEncoder m_driveEncoder;
+  // private final RelativeEncoder m_driveEncoder;
   private final AnalogEncoder m_turningEncoder;
 
   private SparkBaseConfig driveConfig;
 
-  public static double driveKp = ModuleConstants.driveKp;
-  public static double driveKi = ModuleConstants.driveKi;
-  public static double driveKd = ModuleConstants.driveKd;
+  public static double driveKp = startingDriveKp;
+  public static double driveKi = startingDriveKi;
+  public static double driveKd = startingDriveKd;
 
-  public static double turningKp = ModuleConstants.turningKp;
-  public static double turningKi = ModuleConstants.turningKi;
-  public static double turningKd = ModuleConstants.turningKd;
+  public static double turningKp = startingTurningKp;
+  public static double turningKi = startingTurningKi;
+  public static double turningKd = startingTurningKd;
 
-  SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(ModuleConstants.drivekS, ModuleConstants.drivekV, ModuleConstants.drivekA); 
-  SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(ModuleConstants.turningkS, ModuleConstants.turningkV, ModuleConstants.turningkA); 
+  SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(drivekS, drivekV, drivekA); 
+  SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(turningkS, turningkV, turningkA); 
     
-    
-  // This creates a PIDController object passing through the kP, kI, and kD parameters
-  // We need to change these values, starting with kP and kI, then kI
-  private PIDController m_drivePIDController = new PIDController(ModuleConstants.driveKp, ModuleConstants.driveKi, ModuleConstants.driveKd);
-  
-  // private final PIDController m_turningPIDController = new PIDController(turningKp, turningKi, turningKd);
+  private PIDController m_drivePIDController = new PIDController(driveKp, driveKi, driveKd);
 
-  // This creates a ProfiledPIDController object passing through the kP, kI, and kD parameters
-  // hte kp, kd, ki values should be in constants, I am testing this with smartdhasboard getNumber functions
   private ProfiledPIDController m_turningPIDController =
       new ProfiledPIDController(
-          /*ModuleConstants.*/turningKp,
-          /*ModuleConstants.*/turningKi,
-          /*ModuleConstants.*/turningKd,
+          turningKp,
+          turningKi,
+          turningKd,
           new TrapezoidProfile.Constraints(
-              ModuleConstants.MAX_ANGULAR_VELOCITY, 
-              ModuleConstants.MAX_ANGULAR_ACCELERATION));
+              MAX_ANGULAR_VELOCITY, 
+              MAX_ANGULAR_ACCELERATION));
     
 
   /**
@@ -78,9 +72,6 @@ public class SwerveModule extends SubsystemBase {
    * @param turningEncoderChannelA DIO input for the turning encoder channel A
    * @param turningEncoderChannelB DIO input for the turning encoder channel B
    */
-
-  // This is the constructor for the SwerveModule class
-  // When creating an instance of the class (in DriveTrain), you will put in these parameters
   public SwerveModule(
       int driveMotorChannel,
       int turningMotorChannel,
@@ -90,32 +81,23 @@ public class SwerveModule extends SubsystemBase {
       boolean turningEncoderReversed) {
     drivePort = driveMotorChannel;
     turnPort = turningMotorChannel;
-    m_driveMotor = new SparkMax(driveMotorChannel, MotorType.kBrushless);
-    m_turningMotor = new SparkMax(turningMotorChannel, MotorType.kBrushless);
+    m_driveMotor = new TalonFX(driveMotorChannel);
+    m_turningMotor = new TalonFX(turningMotorChannel);
 
-    m_driveEncoder = m_driveMotor.getEncoder(); 
+    // m_driveEncoder = m_driveMotor.getEncoder(); 
     m_turningEncoder = new AnalogEncoder(turningEncoderChannel, 1, expectedEncoderZero);
     
     m_turningPIDController.setTolerance(Units.degreesToRadians(1));
 
-    // m_driveEncoder.setDistancePerPulse(ModuleConstants.kDriveEncoderDistancePerPulse);
+    // m_driveEncoder.setDistancePerPulse(kDriveEncoderDistancePerPulse);
     // m_driveEncoder.setReverseDirection(driveEncoderReversed); 
 
     // this method doesnt exist for analogencoders
-    //m_turningEncoder.setDistancePerPulse(ModuleConstants.kTurningEncoderDistancePerPulse);
+    //m_turningEncoder.setDistancePerPulse(kTurningEncoderDistancePerPulse);
     m_turningEncoder.setInverted(turningEncoderReversed);
     driveConfig = new SparkMaxConfig()
         .inverted(driveEncoderReversed)
         .idleMode(IdleMode.kBrake);
-    driveConfig.encoder
-        .positionConversionFactor(ModuleConstants.kDriveEncoderDistancePerPulse * ModuleConstants.kdriveEncoderCPR) 
-        .velocityConversionFactor(ModuleConstants.kDriveVelocityConversionFactor);
-        // (ModuleConstants.kDriveEncoderDistancePerPulse * (double) ModuleConstants.kdriveEncoderCPR) / 60.0
-    
-        // .inverted(driveEncoderReversed);
-    // driveConfig.inverted(driveEncoderReversed); 
-    // Idk what these parameters are
-    m_driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     // Limit the PID Controller's input range between -pi and pi and set the input
     // to be continuous. 
     m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
@@ -128,12 +110,12 @@ public class SwerveModule extends SubsystemBase {
   public SwerveModuleState getState() {
     // return new SwerveModuleState(
     //     m_driveEncoder.getRate(), new Rotation2d(m_turningEncoder.getDistance()));
-    // with scale (m_driveEncoder.getVelocity() * ModuleConstants.kdriveEncoderCPR * ModuleConstants.kDriveEncoderDistancePerPulse)/60
-
     SmartDashboard.putNumber("Encoder Turn "+turnPort, m_turningEncoder.get());
+
+    // Women r scawy man, rather choose the bear
     return new SwerveModuleState(
-        m_driveEncoder.getVelocity(), 
-        new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse));
+        m_driveMotor.getVelocity().refresh().getValueAsDouble() * kDriveVelocityConversionFactor, 
+        new Rotation2d(m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse));
   }
 
   /**
@@ -144,11 +126,11 @@ public class SwerveModule extends SubsystemBase {
   public SwerveModulePosition getPosition() {
     // return new SwerveModulePosition(
     //   m_driveEncoder.getDistance(), new Rotation2d(m_turningEncoder.getDistance()));
-    // with scale (m_driveEncoder.getPosition() * ModuleConstants.kdriveEncoderCPR * ModuleConstants.kDriveEncoderDistancePerPulse)
+    // with scale (m_driveEncoder.getPosition() * kdriveEncoderCPR * kDriveEncoderDistancePerPulse)
     
     return new SwerveModulePosition(
-        m_driveEncoder.getPosition(),
-        new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse));
+        m_driveMotor.getPosition().refresh().getValueAsDouble()  * kDrivePositionConversionFactor,
+        new Rotation2d(m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse));
   }
   
   /**
@@ -162,8 +144,8 @@ public class SwerveModule extends SubsystemBase {
       stop();
       return;
     }
-    var encoderRotation = new Rotation2d(m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse);
-    SmartDashboard.putNumber("Turn Encoder "+turnPort, m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse);
+    var encoderRotation = new Rotation2d(m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse);
+    SmartDashboard.putNumber("Turn Encoder "+turnPort, m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse);
     // Optimize the reference state to avoid spinning further than 90 degrees
     desiredState.optimize(encoderRotation);
     
@@ -175,8 +157,8 @@ public class SwerveModule extends SubsystemBase {
     double turnFeedforward = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
     // Calculate the drive output from the drive PID controller.
     double driveOutput =
-        m_drivePIDController.calculate(m_driveEncoder.getVelocity(), desiredState.speedMetersPerSecond);
-    SmartDashboard.putNumber("Current Velocity" + drivePort, m_driveEncoder.getVelocity());
+        m_drivePIDController.calculate(m_driveMotor.getVelocity().refresh().getValueAsDouble() * kDriveVelocityConversionFactor, desiredState.speedMetersPerSecond);
+    SmartDashboard.putNumber("Current Velocity" + drivePort, m_driveMotor.getVelocity().refresh().getValueAsDouble() * kDriveVelocityConversionFactor);
     SmartDashboard.putNumber("Desired Velocity" + drivePort, desiredState.speedMetersPerSecond);
 
     // Calculate the turning motor output from the turning PID controller.
@@ -185,7 +167,7 @@ public class SwerveModule extends SubsystemBase {
     //         m_turningEncoder.getDistance(), desiredState.angle.getRadians());
     double turnOutput = 
         m_turningPIDController.calculate(
-          (m_turningEncoder.get() * ModuleConstants.kturningEncoderCPR * ModuleConstants.kTurningEncoderDistancePerPulse), 
+          (m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse), 
           desiredState.angle.getRadians());
 
     // driveOutput = (driveOutput) * speedMultiplier;
@@ -203,7 +185,7 @@ public class SwerveModule extends SubsystemBase {
     m_turningMotor.set(0);
   }
   public void resetEncoders() {
-    m_driveEncoder.setPosition(0);
+    // this does nothing
     // m_turningEncoder.reset();
   }
   

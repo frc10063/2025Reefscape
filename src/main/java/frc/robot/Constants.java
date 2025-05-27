@@ -40,12 +40,15 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-// we have to go thorugh these once our robot is done
+
 public final class Constants {
 
   public static final class OperatorConstants {
     public static final int kXBoxControllerPort = 0;
     public static final int kJoystickControllerPort = 1;
+    public static final int kBongoControllerPort = 2;
+    public static final int kDDRControllerPort = 3;
+
   }
 
   public static final class DriveConstants {
@@ -123,18 +126,19 @@ public final class Constants {
 
     public static final double kDriveEncoderDistancePerPulse = (WHEEL_DIAMETER * Math.PI) / (double) (kdriveEncoderCPR) / 6.75; // 6.75 divided by 1.3?
     public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR) / 60.0;
+    public static final double kDrivePositionConversionFactor = kDriveEncoderDistancePerPulse * kdriveEncoderCPR;
 
     public static final double kTurningEncoderDistancePerPulse =
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
         (2 * Math.PI) / ((double) kturningEncoderCPR);
 
-    public static double turningKp = 8; //12.5
-    public static double turningKd = 0.28;
-    public static double turningKi = 0.01;
+    public static double startingTurningKp = 8; //12.5
+    public static double startingTurningKd = 0.28;
+    public static double startingTurningKi = 0.01;
     
-    public static double driveKp = 0.5; //0.5 
-    public static double driveKd = 0.01875; // 0.01875
-    public static double driveKi = 0.01; //0.01
+    public static double startingDriveKp = 0.5; //0.5 
+    public static double startingDriveKd = 0.01875; // 0.01875
+    public static double startingDriveKi = 0.01; //0.01
   }
 
 
