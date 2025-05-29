@@ -32,7 +32,7 @@ public class SwerveModule extends SubsystemBase {
   int drivePort, turnPort;
 
   private final TalonFX m_driveMotor;
-  private final TalonFX m_turningMotor;
+  private final SparkMax m_turningMotor;
 
   // private final RelativeEncoder m_driveEncoder;
   private final AnalogEncoder m_turningEncoder;
@@ -82,7 +82,7 @@ public class SwerveModule extends SubsystemBase {
     drivePort = driveMotorChannel;
     turnPort = turningMotorChannel;
     m_driveMotor = new TalonFX(driveMotorChannel);
-    m_turningMotor = new TalonFX(turningMotorChannel);
+    m_turningMotor = new SparkMax(turningMotorChannel, MotorType.kBrushless);
 
     // m_driveEncoder = m_driveMotor.getEncoder(); 
     m_turningEncoder = new AnalogEncoder(turningEncoderChannel, 1, expectedEncoderZero);
@@ -112,7 +112,6 @@ public class SwerveModule extends SubsystemBase {
     //     m_driveEncoder.getRate(), new Rotation2d(m_turningEncoder.getDistance()));
     SmartDashboard.putNumber("Encoder Turn "+turnPort, m_turningEncoder.get());
 
-    // Women r scawy man, rather choose the bear
     return new SwerveModuleState(
         m_driveMotor.getVelocity().refresh().getValueAsDouble() * kDriveVelocityConversionFactor, 
         new Rotation2d(m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse));
@@ -146,6 +145,7 @@ public class SwerveModule extends SubsystemBase {
     }
     var encoderRotation = new Rotation2d(m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse);
     SmartDashboard.putNumber("Turn Encoder "+turnPort, m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse);
+
     // Optimize the reference state to avoid spinning further than 90 degrees
     desiredState.optimize(encoderRotation);
     
@@ -153,24 +153,20 @@ public class SwerveModule extends SubsystemBase {
     // direction of travel that can occur when modules change directions. This results in smoother
     // driving.
     desiredState.cosineScale(encoderRotation);
+
     double driveFeedforward = m_driveFeedforward.calculate(desiredState.speedMetersPerSecond);
     double turnFeedforward = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
-    // Calculate the drive output from the drive PID controller.
+
     double driveOutput =
         m_drivePIDController.calculate(m_driveMotor.getVelocity().refresh().getValueAsDouble() * kDriveVelocityConversionFactor, desiredState.speedMetersPerSecond);
     SmartDashboard.putNumber("Current Velocity" + drivePort, m_driveMotor.getVelocity().refresh().getValueAsDouble() * kDriveVelocityConversionFactor);
     SmartDashboard.putNumber("Desired Velocity" + drivePort, desiredState.speedMetersPerSecond);
 
-    // Calculate the turning motor output from the turning PID controller.
-    // final double turnOutput =
-    //     m_turningPIDController.calculate(
-    //         m_turningEncoder.getDistance(), desiredState.angle.getRadians());
     double turnOutput = 
         m_turningPIDController.calculate(
           (m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse), 
           desiredState.angle.getRadians());
 
-    // driveOutput = (driveOutput) * speedMultiplier;
     driveOutput = (driveOutput + driveFeedforward);
     turnOutput = -(turnOutput);
 
