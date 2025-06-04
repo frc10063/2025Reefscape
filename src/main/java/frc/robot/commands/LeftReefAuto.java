@@ -63,6 +63,5 @@ public class LeftReefAuto extends SequentialCommandGroup {
         swerveControllerCommand,
         new InstantCommand(() -> m_swerve.drive(0, 0, 0, false)), 
         new RunCommand(() -> m_intakeSubsystem.runIntake(0.5), m_intakeSubsystem));
-    addCommands();
   }
 }

@@ -89,11 +89,6 @@ public class SwerveModule extends SubsystemBase {
     
     m_turningPIDController.setTolerance(Units.degreesToRadians(1));
 
-    // m_driveEncoder.setDistancePerPulse(kDriveEncoderDistancePerPulse);
-    // m_driveEncoder.setReverseDirection(driveEncoderReversed); 
-
-    // this method doesnt exist for analogencoders
-    //m_turningEncoder.setDistancePerPulse(kTurningEncoderDistancePerPulse);
     m_turningEncoder.setInverted(turningEncoderReversed);
     driveConfig = new SparkMaxConfig()
         .inverted(driveEncoderReversed)
@@ -127,6 +122,7 @@ public class SwerveModule extends SubsystemBase {
     //   m_driveEncoder.getDistance(), new Rotation2d(m_turningEncoder.getDistance()));
     // with scale (m_driveEncoder.getPosition() * kdriveEncoderCPR * kDriveEncoderDistancePerPulse)
     
+    // 74 8 25 18 75 16 20 75 39
     return new SwerveModulePosition(
         m_driveMotor.getPosition().refresh().getValueAsDouble()  * kDrivePositionConversionFactor,
         new Rotation2d(m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse));
@@ -134,7 +130,7 @@ public class SwerveModule extends SubsystemBase {
   
   /**
    * Sets the desired state for the module.
-   *
+   * .-- --- -- . -. / .- .-. . / ... -.-. .- .-. -.--
    * @param desiredState Desired state with speed and angle.
    */
   // var encoderRotation = new Rotation2d(m_turningEncoder.getDistance());

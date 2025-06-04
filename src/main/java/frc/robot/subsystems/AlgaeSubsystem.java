@@ -76,6 +76,15 @@ public class AlgaeSubsystem extends SubsystemBase {
       extendAlgae();
     }
   }
+
+
+  public Command extendAlgaeCommand() {
+    return Commands.run(this::extendAlgae).withTimeout(2);
+  }
+  public Command retractAlgaeCommand() {
+    return Commands.run(this::retractAlgae).withTimeout(2);
+  }
+  // dlnvm ziv hxzib
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Algae Position", m_algaeEncoder.getPosition());

@@ -34,9 +34,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Autos;
 // import frc.robot.commands.ChaseTagCommand;
-import frc.robot.commands.CoralPlacingAuto;
-import frc.robot.commands.DeAlgaeCommand;
 import frc.robot.commands.MoveForwardAuto;
 import frc.robot.commands.RotationCommand;
 import frc.robot.commands.TaxiAuto;
@@ -152,9 +151,7 @@ public class RobotContainer {
   // ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
   // Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
   // Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
-  Command L2DeAlgaeCommand = new DeAlgaeCommand(m_algaeSubsystem, m_elevatorSubsystem, "L3");
-  Command L3DeAlgaeCommand = new DeAlgaeCommand(m_algaeSubsystem, m_elevatorSubsystem, "L2");
-  Command coralPlacingCommand = new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L2");
+  
   Command taxiAutoCommand = new TaxiAuto(m_swerve);
   // Command visionLeftReefAuto = new VisionLeftReefAuto();
   // Command visionRightReefAuto = new VisionRightReefAuto();
@@ -206,7 +203,7 @@ public class RobotContainer {
     m_chooser.addOption("Middle Reef Auto", middleAutoCommand);
     m_chooser.addOption("Left Reef Auto", leftAutoCommand);
     m_chooser.addOption("Right Reef Auto", rightAutoCommand);
-    m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L3")));
+    m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), Autos.coralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L2")));
   
     SmartDashboard.putData(m_chooser);
     
@@ -312,14 +309,14 @@ public class RobotContainer {
     L3BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L3"), () -> m_elevatorSubsystem.isAtLevel("L3")));
     // L4BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L4"), () -> m_elevatorSubsystem.isAtLevel("L4")));
     
-    bongoPlaceL2Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L2"));
-    bongoPlaceL3Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L3"));
+    bongoPlaceL2Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L2"));
+    bongoPlaceL3Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L3"));
     //bongoPlaceL4Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 4).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
     clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     algaeToggleTrigger.onTrue(new StartEndCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem::stopAlgae, m_algaeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-    // DDRMat (was originally gonna make it drive but scared)
+
     // DDRL1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
     // DDRL2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
     // DDRL3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));

@@ -17,18 +17,20 @@ public final class Autos {
   // public static Command exampleAuto(ExampleSubsystem subsystem) {
   //   return Commands.sequence(subsystem.exampleMethodCommand(), new ExampleCommand(subsystem));
   // }
-
-  private Autos() {
-    throw new UnsupportedOperationException("This is a utility class!");
-  }
   public static Command coralPlacingAuto(ElevatorSubsystem m_elevatorSubsystem, IntakeSubsystem m_intakeSubsystem, String level) {
     return Commands.sequence(m_elevatorSubsystem.moveElevatorTo(level),
     m_intakeSubsystem.runEndEffector(),
     m_elevatorSubsystem.moveElevatorTo("ZERO"));
   }
+
+
   public static Command DeAlgaeCommand(ElevatorSubsystem m_elevatorSubsystem, AlgaeSubsystem m_algaeSubsystem, String level) {
-    return Commands.sequence(new RunCommand(m_algaeSubsystem::extendAlgae).withTimeout(2)
-    .andThen(m_elevatorSubsystem.moveElevatorTo(level),
-    Commands.waitSeconds(3).andThen(new RunCommand(m_algaeSubsystem::retractAlgae).withTimeout(1.5))));
+    return Commands.sequence(
+      m_algaeSubsystem.extendAlgaeCommand(),
+      m_elevatorSubsystem.moveElevatorTo(level), 
+      Commands.waitSeconds(3),
+      m_algaeSubsystem.retractAlgaeCommand(),
+      m_elevatorSubsystem.moveElevatorTo("ZERO"));
   }
+  
 }
