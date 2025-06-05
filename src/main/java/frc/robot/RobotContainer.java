@@ -229,9 +229,9 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.LINEAR_SPEED, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.LINEAR_SPEED, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
                   fieldRelative), 
                   m_swerve));
 

@@ -101,8 +101,8 @@ public final class Constants {
 
     // The SysId tool provides a convenient method for obtaining these values for your robot.
 
-    public static final double MAX_LINEAR_SPEED = 3.5;
-    public static final double LINEAR_SPEED = 3;
+    public static final double MAX_LINEAR_SPEED = 3.3;
+    public static final double LINEAR_SPEED = 2;
     public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
   }
   public static final class ModuleConstants {
@@ -112,7 +112,7 @@ public final class Constants {
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 42; // 4096
 
-    public static final double drivekS = 0.1; // default 1
+    public static final double drivekS = 0; // default 1
     public static final double drivekV = 2.07; // default 0.8
     public static final double drivekA = 0.5; // default 0.15
     
@@ -125,7 +125,7 @@ public final class Constants {
     public static final double WHEEL_DIAMETER = 0.1016;
 
     public static final double kDriveEncoderDistancePerPulse = (WHEEL_DIAMETER * Math.PI) / (double) (kdriveEncoderCPR) / 6.75; // 6.75 divided by 1.3?
-    public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR) / 60.0;
+    public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR);
     public static final double kDrivePositionConversionFactor = kDriveEncoderDistancePerPulse * kdriveEncoderCPR;
 
     public static final double kTurningEncoderDistancePerPulse =
@@ -136,9 +136,9 @@ public final class Constants {
     public static double startingTurningKd = 0.28;
     public static double startingTurningKi = 0.01;
     
-    public static double startingDriveKp = 0.5; //0.5 
-    public static double startingDriveKd = 0.01875; // 0.01875
-    public static double startingDriveKi = 0.01; //0.01
+    public static double startingDriveKp = 0.8; //0.5 
+    public static double startingDriveKd = 0.021; // 0.01875
+    public static double startingDriveKi = 0.3; //0.01
   }
 
 
