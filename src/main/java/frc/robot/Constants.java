@@ -112,12 +112,12 @@ public final class Constants {
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 42; // 4096
 
-    public static final double drivekS = 0.1; // default 1
-    public static final double drivekV = 2.07; // default 0.8
-    public static final double drivekA = 0.5; // default 0.15
+    public static final double drivekS = 0.1; // default 1 test pls
+    public static final double drivekV = 2.07; // default 0.8 maybe 2.5?
+    public static final double drivekA = 0.5; // default 0.15 maybe 0.16?
     
     public static final double turningkS = 0.2;
-    public static final double turningkV = 0.5;
+    public static final double turningkV = 0.5; // 
     public static final double turningkA = 0;
 
     public static final double DRIVE_GEAR_RATIO = 6.75;
