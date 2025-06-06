@@ -120,7 +120,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void slowSpeed() {
-    speedMultiplier = 0.2;
+    speedMultiplier = 0.3;
     SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
 
@@ -130,7 +130,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void fastSpeed() {
-    speedMultiplier = 1.66;
+    speedMultiplier = 1.33;
     SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
 
@@ -150,14 +150,14 @@ public class DriveTrain extends SubsystemBase {
   public void drive(
       double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
 
+    xSpeed = xSpeed * speedMultiplier;
+    ySpeed = ySpeed * speedMultiplier;
+    rot = rot * speedMultiplier;
+
     SmartDashboard.putNumber("XSpeed", xSpeed);
     SmartDashboard.putNumber("YSpeed", ySpeed);
     SmartDashboard.putNumber("Rotation", rot);
     SmartDashboard.putBoolean("Field Relative", fieldRelative);
-
-    xSpeed = xSpeed * speedMultiplier;
-    ySpeed = ySpeed * speedMultiplier;
-    rot = rot * speedMultiplier;
 
     var maxSpeed = MAX_LINEAR_SPEED;
 

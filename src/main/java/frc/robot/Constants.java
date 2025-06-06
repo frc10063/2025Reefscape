@@ -101,8 +101,8 @@ public final class Constants {
 
     // The SysId tool provides a convenient method for obtaining these values for your robot.
 
-    public static final double MAX_LINEAR_SPEED = 3.3;
-    public static final double LINEAR_SPEED = 2;
+    public static final double MAX_LINEAR_SPEED = 3.5;
+    public static final double LINEAR_SPEED = 3;
     public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
   }
   public static final class ModuleConstants {
@@ -112,7 +112,7 @@ public final class Constants {
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 42; // 4096
 
-    public static final double drivekS = 0; // default 1
+    public static final double drivekS = 0.1; // default 1
     public static final double drivekV = 2.07; // default 0.8
     public static final double drivekA = 0.5; // default 0.15
     
@@ -124,9 +124,13 @@ public final class Constants {
     public static final double STEER_GEAR_RATIO =  150.0 / 7.0;
     public static final double WHEEL_DIAMETER = 0.1016;
 
+    public static final double kDriveDistancePerROTATION = (WHEEL_DIAMETER * Math.PI) / DRIVE_GEAR_RATIO;
+
     public static final double kDriveEncoderDistancePerPulse = (WHEEL_DIAMETER * Math.PI) / (double) (kdriveEncoderCPR) / 6.75; // 6.75 divided by 1.3?
-    public static final double kDriveVelocityConversionFactor = (kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR);
-    public static final double kDrivePositionConversionFactor = kDriveEncoderDistancePerPulse * kdriveEncoderCPR;
+    public static final double kDriveVelocityConversionFactor = kDriveDistancePerROTATION/*(kDriveEncoderDistancePerPulse * (double) kdriveEncoderCPR)*/;
+    public static final double kDrivePositionConversionFactor = kDriveDistancePerROTATION/*kDriveEncoderDistancePerPulse * kdriveEncoderCPR*/;
+
+    
 
     public static final double kTurningEncoderDistancePerPulse =
         // Assumes the encoders are on a 1:1 reduction with the module shaft.
@@ -192,7 +196,7 @@ public final class Constants {
 
     public static final double kSpoolCircumference = SPOOL_DIAMETER.magnitude() * Math.PI;
 
-    public static final Distance kElevatorDistancePerPulse = ((SPOOL_DIAMETER.times(Math.PI)).div((double) kElevatorEncoderRes)).div(GEAR_RATIO);
+    public static final Distance kElevatorDistancePerPulse = ((SPOOL_DIAMETER.times(Math.PI)).div((double) kElevatorEncoderRes));
     public static final double kElevatorMaxPosition = 24000; //22000?
     public static final double[] kElevatorSetpoints = new double[] {0, 800, 2544, 7948, 14800, 22800}; 
     public static final Map<String, Integer> ELEVATOR_HEIGHTS = 

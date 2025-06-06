@@ -307,13 +307,13 @@ public class RobotContainer {
     L1BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L1"), () -> m_elevatorSubsystem.isAtLevel("L1")));
     L2BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L2"), () -> m_elevatorSubsystem.isAtLevel("L2")));
     L3BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L3"), () -> m_elevatorSubsystem.isAtLevel("L3")));
-    // L4BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L4"), () -> m_elevatorSubsystem.isAtLevel("L4")));
+    L4BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L4"), () -> m_elevatorSubsystem.isAtLevel("L4")));
     
     bongoPlaceL2Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L2"));
     bongoPlaceL3Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L3"));
     //bongoPlaceL4Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 4).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
-    clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    // clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     algaeToggleTrigger.onTrue(new StartEndCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem::stopAlgae, m_algaeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
 
@@ -333,17 +333,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_chooser.getSelected();
+    // return m_chooser.getSelected();
     // test this (commented out for now -b)
-    // return coralPlacingCommand;
-
-    // just comment and uncomment
-    // return visionLeftReefAuto;
-    // return visionRightReefAuto;
-    // return VisionMiddleReefAuto;
-
     // if all goes wrong use this
-    // return taxiAutoCommand.withTimeout(2);
+    return taxiAutoCommand.withTimeout(2);
     // return new RunCommand(() -> m_swerve.drive(-5, 0, 0, true)).withTimeout(2);
   }
 }
