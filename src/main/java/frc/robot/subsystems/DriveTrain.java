@@ -120,7 +120,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void slowSpeed() {
-    speedMultiplier = 0.3;
+    speedMultiplier = 0.2;
     SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
 
@@ -130,7 +130,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void fastSpeed() {
-    speedMultiplier = 1.33;
+    speedMultiplier = 1.167;
     SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
 

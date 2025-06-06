@@ -104,8 +104,8 @@ public class RobotContainer {
   Trigger deAlgaeL2Trigger = m_joystick.button(11);
 
   // Controller triggers
-  Trigger halfSpeedTrigger = m_controller.leftTrigger(0.01);
-  Trigger fastSpeedTrigger = m_controller.rightTrigger(0.01);
+  Trigger halfSpeedTrigger = m_controller.leftTrigger();
+  Trigger fastSpeedTrigger = m_controller.rightTrigger();
   Trigger speedChangeTrigger = m_controller.leftTrigger(0.01).or(m_controller.rightTrigger(0.01));
   
   Trigger fieldRelativeHoldTrigger = m_controller.rightBumper();
@@ -123,7 +123,7 @@ public class RobotContainer {
   Trigger bongoPlaceL3Trigger = m_bongoController.getRightFullBongo();
   // Trigger bongoPlaceL4Trigger = m_bongoController.getLeftFullBongo().and(m_bongoController.getRightFullBongo());
 
-  Trigger clapIntakeTrigger = m_bongoController.getClap();
+  //Trigger clapIntakeTrigger = m_bongoController.getClap();
 
   Trigger algaeToggleTrigger = m_bongoController.getMiddleButton();
 
@@ -203,7 +203,7 @@ public class RobotContainer {
     m_chooser.addOption("Middle Reef Auto", middleAutoCommand);
     m_chooser.addOption("Left Reef Auto", leftAutoCommand);
     m_chooser.addOption("Right Reef Auto", rightAutoCommand);
-    m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), Autos.coralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L2")));
+    //m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), Autos.coralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L2")));
   
     SmartDashboard.putData(m_chooser);
     
@@ -336,7 +336,7 @@ public class RobotContainer {
     // return m_chooser.getSelected();
     // test this (commented out for now -b)
     // if all goes wrong use this
-    return taxiAutoCommand.withTimeout(2);
+    return taxiAutoCommand;
     // return new RunCommand(() -> m_swerve.drive(-5, 0, 0, true)).withTimeout(2);
   }
 }

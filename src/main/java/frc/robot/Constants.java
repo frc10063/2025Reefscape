@@ -102,7 +102,7 @@ public final class Constants {
     // The SysId tool provides a convenient method for obtaining these values for your robot.
 
     public static final double MAX_LINEAR_SPEED = 3.5;
-    public static final double LINEAR_SPEED = 3;
+    public static final double LINEAR_SPEED = 2.5;
     public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
   }
   public static final class ModuleConstants {
@@ -113,8 +113,8 @@ public final class Constants {
     public static final int kdriveEncoderCPR = 42; // 4096
 
     public static final double drivekS = 0.1; // default 1 test pls
-    public static final double drivekV = 2.07; // default 0.8 maybe 2.5?
-    public static final double drivekA = 0.5; // default 0.15 maybe 0.16?
+    public static final double drivekV = 2.54; // default 0.8 maybe 2.5? was 2.07
+    public static final double drivekA = 0.16; // default 0.15 maybe 0.16? was 0.5
     
     public static final double turningkS = 0.2;
     public static final double turningkV = 0.5; // 
@@ -142,7 +142,7 @@ public final class Constants {
     
     public static double startingDriveKp = 0.8; //0.5 
     public static double startingDriveKd = 0.021; // 0.01875
-    public static double startingDriveKi = 0.3; //0.01
+    public static double startingDriveKi = 0.2; //0.01
   }
 
 

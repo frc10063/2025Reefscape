@@ -151,7 +151,7 @@ public class SwerveModule extends SubsystemBase {
     desiredState.cosineScale(encoderRotation);
 
     // ADDED FEEDFORWARD PARAM
-    double driveFeedforward = m_driveFeedforward.calculate(m_driveMotor.getVelocity().refresh().getValueAsDouble() * kDriveVelocityConversionFactor, desiredState.speedMetersPerSecond);
+    double driveFeedforward = m_driveFeedforward.calculate(desiredState.speedMetersPerSecond);
     double turnFeedforward = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
 
     double driveOutput =
