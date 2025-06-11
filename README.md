@@ -6,6 +6,11 @@ This is SCRAP’s code for the 2025 competition robot Jalapeno.
 
 (3/5/25)
 
+![Jalapeno being a material girl](https://github.com/user-attachments/assets/27415291-de37-42d6-af5a-34e4e846342c)
+
+
+(6/7/25)
+
 # Credits 
 We are thankful for our Programmers that...
 
