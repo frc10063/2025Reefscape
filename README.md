@@ -1,15 +1,15 @@
 # 2025 Reefscape
 This is SCRAP’s code for the 2025 competition robot Jalapeno.
 
-![Jalapeno](https://github.com/user-attachments/assets/c2132e90-67de-4c38-b4c4-713de08de762)
+![Jalapeno](https://github.com/user-attachments/assets/c2132e90-67de-4c38-b4c4-713de08de762) ![Jalapeno being a material girl](https://github.com/user-attachments/assets/27415291-de37-42d6-af5a-34e4e846342c)
 
 
-(3/5/25)
-
-![Jalapeno being a material girl](https://github.com/user-attachments/assets/27415291-de37-42d6-af5a-34e4e846342c)
+(3/5/25)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~(6/7/25)
 
 
-(6/7/25)
+
+
+
 
 # Credits 
 We are thankful for our Programmers that...
