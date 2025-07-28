@@ -12,36 +12,30 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-import frc.robot.Constants.IntakeConstants;
+import static frc.robot.Constants.EndEffectorConstants.*;
 
-public class IntakeSubsystem extends SubsystemBase {
+public class EndEffectorSubsystem extends SubsystemBase {
 
-    // private final SparkMax m_intakeRightMotor;
-    // private final SparkMax m_intakeLeftMotor;
-    private final SparkMax m_intakeMotor;
+    private final SparkMax m_endEffectorMotor;
     ElevatorSubsystem m_elevatorSubsystem;
+    
 
-    private final double kMaxSpeed = 0.4; // Full speed? Not sure if it's needed
-    // public double L4SpeedMultiplier = 1;
-
-    public IntakeSubsystem(ElevatorSubsystem m_elevatorSubsystem) {
+    public EndEffectorSubsystem(ElevatorSubsystem m_elevatorSubsystem) {
         this.m_elevatorSubsystem = m_elevatorSubsystem;
-        m_intakeMotor = new SparkMax(IntakeConstants.kIntakePort, MotorType.kBrushless);
-        m_intakeMotor.configure(IntakeConstants.ENDEFFECTOR_CONFIG, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-        // invert to spin in opposite directions prob
-        // m_intakeLeftMotor.setInverted(true);
-    }
-
-    public Command runIntakeMaxSpeed() {
-        return Commands.run(() -> runIntake(kMaxSpeed)).withTimeout(1).finallyDo(this::stopIntake);
+        m_endEffectorMotor = new SparkMax(END_EFFECTOR_PORT, MotorType.kBrushless);
+        m_endEffectorMotor.configure(ENDEFFECTOR_CONFIG, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void runIntake(double intakeSpeed) {
-        m_intakeMotor.set(intakeSpeed);
+        m_endEffectorMotor.set(intakeSpeed);
     }
 
     public void stopIntake() {
-        m_intakeMotor.set(0);
+        m_endEffectorMotor.set(0);
+    }
+
+    public Command runIntakeMaxSpeed() {
+        return Commands.run(() -> runIntake(MAX_SPEED)).withTimeout(1).finallyDo(this::stopIntake);
     }
 
     public Command runL1EndEffector() {

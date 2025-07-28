@@ -11,14 +11,14 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.EndEffectorSubsystem;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
   
-  public static Command coralPlacingAuto(ElevatorSubsystem m_elevatorSubsystem, IntakeSubsystem m_intakeSubsystem, String level) {
+  public static Command coralPlacingAuto(ElevatorSubsystem m_elevatorSubsystem, EndEffectorSubsystem m_endEffectorSubsystem, String level) {
     return Commands.sequence(m_elevatorSubsystem.moveElevatorTo(level),
-    m_intakeSubsystem.runEndEffector(),
+    m_endEffectorSubsystem.runEndEffector(),
     m_elevatorSubsystem.moveElevatorTo("ZERO"));
   }
 
@@ -32,7 +32,10 @@ public final class Autos {
       m_elevatorSubsystem.moveElevatorTo("ZERO"));
   }
   public static Command taxi(DriveTrain m_swerve) {
-    return new TaxiAuto(m_swerve).withTimeout(2);
+    return new Move(m_swerve, -2, 0, true).withTimeout(2);
+  }
+  public static Command L1Sequence(DriveTrain m_swerve, EndEffectorSubsystem m_endEffectorSubsystem) {
+    return Commands.run(() -> m_swerve.drive(0, -0.3, 0, false)).alongWith(m_endEffectorSubsystem.runL1EndEffector());
   }
 
 

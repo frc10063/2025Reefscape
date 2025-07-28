@@ -49,6 +49,7 @@ public final class Constants {
     public static final int kBongoControllerPort = 2;
     public static final int kDDRControllerPort = 3;
 
+    public static final boolean TESTING_MODE = true;
   }
 
   public static final class DriveConstants {
@@ -110,12 +111,12 @@ public final class Constants {
     public static final int kturningEncoderCPR = 4096;
     public static final int kdriveEncoderCPR = 42; // 4096
 
-    public static final double drivekS = 0.1; // default 1 test pls
-    public static final double drivekV = 2.54; // default 0.8 maybe 2.5? was 2.07
-    public static final double drivekA = 0.16; // default 0.15 maybe 0.16? was 0.5
+    public static final double drivekS = 0.1;
+    public static final double drivekV = 2.54; 
+    public static final double drivekA = 0.16; 
     
     public static final double turningkS = 0.2;
-    public static final double turningkV = 0.5; // 
+    public static final double turningkV = 0.5;
     public static final double turningkA = 0;
 
     public static final double DRIVE_GEAR_RATIO = 6.75;
@@ -207,7 +208,7 @@ public final class Constants {
         "L4", 22800);
     public static final double[] kElevatorDeAlgaeSetpoints = new double[] {9300, 15000};
 
-    public static final double kP = 0.0025; // 0.0025
+    public static final double kP = 0.0025;
     public static final double kI = 0.0002;
     public static final double kD = 0;
 
@@ -216,16 +217,30 @@ public final class Constants {
     public static final double kV = 0.00071;
     public static final double kS = 0;
 
-    public static final double kMaxVelocity = 40000;
-    public static final double kMaxAcceleration = 45000;
+    public static final double kMaxVelocity = 25000;
+    public static final double kMaxAcceleration = 25000;
+
+    // thinking out loud here
+    // so 2048 encoder pulses is the equivalent of one rotation of the spool thing
+    // One rotation of the spool thing is equal to pi * diameter inches (roughly 3.14 if diameter is 1)
+    // Bc the current measurements are in pulses the kp is correcting 0.0025 of the error
+    // 0.0025 * 2048 means a kp of 5.12 essentially per rotation
+    // If Im basing the hieghts on inches then it should be 5.12/3.14 = 1.63 as a kp
+    // Im gonna guess the same calculation for all of these things
+    // kp = 1.63
+    // ki = 0.13
+    // kg = 0.28 (should remain same bc its volts)
+    // ka = 0.13
+    // kv = 0.463
+
   }
-  public static final class IntakeConstants {
+  public static final class EndEffectorConstants {
     
-    public static final int kIntakePort = 12;
+    public static final int END_EFFECTOR_PORT = 12;
 
     public static final SparkBaseConfig ENDEFFECTOR_CONFIG = new SparkMaxConfig()
         .inverted(true);
-    public static double kMaxSpeed = 0.6;
+    public static double MAX_SPEED = 0.4;
   }
 
 

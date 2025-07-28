@@ -21,14 +21,14 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.EndEffectorSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class RightReefAuto extends SequentialCommandGroup {
   /** Creates a new RightReefAuto. */
-  public RightReefAuto(DriveTrain m_swerve, IntakeSubsystem m_intakeSubsystem) {
+  public RightReefAuto(DriveTrain m_swerve, EndEffectorSubsystem m_endEffectorSubsystem) {
     TrajectoryConfig config =
         new TrajectoryConfig(
                 AutoConstants.kMaxSpeedMetersPerSecond,
@@ -62,6 +62,6 @@ public class RightReefAuto extends SequentialCommandGroup {
     addCommands(new InstantCommand(() -> m_swerve.resetOdometry(toReefTrajectory.getInitialPose())),
         swerveControllerCommand,
         new InstantCommand(() -> m_swerve.drive(0, 0, 0, false)), 
-        new RunCommand(() -> m_intakeSubsystem.runIntake(0.5), m_intakeSubsystem));
+        new RunCommand(() -> m_endEffectorSubsystem.runIntake(0.5), m_endEffectorSubsystem));
   }
 }
