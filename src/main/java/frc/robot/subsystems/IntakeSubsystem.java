@@ -50,4 +50,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public Command runEndEffector() {
         return Commands.either(runL1EndEffector(), runIntakeMaxSpeed(), () -> m_elevatorSubsystem.isAtLevel("L1"));
     }
+    public Command coralToPosition() {
+        return Commands.run(() -> this.runIntake(0.2)).withTimeout(0.1).finallyDo(this::stopIntake);
+    }
 }

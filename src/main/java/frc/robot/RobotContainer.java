@@ -66,7 +66,7 @@ public class RobotContainer {
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final Bongo m_bongoController = new Bongo(OperatorConstants.kBongoControllerPort);
-  private final DDRMat m_ddrController = new DDRMat(OperatorConstants.kDDRControllerPort);
+  // private final DDRMat m_ddrController = new DDRMat(OperatorConstants.kDDRControllerPort);
 
 
   // slew rate limiters (optional)
@@ -96,6 +96,7 @@ public class RobotContainer {
 
   // Override for if elevator encoder readings are bad
   Trigger OverrideElevatorSafetyTrigger = m_joystick.button(9);
+  Trigger coralManipulatingTrigger = m_joystick.button(8);
 
   Trigger forwardAlgaeTrigger = m_joystick.button(6);
   Trigger reverseAlgaeTrigger = m_joystick.button(7);
@@ -121,7 +122,8 @@ public class RobotContainer {
 
   Trigger bongoPlaceL2Trigger = m_bongoController.getLeftFullBongo();
   Trigger bongoPlaceL3Trigger = m_bongoController.getRightFullBongo();
-  // Trigger bongoPlaceL4Trigger = m_bongoController.getLeftFullBongo().and(m_bongoController.getRightFullBongo());
+  Trigger bongoZeroTrigger = m_bongoController.getBottomLeft().and(m_bongoController.getBottomRight());
+ // Trigger bongoPlaceL4Trigger = m_bongoController.getLeftFullBongo().and(m_bongoController.getRightFullBongo());
 
   //Trigger clapIntakeTrigger = m_bongoController.getClap();
 
@@ -179,13 +181,13 @@ public class RobotContainer {
   }
   // ddr speed changing
   public void addDDRSpeed() {
-    if (DDRSpeedMultiplier < 4) {
-      DDRSpeedMultiplier = DDRSpeedMultiplier + 1;
+    if (DDRSpeedMultiplier < 2) {
+      DDRSpeedMultiplier = DDRSpeedMultiplier + 0.2;
     }
   }
   public void lowerDDRSpeed() {
     if (DDRSpeedMultiplier > 1) {
-      DDRSpeedMultiplier = DDRSpeedMultiplier - 1;
+      DDRSpeedMultiplier = DDRSpeedMultiplier - 0.2;
     }
   }
   public double calculateSpeedMultiplier() {
@@ -229,9 +231,9 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.LINEAR_SPEED, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.LINEAR_SPEED, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
                   fieldRelative), 
                   m_swerve));
 
@@ -303,6 +305,7 @@ public class RobotContainer {
 
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
+    coralManipulatingTrigger.onTrue(m_intakeSubsystem.coralToPosition());
     // Bongo
     L1BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L1"), () -> m_elevatorSubsystem.isAtLevel("L1")));
     L2BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L2"), () -> m_elevatorSubsystem.isAtLevel("L2")));
@@ -313,6 +316,7 @@ public class RobotContainer {
     bongoPlaceL3Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L3"));
     //bongoPlaceL4Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 4).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
+    bongoZeroTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo("ZERO"));
     // clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     algaeToggleTrigger.onTrue(new StartEndCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem::stopAlgae, m_algaeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 

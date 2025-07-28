@@ -31,7 +31,7 @@ public class TaxiAuto extends Command {
   
   @Override
   public void execute() {
-    double xSpeed = xController.calculate(m_swerve.getPose().getX(), -2);
+    double xSpeed = xController.calculate(m_swerve.getPose().getX(), -1);
     m_swerve.drive(xSpeed, 0, 0, true);
   }
 

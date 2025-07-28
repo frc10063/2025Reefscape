@@ -99,8 +99,6 @@ public final class Constants {
     
     public static final boolean kGyroReversed = false;
 
-    // The SysId tool provides a convenient method for obtaining these values for your robot.
-
     public static final double MAX_LINEAR_SPEED = 3.5;
     public static final double LINEAR_SPEED = 2.5;
     public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
@@ -218,8 +216,8 @@ public final class Constants {
     public static final double kV = 0.00071;
     public static final double kS = 0;
 
-    public static final double kMaxVelocity = 25000;
-    public static final double kMaxAcceleration = 25000;
+    public static final double kMaxVelocity = 40000;
+    public static final double kMaxAcceleration = 45000;
   }
   public static final class IntakeConstants {
     
