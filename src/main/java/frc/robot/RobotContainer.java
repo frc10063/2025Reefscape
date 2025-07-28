@@ -36,9 +36,8 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 // import frc.robot.commands.ChaseTagCommand;
-import frc.robot.commands.MoveForwardAuto;
 import frc.robot.commands.RotationCommand;
-import frc.robot.commands.TaxiAuto;
+import frc.robot.commands.Move;
 import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
 import frc.robot.commands.RightReefAuto;
@@ -47,7 +46,7 @@ import frc.robot.subsystems.Bongo;
 import frc.robot.subsystems.DDRMat;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.EndEffectorSubsystem;
 // import frc.robot.subsystems.AlgaeSubsystem;
 // import frc.robot.subsystems.VisionSubsystem;
 
@@ -78,7 +77,7 @@ public class RobotContainer {
   // Subsystems
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final DriveTrain m_swerve = new DriveTrain();
-  private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem(m_elevatorSubsystem);
+  private final EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem(m_elevatorSubsystem);
   private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
   // private final VisionSubsystem m_vision = new VisionSubsystem(m_swerve);
   
@@ -142,7 +141,6 @@ public class RobotContainer {
   
 
   // Commands
-  Command offLineAutoCommand = new MoveForwardAuto(m_swerve);
   RotationCommand rotMiddle90Command = new RotationCommand(m_swerve, -Math.PI/2);
   // for starting left side 
   RotationCommand rotLeftCommand = new RotationCommand(m_swerve, -Math.PI/3);
@@ -152,13 +150,13 @@ public class RobotContainer {
   // Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
   // Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
   
-  Command taxiAutoCommand = new TaxiAuto(m_swerve);
+  // Command taxiAutoCommand = new Move(m_swerve, -2, 0, true);
   // Command visionLeftReefAuto = new VisionLeftReefAuto();
   // Command visionRightReefAuto = new VisionRightReefAuto();
 
-  Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_intakeSubsystem);
-  Command leftAutoCommand = new LeftReefAuto(m_swerve, m_intakeSubsystem);
-  Command rightAutoCommand = new RightReefAuto(m_swerve, m_intakeSubsystem);
+  Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_endEffectorSubsystem);
+  Command leftAutoCommand = new LeftReefAuto(m_swerve, m_endEffectorSubsystem);
+  Command rightAutoCommand = new RightReefAuto(m_swerve, m_endEffectorSubsystem);
 
   // chooser for autos
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -199,11 +197,11 @@ public class RobotContainer {
   public RobotContainer() {
     
     // options for sendable auto chooser
-    m_chooser.setDefaultOption("Taxi Auto", taxiAutoCommand);
+    m_chooser.setDefaultOption("Taxi Auto", Autos.taxi(m_swerve));
     m_chooser.addOption("Middle Reef Auto", middleAutoCommand);
     m_chooser.addOption("Left Reef Auto", leftAutoCommand);
     m_chooser.addOption("Right Reef Auto", rightAutoCommand);
-    //m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), Autos.coralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L2")));
+    //m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L2")));
   
     SmartDashboard.putData(m_chooser);
     
@@ -290,7 +288,7 @@ public class RobotContainer {
     L4Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L4"));
 
 
-    runIntakeTrigger.onTrue(m_intakeSubsystem.runEndEffector());
+    runIntakeTrigger.onTrue(m_endEffectorSubsystem.runEndEffector());
 
 
     forwardAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
@@ -304,16 +302,16 @@ public class RobotContainer {
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
     // Bongo
-    L1BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L1"), () -> m_elevatorSubsystem.isAtLevel("L1")));
-    L2BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L2"), () -> m_elevatorSubsystem.isAtLevel("L2")));
-    L3BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L3"), () -> m_elevatorSubsystem.isAtLevel("L3")));
-    L4BongoTrigger.onTrue(Commands.either(m_intakeSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L4"), () -> m_elevatorSubsystem.isAtLevel("L4")));
+    L1BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L1"), () -> m_elevatorSubsystem.isAtLevel("L1")));
+    L2BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L2"), () -> m_elevatorSubsystem.isAtLevel("L2")));
+    L3BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L3"), () -> m_elevatorSubsystem.isAtLevel("L3")));
+    L4BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L4"), () -> m_elevatorSubsystem.isAtLevel("L4")));
     
-    bongoPlaceL2Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L2"));
-    bongoPlaceL3Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, "L3"));
-    //bongoPlaceL4Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_intakeSubsystem, 4).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+    bongoPlaceL2Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L2"));
+    bongoPlaceL3Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L3"));
+    //bongoPlaceL4Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, 4).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
-    // clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    // clapIntakeTrigger.onTrue(new StartEndCommand(m_endEffectorSubsystem::runIntakeMaxSpeed, m_endEffectorSubsystem::stopIntake, m_endEffectorSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     algaeToggleTrigger.onTrue(new StartEndCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem::stopAlgae, m_algaeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
 
@@ -321,7 +319,7 @@ public class RobotContainer {
     // DDRL2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
     // DDRL3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
 
-    // DDRIntakeTrigger.onTrue(new RunCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem).withTimeout(0.5));
+    // DDRIntakeTrigger.onTrue(new RunCommand(m_endEffectorSubsystem::runIntakeMaxSpeed, m_endEffectorSubsystem).withTimeout(0.5));
     // DDRL4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
     // DDRIncreaseSpeedTrigger.onTrue(new InstantCommand(this::addDDRSpeed));
     // DDRDecreaseSpeedTrigger.onTrue(new InstantCommand(this::lowerDDRSpeed));
@@ -334,9 +332,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return m_chooser.getSelected();
-    // test this (commented out for now -b)
-    // if all goes wrong use this
-    return taxiAutoCommand;
-    // return new RunCommand(() -> m_swerve.drive(-5, 0, 0, true)).withTimeout(2);
+    
+    return Autos.taxi(m_swerve);
+    
   }
 }

@@ -11,13 +11,21 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveTrain;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class TaxiAuto extends Command {
+public class Move extends Command {
   /** Creates a new TaxiAuto. */
   private final DriveTrain m_swerve;
   private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(2, 3);
+  private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(2, 3);
   private final ProfiledPIDController xController = new ProfiledPIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD, xConstraints);
-  public TaxiAuto(DriveTrain m_swerve) {
+  private final ProfiledPIDController yController = new ProfiledPIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD, xConstraints);
+  private double xDistance;
+  private double yDistance;
+  private boolean fieldRelative;
+  public Move(DriveTrain m_swerve, double xDistance, double yDistance, boolean fieldRelative) {
     this.m_swerve = m_swerve;
+    this.xDistance = xDistance;
+    this.yDistance = yDistance;
+    this.fieldRelative = fieldRelative;
     addRequirements(m_swerve);
   }
 
@@ -26,19 +34,22 @@ public class TaxiAuto extends Command {
   public void initialize() {
     xController.reset(m_swerve.getPose().getX());
     xController.setTolerance(0.1);
+    yController.reset(m_swerve.getPose().getX());
+    yController.setTolerance(0.1);
   }
 
   
   @Override
   public void execute() {
-    double xSpeed = xController.calculate(m_swerve.getPose().getX(), -2);
-    m_swerve.drive(xSpeed, 0, 0, true);
+    double xSpeed = xController.calculate(m_swerve.getPose().getX(), xDistance);
+    double ySpeed = xController.calculate(m_swerve.getPose().getX(), yDistance);
+    m_swerve.drive(xSpeed, ySpeed, 0, fieldRelative);
   }
 
   
   @Override
   public void end(boolean interrupted) {
-    m_swerve.drive(0, 0, 0, true);
+    m_swerve.drive(0, 0, 0, fieldRelative);
   }
 
   

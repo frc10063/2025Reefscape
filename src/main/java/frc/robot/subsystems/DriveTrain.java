@@ -159,8 +159,6 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Rotation", rot);
     SmartDashboard.putBoolean("Field Relative", fieldRelative);
 
-    var maxSpeed = MAX_LINEAR_SPEED;
-
     var swerveModuleStates = kDriveKinematics.toSwerveModuleStates(
         ChassisSpeeds.discretize(
             fieldRelative
@@ -169,7 +167,7 @@ public class DriveTrain extends SubsystemBase {
                 : new ChassisSpeeds(ySpeed, xSpeed, rot),
             kDrivePeriod));
     SwerveDriveKinematics.desaturateWheelSpeeds(
-        swerveModuleStates, maxSpeed);
+        swerveModuleStates, MAX_LINEAR_SPEED);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
