@@ -105,7 +105,7 @@
 //       currentTarget = target;
 //       // var?
 //       int fiducialId = target.getFiducialId();
-//       if (target.getPoseAmbiguity() <= 0.2 && fiducalId >= 0 && fiducalId < tagPoses.size()) {
+//       if (target.getPoseAmbiguity() <= 0.2 && fiducialId >= 0 && fiducialId < tagPoses.size()) {
 //         var targetPose = tagPoses.get(fiducialId - 1);
 //         Transform3d camToTarget = target.getBestCameraToTarget();
 //         Pose3d camPose = targetPose.transformBy(camToTarget.inverse());

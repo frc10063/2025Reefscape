@@ -53,20 +53,20 @@ public final class Constants {
   }
 
   public static final class DriveConstants {
-    public static final int kFrontLeftDriveMotorPort = 2;
-    public static final int kRearLeftDriveMotorPort = 3;
-    public static final int kRearRightDriveMotorPort = 4;
-    public static final int kFrontRightDriveMotorPort = 5;
+    public static final int kFrontLeftDriveMotorPort = 5; // 2 3 4 5
+    public static final int kRearLeftDriveMotorPort = 2;
+    public static final int kRearRightDriveMotorPort = 3;
+    public static final int kFrontRightDriveMotorPort = 4;
 
-    public static final int kFrontLeftTurningMotorPort = 6;
-    public static final int kRearLeftTurningMotorPort = 7;
-    public static final int kRearRightTurningMotorPort = 8;
-    public static final int kFrontRightTurningMotorPort = 9;
+    public static final int kFrontLeftTurningMotorPort = 9; // 6 7 8 9
+    public static final int kRearLeftTurningMotorPort = 6;
+    public static final int kRearRightTurningMotorPort = 7;
+    public static final int kFrontRightTurningMotorPort = 8;
 
-    public static final int kFrontLeftTurningEncoderPorts = 3;
-    public static final int kRearLeftTurningEncoderPorts = 2;
-    public static final int kRearRightTurningEncoderPorts = 1; 
-    public static final int kFrontRightTurningEncoderPorts = 0;
+    public static final int kFrontLeftTurningEncoderPorts = 0; // 3 2 1 0
+    public static final int kRearLeftTurningEncoderPorts = 3;
+    public static final int kRearRightTurningEncoderPorts = 2; 
+    public static final int kFrontRightTurningEncoderPorts = 1;
 
     public static final boolean kFrontLeftTurningEncoderReversed = false;
     public static final boolean kRearLeftTurningEncoderReversed = false;
@@ -78,10 +78,10 @@ public final class Constants {
     public static final boolean kFrontRightDriveEncoderReversed = false;
     public static final boolean kRearRightDriveEncoderReversed = false;
 
-    public static final double kFrontLeftExpectedZero = 0.935; // 0.935
-    public static final double kRearLeftExpectedZero = 0.754; // 0.754
-    public static final double kRearRightExpectedZero = 0.483; // 0.483
-    public static final double kFrontRightExpectedZero = 0.436; // 0.436
+    public static final double kFrontLeftExpectedZero = 0.436; // 0.935
+    public static final double kRearLeftExpectedZero = 0.935; // 0.754
+    public static final double kRearRightExpectedZero = 0.754; // 0.483
+    public static final double kFrontRightExpectedZero = 0.483; // 0.436
 
     public static final double kDrivePeriod = TimedRobot.kDefaultPeriod;
 
@@ -100,8 +100,8 @@ public final class Constants {
     
     public static final boolean kGyroReversed = false;
 
-    public static final double MAX_LINEAR_SPEED = 3.5;
-    public static final double LINEAR_SPEED = 2.5;
+    public static final double MAX_LINEAR_SPEED = 1; //3.5
+    public static final double LINEAR_SPEED = 1; //2.5
     public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
   }
   public static final class ModuleConstants {
