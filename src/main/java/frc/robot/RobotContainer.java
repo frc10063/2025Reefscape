@@ -35,7 +35,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-// import frc.robot.commands.ChaseTagCommand;
+import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.RotationCommand;
 import frc.robot.commands.Move;
 import frc.robot.commands.LeftReefAuto;
@@ -48,7 +48,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 // import frc.robot.subsystems.AlgaeSubsystem;
-// import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.PoseEstimatorSubsystem;
 
 
 /**
@@ -79,7 +79,7 @@ public class RobotContainer {
   private final DriveTrain m_swerve = new DriveTrain();
   private final EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem(m_elevatorSubsystem);
   private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
-  // private final VisionSubsystem m_vision = new VisionSubsystem(m_swerve);
+  private final PoseEstimatorSubsystem m_vision = new PoseEstimatorSubsystem(m_swerve);
   
 
 
@@ -148,7 +148,7 @@ public class RobotContainer {
   RotationCommand rotLeftCommand = new RotationCommand(m_swerve, -Math.PI/3);
   // for right side
   RotationCommand rotRightCommand = new RotationCommand(m_swerve, -2 * Math.PI/3);
-  // ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
+  ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
   // Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
   // Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
   
@@ -229,9 +229,9 @@ public class RobotContainer {
         new RunCommand(
           () ->
               m_swerve.drive(
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05)) * DriveConstants.LINEAR_SPEED, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05)) * DriveConstants.LINEAR_SPEED, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.05)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
                   fieldRelative), 
                   m_swerve));
 
@@ -337,7 +337,8 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return m_chooser.getSelected();
     
-    return Autos.taxi(m_swerve);
+    // return Autos.taxi(m_swerve);
+    return chaseTagCommand;
     
   }
 }
