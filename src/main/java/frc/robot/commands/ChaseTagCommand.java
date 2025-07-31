@@ -19,6 +19,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -35,7 +36,7 @@ public class ChaseTagCommand extends Command {
           new Rotation3d(0, 0, Math.PI/2));
 //   private final PhotonCamera photonCamera;
   private final DriveTrain swerve;
-  private final VisionSubsystem vision;
+  private final PoseEstimatorSubsystem vision;
 
   private final ProfiledPIDController xController = new ProfiledPIDController(3, 0, 0, xConstraints);
   private final ProfiledPIDController yController = new ProfiledPIDController(3, 0, 0, yConstraints);
@@ -43,7 +44,7 @@ public class ChaseTagCommand extends Command {
 
   private PhotonTrackedTarget lastTarget;
 
-  public ChaseTagCommand(VisionSubsystem vision, DriveTrain swerve) {
+  public ChaseTagCommand(PoseEstimatorSubsystem vision, DriveTrain swerve) {
     this.swerve = swerve;
     this.vision = vision;
 
@@ -58,7 +59,7 @@ public class ChaseTagCommand extends Command {
   @Override
   public void initialize() {
     lastTarget = null;
-    var robotPose = vision.getPoseEstimate();
+    var robotPose = swerve.getPose();
     rotController.reset(robotPose.getRotation().getRadians());
     xController.reset(robotPose.getX());
     yController.reset(robotPose.getY());
@@ -67,7 +68,7 @@ public class ChaseTagCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    var robotPose2d = vision.getPoseEstimate();
+    var robotPose2d = swerve.getPose();
     var robotPose = 
         new Pose3d(
           robotPose2d.getX(),
