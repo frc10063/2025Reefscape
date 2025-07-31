@@ -16,11 +16,11 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ChaseTagCommand extends Command {
@@ -50,7 +50,7 @@ public class ChaseTagCommand extends Command {
 
     xController.setTolerance(0.05);
     yController.setTolerance(0.05);
-    rotController.setTolerance(Units.degreesToRadians(3));
+    rotController.setTolerance(Units.degreesToRadians(5));
     rotController.enableContinuousInput(-Math.PI, Math.PI);
     addRequirements(swerve);
   }
@@ -76,6 +76,10 @@ public class ChaseTagCommand extends Command {
           0,
           new Rotation3d(0,0, robotPose2d.getRotation().getRadians())
         );
+    SmartDashboard.putString("Current Pose", String.format("(%.2f, %.2f) %.2f degrees", 
+      robotPose2d.getX(),
+      robotPose2d.getY(), 
+      robotPose2d.getRotation().getDegrees()));
     var photonRes = vision.getNewestResult();
     if (photonRes.hasTargets()) {
       var targetOpt = photonRes.getTargets().stream()
@@ -93,9 +97,18 @@ public class ChaseTagCommand extends Command {
         var camToTarget = target.getBestCameraToTarget();
         // the target pose is the distance of camera position to the target
         var targetPose = cameraPose.transformBy(camToTarget);
+        SmartDashboard.putString("Target Pose", String.format("(%.2f, %.2f) %.2f degrees", 
+          targetPose.getX(),
+          targetPose.getY(), 
+          targetPose.toPose2d().getRotation().getDegrees()));
         // the GOAL pose of robot is the target accounting for where
         // the robot should be relative to (in this case, 1.5m in front)
         var goalPose = targetPose.transformBy(tagToGoal).toPose2d();
+
+        SmartDashboard.putString("Goal Pose", String.format("(%.2f, %.2f) %.2f degrees", 
+          goalPose.getX(),
+          goalPose.getY(), 
+          goalPose.getRotation().getDegrees()));
         // set the x y and rot controllers to follow that goal
         xController.setGoal(goalPose.getX());
         yController.setGoal(goalPose.getY());
@@ -118,7 +131,7 @@ public class ChaseTagCommand extends Command {
       if (rotController.atGoal()) {
         rot = 0;
       }
-      swerve.drive(xSpeed, ySpeed, rot, true);
+      swerve.drive(0, 0, rot, true);
       
     }
   }

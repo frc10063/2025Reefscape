@@ -14,8 +14,8 @@ import frc.robot.subsystems.DriveTrain;
 public class RotationCommand extends Command {
   /** Creates a new RotationCommand. */
   private final DriveTrain m_swerve;
-  private static final TrapezoidProfile.Constraints rotConstraints = new TrapezoidProfile.Constraints(8, 8);
-  private final ProfiledPIDController rotController = new ProfiledPIDController(1, 0, 0, rotConstraints);
+  private static final TrapezoidProfile.Constraints rotConstraints = new TrapezoidProfile.Constraints(Math.PI, Math.PI);
+  private final ProfiledPIDController rotController = new ProfiledPIDController(3, 0, 0, rotConstraints);
   private final double targetAngle;
 
   public RotationCommand(DriveTrain m_swerve, double angle) {

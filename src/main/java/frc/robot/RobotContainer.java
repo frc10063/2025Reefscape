@@ -34,6 +34,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AlignCommand;
+import frc.robot.commands.AlignToTagCommand;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.RotationCommand;
@@ -49,6 +51,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 // import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
+
 
 
 /**
@@ -113,6 +116,8 @@ public class RobotContainer {
   Trigger fieldRelativeToggleTrigger = m_controller.b();
   Trigger resetGyroTrigger = m_controller.y();
 
+  Trigger chaseTagTrigger = m_controller.leftBumper();
+
   // Bongo Triggers for fun
   Trigger L1BongoTrigger = m_bongoController.getBottomLeft();
   Trigger L2BongoTrigger = m_bongoController.getTopLeft();
@@ -149,7 +154,7 @@ public class RobotContainer {
   // for right side
   RotationCommand rotRightCommand = new RotationCommand(m_swerve, -2 * Math.PI/3);
   ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
-  // Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
+  Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
   // Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
   
   // Command taxiAutoCommand = new Move(m_swerve, -2, 0, true);
@@ -159,6 +164,8 @@ public class RobotContainer {
   Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_endEffectorSubsystem);
   Command leftAutoCommand = new LeftReefAuto(m_swerve, m_endEffectorSubsystem);
   Command rightAutoCommand = new RightReefAuto(m_swerve, m_endEffectorSubsystem);
+
+  Command alignToTagCommand = new AlignToTagCommand(m_vision, m_swerve);
 
   // chooser for autos
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -275,6 +282,7 @@ public class RobotContainer {
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
     fastSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::fastSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
 
+    chaseTagTrigger.whileTrue(alignToTagCommand);
     // idk if this works
     // I coulda been on team 6969 if i stayed in ny but now im stuck here
     // speedChangeTrigger.whileTrue(new StartEndCommand(() -> m_swerve.setSpeedMultiplier(calculateSpeedMultiplier()), m_swerve::defaultSpeed, new Subsystem[0]));
@@ -338,7 +346,7 @@ public class RobotContainer {
     // return m_chooser.getSelected();
     
     // return Autos.taxi(m_swerve);
-    return chaseTagCommand;
+    return rotMiddle90Command;
     
   }
 }

@@ -103,7 +103,7 @@ public final class Constants {
 
     public static final double MAX_LINEAR_SPEED = 1; //3.5
     public static final double LINEAR_SPEED = 1; //2.5
-    public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
+    public static final double MAX_ANGULAR_VELOCITY = Math.PI;
   }
   public static final class ModuleConstants {
     public static final double MAX_ANGULAR_VELOCITY = 4 * Math.PI;

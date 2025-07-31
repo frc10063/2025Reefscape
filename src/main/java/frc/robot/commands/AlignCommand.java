@@ -19,7 +19,6 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AlignCommand extends Command {
@@ -100,7 +99,7 @@ public class AlignCommand extends Command {
       targetPoseV2.getX() + lateralOffsetTranslation.getX() + approachOffset.getX(),
       targetPoseV2.getY() + lateralOffsetTranslation.getY() + approachOffset.getY(),
       targetPoseV2.getRotation().rotateBy(Rotation2d.k180deg));
-    goalPoseV2 = goalPoseV2.rotateBy(Rotation2d.fromRadians(Math.PI/2));
+    // goalPoseV2 = goalPoseV2.rotateBy(Rotation2d.fromRadians(Math.PI/2));
   }
 
   
