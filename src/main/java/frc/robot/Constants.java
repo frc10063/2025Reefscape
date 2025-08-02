@@ -54,20 +54,20 @@ public final class Constants {
   }
 
   public static final class DriveConstants {
-    public static final int kFrontLeftDriveMotorPort = 2; // 2 3 4 5
-    public static final int kRearLeftDriveMotorPort = 3;
-    public static final int kRearRightDriveMotorPort = 4;
-    public static final int kFrontRightDriveMotorPort = 5;
+    public static final int kFrontLeftDriveMotorPort = 5; // 2 3 4 5
+    public static final int kRearLeftDriveMotorPort = 2;
+    public static final int kRearRightDriveMotorPort = 3;
+    public static final int kFrontRightDriveMotorPort = 4;
 
-    public static final int kFrontLeftTurningMotorPort = 6; // 6 7 8 9
-    public static final int kRearLeftTurningMotorPort = 7;
-    public static final int kRearRightTurningMotorPort = 8;
-    public static final int kFrontRightTurningMotorPort = 9;
+    public static final int kFrontLeftTurningMotorPort = 9; // 6 7 8 9
+    public static final int kRearLeftTurningMotorPort = 6;
+    public static final int kRearRightTurningMotorPort = 7;
+    public static final int kFrontRightTurningMotorPort = 8;
 
-    public static final int kFrontLeftTurningEncoderPorts = 3; // 3 2 1 0
-    public static final int kRearLeftTurningEncoderPorts = 2;
-    public static final int kRearRightTurningEncoderPorts = 1; 
-    public static final int kFrontRightTurningEncoderPorts = 0;
+    public static final int kFrontLeftTurningEncoderPorts = 0; // 3 2 1 0
+    public static final int kRearLeftTurningEncoderPorts = 3;
+    public static final int kRearRightTurningEncoderPorts = 2; 
+    public static final int kFrontRightTurningEncoderPorts = 1;
 
     public static final boolean kFrontLeftTurningEncoderReversed = false;
     public static final boolean kRearLeftTurningEncoderReversed = false;
@@ -79,10 +79,15 @@ public final class Constants {
     public static final boolean kFrontRightDriveEncoderReversed = false;
     public static final boolean kRearRightDriveEncoderReversed = false;
 
-    public static final double kFrontLeftExpectedZero = 0.935; // 0.935
-    public static final double kRearLeftExpectedZero = 0.754; // 0.754
-    public static final double kRearRightExpectedZero = 0.483; // 0.483
-    public static final double kFrontRightExpectedZero = 0.436; // 0.436
+    // for the front of hte robot being opposite the battery,
+    // the zeroes are 0.935, 0.754, 0.483, 0.436
+
+    // these are now changed so the zero is to the right 
+    // as the front of the robot is 90 degrees right
+    public static final double kFrontLeftExpectedZero = 0.186; // 0.935
+    public static final double kRearLeftExpectedZero = 0.685; // 0.754
+    public static final double kRearRightExpectedZero = 0.504; // 0.483
+    public static final double kFrontRightExpectedZero = 0.233; // 0.436
 
     public static final double kDrivePeriod = TimedRobot.kDefaultPeriod;
 
@@ -262,8 +267,8 @@ public final class Constants {
   public static final class VisionConstants {
     public static final AprilTagFieldLayout APRIL_TAGS_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     public static final Transform3d camPosition = new Transform3d(
-      -0.083, -0.3, 0.46, 
-      new Rotation3d(Units.degreesToRadians(12.5), Units.degreesToRadians(10), -Math.PI/2));
+      0.3, -0.083, 0.46, 
+      new Rotation3d(Units.degreesToRadians(12.5), Units.degreesToRadians(10), 0)); // yaw may be -pi/2 if front hasnt changed
     public static final int[] tagIds = {
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
       12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22

@@ -37,7 +37,7 @@ public class AlignToTagCommand extends Command {
     this.swerve = swerve;
     this.vision = vision;
 
-    xController.setTolerance(0.05);
+    xController.setTolerance(0.1);
     yController.setTolerance(0.1);
     rotController.setTolerance(Units.degreesToRadians(3));
     rotController.enableContinuousInput(-Math.PI, Math.PI);
@@ -83,11 +83,11 @@ public class AlignToTagCommand extends Command {
       if (rotController.atGoal()) {
         rot = 0;
       }
-      double ySpeed = yController.calculate(target.getBestCameraToTarget().getX());
-      if (yController.atGoal()) {
-        ySpeed = 0;
+      double xSpeed = xController.calculate(target.getBestCameraToTarget().getX());
+      if (xController.atGoal()) {
+        xSpeed = 0;
       }
-      swerve.drive(0, ySpeed, rot, true);
+      swerve.drive(xSpeed, 0, rot, true);
     }
   }
 

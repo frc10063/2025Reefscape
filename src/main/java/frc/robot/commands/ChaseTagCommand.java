@@ -12,6 +12,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -33,7 +34,7 @@ public class ChaseTagCommand extends Command {
   private static final int tagToChase = 15;
   private static final Transform3d tagToGoal = 
       new Transform3d(1, 0, 0,
-          new Rotation3d(0, 0, Math.PI/2));
+          new Rotation3d(0, 0, Math.PI)); // yaw may be -pi/2 if front hasnt changed
 //   private final PhotonCamera photonCamera;
   private final DriveTrain swerve;
   private final PoseEstimatorSubsystem vision;
@@ -48,8 +49,8 @@ public class ChaseTagCommand extends Command {
     this.swerve = swerve;
     this.vision = vision;
 
-    xController.setTolerance(0.05);
-    yController.setTolerance(0.05);
+    xController.setTolerance(0.1);
+    yController.setTolerance(0.1);
     rotController.setTolerance(Units.degreesToRadians(5));
     rotController.enableContinuousInput(-Math.PI, Math.PI);
     addRequirements(swerve);
@@ -84,7 +85,7 @@ public class ChaseTagCommand extends Command {
     if (photonRes.hasTargets()) {
       var targetOpt = photonRes.getTargets().stream()
           .filter(t -> t.getFiducialId() == tagToChase)
-          .filter(t -> !t.equals(lastTarget) && t.getPoseAmbiguity() <= 0.2) // && t.getPose
+          .filter(t -> !t.equals(lastTarget) && t.getPoseAmbiguity() <= 0.2 && t.getPoseAmbiguity() != -1) 
           .findFirst();
       if (targetOpt.isPresent()) {
         var target = targetOpt.get();
@@ -112,7 +113,10 @@ public class ChaseTagCommand extends Command {
         // set the x y and rot controllers to follow that goal
         xController.setGoal(goalPose.getX());
         yController.setGoal(goalPose.getY());
-        rotController.setGoal(goalPose.getRotation().getRadians());
+        if (Math.abs(Rotation2d.fromRadians(rotController.getGoal().position).minus(goalPose.getRotation()).getRadians()) > 0.05) {
+          rotController.setGoal(goalPose.getRotation().getRadians());
+        }
+        // rotController.setGoal(goalPose.getRotation().getRadians());
       }
     }
     if (lastTarget == null) {
@@ -131,7 +135,7 @@ public class ChaseTagCommand extends Command {
       if (rotController.atGoal()) {
         rot = 0;
       }
-      swerve.drive(0, 0, rot, true);
+      swerve.drive(xSpeed, ySpeed, rot, true);
       
     }
   }
