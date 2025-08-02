@@ -73,7 +73,7 @@ public class AlignToTagCommand extends Command {
         targetPitch = target.getPitch();
 
         rotController.setGoal(0);
-        yController.setGoal(0.5);
+        xController.setGoal(0.5);
       }
     }
     if (lastTarget == null) {
@@ -83,6 +83,7 @@ public class AlignToTagCommand extends Command {
       if (rotController.atGoal()) {
         rot = 0;
       }
+      // maybe make this negative?
       double xSpeed = xController.calculate(target.getBestCameraToTarget().getX());
       if (xController.atGoal()) {
         xSpeed = 0;

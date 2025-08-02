@@ -96,6 +96,13 @@ public class ChaseTagCommand extends Command {
         var cameraPose = robotPose.transformBy(VisionConstants.camPosition);
         // camToTarget represents the transformation needed to get from camera to target
         var camToTarget = target.getBestCameraToTarget();
+        SmartDashboard.putString("Best Cam To Target", String.format("(%.2f, %.2f, %.2f) rotation: (%.2f, %.2f, %.2f)", 
+          camToTarget.getX(),
+          camToTarget.getY(),
+          camToTarget.getZ(),
+          camToTarget.getRotation().getX(),
+          camToTarget.getRotation().getY(),
+          camToTarget.getRotation().getZ()));
         // the target pose is the distance of camera position to the target
         var targetPose = cameraPose.transformBy(camToTarget);
         SmartDashboard.putString("Target Pose", String.format("(%.2f, %.2f) %.2f degrees", 
@@ -113,10 +120,10 @@ public class ChaseTagCommand extends Command {
         // set the x y and rot controllers to follow that goal
         xController.setGoal(goalPose.getX());
         yController.setGoal(goalPose.getY());
-        if (Math.abs(Rotation2d.fromRadians(rotController.getGoal().position).minus(goalPose.getRotation()).getRadians()) > 0.05) {
-          rotController.setGoal(goalPose.getRotation().getRadians());
-        }
-        // rotController.setGoal(goalPose.getRotation().getRadians());
+        // if (Math.abs(Rotation2d.fromRadians(rotController.getGoal().position).minus(goalPose.getRotation()).getRadians()) > 0.05) {
+        //   rotController.setGoal(goalPose.getRotation().getRadians());
+        // }
+        rotController.setGoal(goalPose.getRotation().getRadians());
       }
     }
     if (lastTarget == null) {
