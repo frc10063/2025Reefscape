@@ -74,7 +74,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevatorLeftMotor = new SparkMax(kElevatorPorts[0], MotorType.kBrushless);
     m_elevatorEncoder = new Encoder(kElevatorEncoders[0], kElevatorEncoders[1]);
     m_elevatorEncoder.setReverseDirection(false);;
-    // m_elevatorEncoder = new Encoder(ElevatorConstants.kElevatorEncoders1[0], ElevatorConstants.kElevatorEncoders1[1]);
     m_elevatorRightMotor.configure(RIGHTELEVATOR_CONFIG, 
         ResetMode.kNoResetSafeParameters, 
         PersistMode.kPersistParameters);
@@ -90,25 +89,25 @@ public class ElevatorSubsystem extends SubsystemBase {
         new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration));
     m_profiledPIDController.setTolerance(75);
 
-    SmartDashboard.putNumber("Elev kP", m_profiledPIDController.getP());
-    SmartDashboard.putNumber("Elev kI", m_profiledPIDController.getI());
-    SmartDashboard.putNumber("Elev kD", m_profiledPIDController.getD());
+    // SmartDashboard.putNumber("Elev kP", m_profiledPIDController.getP());
+    // SmartDashboard.putNumber("Elev kI", m_profiledPIDController.getI());
+    // SmartDashboard.putNumber("Elev kD", m_profiledPIDController.getD());
 
-    SmartDashboard.putNumber("Elev kG", m_feedforward.getKg());
-    SmartDashboard.putNumber("Elev kV", m_feedforward.getKv());
-    SmartDashboard.putNumber("Elev kA", m_feedforward.getKa());
-    SmartDashboard.putNumber("Elev kS", m_feedforward.getKs());
+    // SmartDashboard.putNumber("Elev kG", m_feedforward.getKg());
+    // SmartDashboard.putNumber("Elev kV", m_feedforward.getKv());
+    // SmartDashboard.putNumber("Elev kA", m_feedforward.getKa());
+    // SmartDashboard.putNumber("Elev kS", m_feedforward.getKs());
 
-    SmartDashboard.putNumber("Elev Max Velocity", m_profiledPIDController.getConstraints().maxVelocity);
-    SmartDashboard.putNumber("Elev Max Accel", m_profiledPIDController.getConstraints().maxAcceleration);
-    SmartDashboard.putNumber("Elev kP", m_profiledPIDController.getP());
+    // SmartDashboard.putNumber("Elev Max Velocity", m_profiledPIDController.getConstraints().maxVelocity);
+    // SmartDashboard.putNumber("Elev Max Accel", m_profiledPIDController.getConstraints().maxAcceleration);
+    // SmartDashboard.putNumber("Elev kP", m_profiledPIDController.getP());
 
     prevFeedGains = new double[] {m_feedforward.getKs(), m_feedforward.getKg(), m_feedforward.getKv(), m_feedforward.getKa()};
-    DBFeedGains = new double[] {
-      SmartDashboard.getNumber("Elev kS", m_feedforward.getKs()),
-      SmartDashboard.getNumber("Elev kG", m_feedforward.getKg()),
-      SmartDashboard.getNumber("Elev kV", m_feedforward.getKv()),
-      SmartDashboard.getNumber("Elev kA", m_feedforward.getKa())};
+    // DBFeedGains = new double[] {
+    //   SmartDashboard.getNumber("Elev kS", m_feedforward.getKs()),
+    //   SmartDashboard.getNumber("Elev kG", m_feedforward.getKg()),
+    //   SmartDashboard.getNumber("Elev kV", m_feedforward.getKv()),
+    //   SmartDashboard.getNumber("Elev kA", m_feedforward.getKa())};
 
     
   }
@@ -147,11 +146,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_elevatorLeftMotor.setVoltage(output);
     m_elevatorRightMotor.setVoltage(output);
 
-    SmartDashboard.putNumber("PID Output", pidOutput);
-    SmartDashboard.putNumber("Feed Foward", feedforwardTerm);
-    SmartDashboard.putNumber("Elev encoder speed", m_elevatorEncoder.getRate());
-    SmartDashboard.putNumber("Elevator Desired Pos", m_profiledPIDController.getGoal().position);
-    SmartDashboard.putNumber("Desired Motion", m_profiledPIDController.getSetpoint().position);
+    // SmartDashboard.putNumber("PID Output", pidOutput);
+    // SmartDashboard.putNumber("Feed Foward", feedforwardTerm);
+    // SmartDashboard.putNumber("Elev encoder speed", m_elevatorEncoder.getRate());
+    // SmartDashboard.putNumber("Elevator Desired Pos", m_profiledPIDController.getGoal().position);
+    // SmartDashboard.putNumber("Desired Motion", m_profiledPIDController.getSetpoint().position);
   }
   public Command moveElevatorTo(String level) {
     // return Commands.runOnce(SetGoal(kElevatorSetpoints[level - 1]), this).run(setElevatorPositionV2(kElevatorSetpoints[level - 1]));
@@ -186,34 +185,34 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putBoolean("is at L1?", MathUtil.isNear(getPositionOf("L1"), m_elevatorEncoder.get(), TOLERANCE));
     
-    SmartDashboard.putNumber("Elevator Speed", m_elevatorLeftMotor.get());
+    // SmartDashboard.putNumber("Elevator Speed", m_elevatorLeftMotor.get());
     SmartDashboard.putNumber("Position", m_elevatorEncoder.get());
 
-    m_profiledPIDController.setP(SmartDashboard.getNumber("Elev kP", m_profiledPIDController.getP()));
-    m_profiledPIDController.setI(SmartDashboard.getNumber("Elev kI", m_profiledPIDController.getI()));
-    m_profiledPIDController.setD(SmartDashboard.getNumber("Elev kD", m_profiledPIDController.getD()));
+    // m_profiledPIDController.setP(SmartDashboard.getNumber("Elev kP", m_profiledPIDController.getP()));
+    // m_profiledPIDController.setI(SmartDashboard.getNumber("Elev kI", m_profiledPIDController.getI()));
+    // m_profiledPIDController.setD(SmartDashboard.getNumber("Elev kD", m_profiledPIDController.getD()));
 
-    m_pidController.setP(SmartDashboard.getNumber("Elev kP", m_profiledPIDController.getP()));
-    m_pidController.setI(SmartDashboard.getNumber("Elev kI", m_profiledPIDController.getI()));
-    m_pidController.setD(SmartDashboard.getNumber("Elev kD", m_profiledPIDController.getD()));
+    // m_pidController.setP(SmartDashboard.getNumber("Elev kP", m_profiledPIDController.getP()));
+    // m_pidController.setI(SmartDashboard.getNumber("Elev kI", m_profiledPIDController.getI()));
+    // m_pidController.setD(SmartDashboard.getNumber("Elev kD", m_profiledPIDController.getD()));
 
-    DBFeedGains = new double[] {
-      SmartDashboard.getNumber("Elev kS", m_feedforward.getKs()),
-      SmartDashboard.getNumber("Elev kG", m_feedforward.getKg()),
-      SmartDashboard.getNumber("Elev kV", m_feedforward.getKv()),
-      SmartDashboard.getNumber("Elev kA", m_feedforward.getKa())
-    };
-    DBConstraints = new double[] {
-      SmartDashboard.getNumber("Elev Max Velocity", m_profiledPIDController.getConstraints().maxVelocity),
-      SmartDashboard.getNumber("Elev Max Accel", m_profiledPIDController.getConstraints().maxAcceleration)
-    };
-    if (DBFeedGains != prevFeedGains) {
-      m_feedforward = new ElevatorFeedforward(DBFeedGains[0], DBFeedGains[1], DBFeedGains[2], DBFeedGains[3]);
-      prevFeedGains = DBFeedGains;
-    }
-    if (DBConstraints != prevConstraints) {
-      m_profiledPIDController.setConstraints(new TrapezoidProfile.Constraints(DBConstraints[0], DBConstraints[1]));
-      prevConstraints = DBConstraints;
-    }
+    // DBFeedGains = new double[] {
+    //   SmartDashboard.getNumber("Elev kS", m_feedforward.getKs()),
+    //   SmartDashboard.getNumber("Elev kG", m_feedforward.getKg()),
+    //   SmartDashboard.getNumber("Elev kV", m_feedforward.getKv()),
+    //   SmartDashboard.getNumber("Elev kA", m_feedforward.getKa())
+    // };
+    // DBConstraints = new double[] {
+    //   SmartDashboard.getNumber("Elev Max Velocity", m_profiledPIDController.getConstraints().maxVelocity),
+    //   SmartDashboard.getNumber("Elev Max Accel", m_profiledPIDController.getConstraints().maxAcceleration)
+    // };
+    // if (DBFeedGains != prevFeedGains) {
+    //   m_feedforward = new ElevatorFeedforward(DBFeedGains[0], DBFeedGains[1], DBFeedGains[2], DBFeedGains[3]);
+    //   prevFeedGains = DBFeedGains;
+    // }
+    // if (DBConstraints != prevConstraints) {
+    //   m_profiledPIDController.setConstraints(new TrapezoidProfile.Constraints(DBConstraints[0], DBConstraints[1]));
+    //   prevConstraints = DBConstraints;
+    // }
   }
 }

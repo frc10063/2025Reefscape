@@ -117,6 +117,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
       m_swerve.getSwerveModulePositions());
     // why is this stuff only error for me what is this method supposed to be called on 
     field2d.setRobotPose(poseEstimator.getEstimatedPosition()); // m_swerve.getPose() maybe??
-    SmartDashboard.putData(field2d);
+    // SmartDashboard.putData(field2d);
   }
 }

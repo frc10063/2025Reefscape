@@ -39,9 +39,9 @@ public class ChaseTagCommand extends Command {
   private final DriveTrain swerve;
   private final PoseEstimatorSubsystem vision;
 
-  private final ProfiledPIDController xController = new ProfiledPIDController(3, 0, 0, xConstraints);
-  private final ProfiledPIDController yController = new ProfiledPIDController(3, 0, 0, yConstraints);
-  private final ProfiledPIDController rotController = new ProfiledPIDController(3, 0, 0, rotConstraints);
+  private final ProfiledPIDController xController = new ProfiledPIDController(2, 0, 0, xConstraints);
+  private final ProfiledPIDController yController = new ProfiledPIDController(2, 0, 0, yConstraints);
+  private final ProfiledPIDController rotController = new ProfiledPIDController(2, 0, 0, rotConstraints);
 
   private PhotonTrackedTarget lastTarget;
 
@@ -49,8 +49,8 @@ public class ChaseTagCommand extends Command {
     this.swerve = swerve;
     this.vision = vision;
 
-    xController.setTolerance(0.1);
-    yController.setTolerance(0.1);
+    xController.setTolerance(0.2);
+    yController.setTolerance(0.2);
     rotController.setTolerance(Units.degreesToRadians(5));
     rotController.enableContinuousInput(-Math.PI, Math.PI);
     addRequirements(swerve);
@@ -90,40 +90,19 @@ public class ChaseTagCommand extends Command {
       if (targetOpt.isPresent()) {
         var target = targetOpt.get();
         lastTarget = target;
-        // ima try to simplify this
-        // the camera pose is set to the estimated robot pose 
-        // accounting for where the camera is on the bot
-        var cameraPose = robotPose.transformBy(VisionConstants.camPosition);
-        // camToTarget represents the transformation needed to get from camera to target
-        var camToTarget = target.getBestCameraToTarget();
-        SmartDashboard.putString("Best Cam To Target", String.format("(%.2f, %.2f, %.2f) rotation: (%.2f, %.2f, %.2f)", 
-          camToTarget.getX(),
-          camToTarget.getY(),
-          camToTarget.getZ(),
-          camToTarget.getRotation().getX(),
-          camToTarget.getRotation().getY(),
-          camToTarget.getRotation().getZ()));
-        // the target pose is the distance of camera position to the target
-        var targetPose = cameraPose.transformBy(camToTarget);
-        SmartDashboard.putString("Target Pose", String.format("(%.2f, %.2f) %.2f degrees", 
-          targetPose.getX(),
-          targetPose.getY(), 
-          targetPose.toPose2d().getRotation().getDegrees()));
-        // the GOAL pose of robot is the target accounting for where
-        // the robot should be relative to (in this case, 1.5m in front)
-        var goalPose = targetPose.transformBy(tagToGoal).toPose2d();
 
-        SmartDashboard.putString("Goal Pose", String.format("(%.2f, %.2f) %.2f degrees", 
-          goalPose.getX(),
-          goalPose.getY(), 
-          goalPose.getRotation().getDegrees()));
-        // set the x y and rot controllers to follow that goal
-        xController.setGoal(goalPose.getX());
-        yController.setGoal(goalPose.getY());
-        // if (Math.abs(Rotation2d.fromRadians(rotController.getGoal().position).minus(goalPose.getRotation()).getRadians()) > 0.05) {
-        //   rotController.setGoal(goalPose.getRotation().getRadians());
-        // }
-        rotController.setGoal(goalPose.getRotation().getRadians());
+        var cameraPose = robotPose.transformBy(VisionConstants.camPosition);        var camToTarget = target.getBestCameraToTarget();
+        var targetPose = cameraPose.transformBy(camToTarget);
+        var goalPose = targetPose.transformBy(tagToGoal).toPose2d();
+        if (Math.abs(xController.getGoal().position - goalPose.getX()) > 0.05) {
+          xController.setGoal(goalPose.getX());
+        }
+        if (Math.abs(yController.getGoal().position - goalPose.getY()) > 0.05) {
+          yController.setGoal(goalPose.getY());
+        }
+        if (Math.abs(Rotation2d.fromRadians(rotController.getGoal().position).minus(goalPose.getRotation()).getRadians()) > 0.05) {
+          rotController.setGoal(goalPose.getRotation().getRadians());
+        }
       }
     }
     if (lastTarget == null) {
@@ -133,15 +112,19 @@ public class ChaseTagCommand extends Command {
       if (xController.atGoal()) {
         xSpeed = 0;
       }
+      
 
       var ySpeed = yController.calculate(robotPose.getY());
       if (yController.atGoal()) {
         ySpeed = 0;
       }
+
+      
       var rot = rotController.calculate(robotPose2d.getRotation().getRadians());
       if (rotController.atGoal()) {
         rot = 0;
       }
+      
       swerve.drive(xSpeed, ySpeed, rot, true);
       
     }

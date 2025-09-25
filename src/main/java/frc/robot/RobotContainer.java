@@ -116,8 +116,6 @@ public class RobotContainer {
   Trigger fieldRelativeToggleTrigger = m_controller.b();
   Trigger resetGyroTrigger = m_controller.y();
 
-  Trigger chaseTagTrigger = m_controller.leftBumper();
-
   // Bongo Triggers for fun
   Trigger L1BongoTrigger = m_bongoController.getBottomLeft();
   Trigger L2BongoTrigger = m_bongoController.getTopLeft();
@@ -143,8 +141,8 @@ public class RobotContainer {
   // Trigger DDRDecreaseSpeedTrigger = m_ddrController.getMinusButton();
 
   // Vision align buttons, not tested
-  // Trigger alignLeftCoralTrigger = m_controller.leftBumper();
-  // Trigger alignRightCoralTrigger = m_controller.rightBumper();
+  Trigger alignLeftCoralTrigger = m_controller.leftBumper();
+  Trigger alignRightCoralTrigger = m_controller.rightBumper();
   
 
   // Commands
@@ -155,7 +153,7 @@ public class RobotContainer {
   RotationCommand rotRightCommand = new RotationCommand(m_swerve, -2 * Math.PI/3);
   ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
   Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
-  // Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
+  Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
   
   // Command taxiAutoCommand = new Move(m_swerve, -2, 0, true);
   // Command visionLeftReefAuto = new VisionLeftReefAuto();
@@ -282,12 +280,12 @@ public class RobotContainer {
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
     fastSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::fastSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
 
-    chaseTagTrigger.whileTrue(alignToTagCommand);
+    // chaseTagTrigger.whileTrue(leftAlignCommand);
     // idk if this works
     // I coulda been on team 6969 if i stayed in ny but now im stuck here
     // speedChangeTrigger.whileTrue(new StartEndCommand(() -> m_swerve.setSpeedMultiplier(calculateSpeedMultiplier()), m_swerve::defaultSpeed, new Subsystem[0]));
-    // alignRightCoralTrigger.whileTrue(rightAlignCommand);
-    // alignLeftCoralTrigger.whileTrue(leftAlignCommand);
+    alignRightCoralTrigger.whileTrue(rightAlignCommand);
+    alignLeftCoralTrigger.whileTrue(leftAlignCommand);
 
 
 
@@ -346,7 +344,7 @@ public class RobotContainer {
     // return m_chooser.getSelected();
     
     // return Autos.taxi(m_swerve);
-    return rotMiddle90Command;
+    return chaseTagCommand;
     
   }
 }
