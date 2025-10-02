@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.VisionConstants;
@@ -50,8 +51,8 @@ public class AlignCommand extends Command {
 
   @Override
   public void initialize() {
-    xController.setTolerance(0.01, 0.01);
-    yController.setTolerance(0.01, 0.01);
+    xController.setTolerance(0.05, 0.1);
+    yController.setTolerance(0.05, 0.1);
     rotController.setTolerance(Units.degreesToRadians(3));
 
     // could use this but eh
@@ -66,10 +67,10 @@ public class AlignCommand extends Command {
     calculateTargetPose();
   }
 
-  // this can be a later job
   private void calculateTargetPose() {
     // make a translation for offset and add the pose of target stuf
     // THIS STUFF IS BACK UP
+    
     var robotPose3d = new Pose3d(robotPose.getX(), robotPose.getY(), 0,
       new Rotation3d(0, 0, robotPose.getRotation().getRadians()));
     var cameraPose = robotPose3d.transformBy(VisionConstants.camPosition);
@@ -77,29 +78,34 @@ public class AlignCommand extends Command {
     // the tag pose relative to camera
     var targetPoseV2 = cameraPose.transformBy(camToTarget).toPose2d();
     // UP TO HERE
-
+    SmartDashboard.putString("Target Pose", String.format("(%.2f, %.2f) %.2f degrees", 
+          targetPoseV2.getX(),
+          targetPoseV2.getY(), 
+          targetPoseV2.getRotation().getDegrees()));
 
 
     double lateralOffset = targetRightCoral ? AutoConstants.coralRightOffset : AutoConstants.coralLeftOffset;
     Translation2d lateralOffsetTranslation = new Translation2d(0, lateralOffset);
-    lateralOffsetTranslation = lateralOffsetTranslation.rotateBy(camToTarget.getRotation().toRotation2d());
+    lateralOffsetTranslation = lateralOffsetTranslation.rotateBy(targetPoseV2.getRotation());
 
-    Translation2d approachOffset = new Translation2d(-AutoConstants.robotCenterToFrontDistance, 0);
+    Translation2d approachOffset = new Translation2d(AutoConstants.robotCenterToFrontDistance + 0.15, 0);
     // approachOffset = approachOffset.rotateBy(targetTagPose.getRotation());
-    approachOffset = approachOffset.rotateBy(camToTarget.getRotation().toRotation2d());
+    approachOffset = approachOffset.rotateBy(targetPoseV2.getRotation());
 
     // targetPose = new Pose2d(
     //   targetTagPose.getX() + lateralOffsetTranslation.getX() + approachOffset.getX(),
     //   targetTagPose.getY() + lateralOffsetTranslation.getY() + approachOffset.getY(),
     //   targetTagPose.getRotation().rotateBy(Rotation2d.k180deg));
-    // targetPose = targetPose.rotateBy(Rotation2d.fromRadians(Math.PI/2));
 
 
     goalPoseV2 = new Pose2d(
       targetPoseV2.getX() + lateralOffsetTranslation.getX() + approachOffset.getX(),
       targetPoseV2.getY() + lateralOffsetTranslation.getY() + approachOffset.getY(),
       targetPoseV2.getRotation().rotateBy(Rotation2d.k180deg));
-    // goalPoseV2 = goalPoseV2.rotateBy(Rotation2d.fromRadians(Math.PI/2));
+    SmartDashboard.putString("Goal Pose", String.format("(%.2f, %.2f) %.2f degrees", 
+          goalPoseV2.getX(),
+          goalPoseV2.getY(), 
+          goalPoseV2.getRotation().getDegrees()));
   }
 
   
@@ -119,6 +125,10 @@ public class AlignCommand extends Command {
     
    
     Pose2d currentPose = m_swerve.getPose();
+    SmartDashboard.putString("Current Pose", String.format("(%.2f, %.2f) %.2f degrees", 
+          currentPose.getX(),
+          currentPose.getY(), 
+          currentPose.getRotation().getDegrees()));
     // Pose2d currentPose = m_vision.getPoseEstimate();
 
     // if all goes wrong, replace targetPose with goalPoseV2

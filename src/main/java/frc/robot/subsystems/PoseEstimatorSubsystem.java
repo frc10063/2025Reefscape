@@ -138,6 +138,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
       m_swerve.getGyroRotation(), // also a m_swerve.getSwerveModuleStates() but thats too many args?
       m_swerve.getSwerveModulePositions());
     field2d.setRobotPose(poseEstimator.getEstimatedPosition()); // m_swerve.getPose() maybe??
-    SmartDashboard.putData(field2d);
+    // SmartDashboard.putData(field2d);
   }
 }

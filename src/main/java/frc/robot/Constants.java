@@ -106,9 +106,9 @@ public final class Constants {
     
     public static final boolean kGyroReversed = false;
 
-    public static final double MAX_LINEAR_SPEED = 1; //3.5
-    public static final double LINEAR_SPEED = 1; //2.5
-    public static final double MAX_ANGULAR_VELOCITY = Math.PI;
+    public static final double MAX_LINEAR_SPEED = 3.5; //3.5
+    public static final double LINEAR_SPEED = 3; 
+    public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
   }
   public static final class ModuleConstants {
     public static final double MAX_ANGULAR_VELOCITY = 4 * Math.PI;
@@ -163,8 +163,8 @@ public final class Constants {
     
     public static final double robotCenterToFrontDistance = 0.425;
 
-    public static final double coralLeftOffset = -0.171;
-    public static final double coralRightOffset = -0.425;
+    public static final double coralLeftOffset = 0.171;
+    public static final double coralRightOffset = 0.425;
 
     public static final double translationkP = 3;
     public static final double translationkI = 0;
@@ -267,8 +267,8 @@ public final class Constants {
   public static final class VisionConstants {
     public static final AprilTagFieldLayout APRIL_TAGS_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     public static final Transform3d camPosition = new Transform3d(
-      0.3, -0.083, 0.46, 
-      new Rotation3d(Units.degreesToRadians(12.5), Units.degreesToRadians(10), 0)); // yaw may be -pi/2 if front hasnt changed
+      0.32, -0.095, 0.47, 
+      new Rotation3d(Units.degreesToRadians(12.5), Units.degreesToRadians(12.5), Units.degreesToRadians(8))); // yaw may be -pi/2 if front hasnt changed
     public static final int[] tagIds = {
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
       12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
