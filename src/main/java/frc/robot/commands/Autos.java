@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 // import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -32,7 +33,7 @@ public final class Autos {
       m_elevatorSubsystem.moveElevatorTo("ZERO"));
   }
   public static Command taxi(DriveTrain m_swerve) {
-    return new Move(m_swerve, -2, 0, true).withTimeout(2);
+    return new Move(m_swerve, -2, 0, new Rotation2d(0), true).withTimeout(2);
   }
   public static Command L1Sequence(DriveTrain m_swerve, EndEffectorSubsystem m_endEffectorSubsystem) {
     return Commands.run(() -> m_swerve.drive(0, -0.3, 0, false)).alongWith(m_endEffectorSubsystem.runL1EndEffector());

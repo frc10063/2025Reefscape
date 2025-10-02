@@ -82,7 +82,7 @@ public class AlignCommand extends Command {
 
     double lateralOffset = targetRightCoral ? AutoConstants.coralRightOffset : AutoConstants.coralLeftOffset;
     Translation2d lateralOffsetTranslation = new Translation2d(0, lateralOffset);
-    lateralOffsetTranslation = lateralOffsetTranslation.rotateBy(targetTagPose.getRotation());
+    lateralOffsetTranslation = lateralOffsetTranslation.rotateBy(camToTarget.getRotation().toRotation2d());
 
     Translation2d approachOffset = new Translation2d(-AutoConstants.robotCenterToFrontDistance, 0);
     // approachOffset = approachOffset.rotateBy(targetTagPose.getRotation());
@@ -123,9 +123,9 @@ public class AlignCommand extends Command {
 
     // if all goes wrong, replace targetPose with goalPoseV2
     // i did that ^
-    double xSpeed = xController.calculate(currentPose.getX(), targetPose.getX());
-    double ySpeed = yController.calculate(currentPose.getY(), targetPose.getY());
-    double rot = rotController.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+    double xSpeed = xController.calculate(currentPose.getX(), goalPoseV2.getX());
+    double ySpeed = yController.calculate(currentPose.getY(), goalPoseV2.getY());
+    double rot = rotController.calculate(currentPose.getRotation().getRadians(), goalPoseV2.getRotation().getRadians());
 
     xSpeed = MathUtil.clamp(xSpeed, -AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxSpeedMetersPerSecond);
     ySpeed = MathUtil.clamp(ySpeed, -AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxSpeedMetersPerSecond);

@@ -5,26 +5,31 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveTrain;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Move extends Command {
-  /** Creates a new TaxiAuto. */
   private final DriveTrain m_swerve;
   private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(2, 3);
   private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(2, 3);
+  private static final TrapezoidProfile.Constraints rotConstraints = new TrapezoidProfile.Constraints(Math.PI, Math.PI);
+  private final ProfiledPIDController rotController = new ProfiledPIDController(3, 0, 0, rotConstraints);
   private final ProfiledPIDController xController = new ProfiledPIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD, xConstraints);
   private final ProfiledPIDController yController = new ProfiledPIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD, xConstraints);
   private double xDistance;
   private double yDistance;
+  private Rotation2d targetAngle;
   private boolean fieldRelative;
-  public Move(DriveTrain m_swerve, double xDistance, double yDistance, boolean fieldRelative) {
+  public Move(DriveTrain m_swerve, double xDistance, double yDistance, Rotation2d targetAngle, boolean fieldRelative) {
     this.m_swerve = m_swerve;
     this.xDistance = xDistance;
     this.yDistance = yDistance;
+    this.targetAngle = targetAngle;
     this.fieldRelative = fieldRelative;
     addRequirements(m_swerve);
   }
@@ -36,14 +41,22 @@ public class Move extends Command {
     xController.setTolerance(0.1);
     yController.reset(m_swerve.getPose().getX());
     yController.setTolerance(0.1);
+    rotController.reset(m_swerve.getPose().getRotation().getRadians());
+    rotController.setTolerance(Units.degreesToRadians(3));
+    rotController.enableContinuousInput(-Math.PI, Math.PI);
+
+    xController.setGoal(xDistance);
+    yController.setGoal(yDistance);
+    rotController.setGoal(targetAngle.getRadians());
   }
 
   
   @Override
   public void execute() {
-    double xSpeed = xController.calculate(m_swerve.getPose().getX(), xDistance);
-    double ySpeed = xController.calculate(m_swerve.getPose().getX(), yDistance);
-    m_swerve.drive(xSpeed, ySpeed, 0, fieldRelative);
+    double xSpeed = xController.calculate(m_swerve.getPose().getX());
+    double ySpeed = yController.calculate(m_swerve.getPose().getY());
+    double rotSpeed = rotController.calculate(m_swerve.getPose().getRotation().getRadians());
+    m_swerve.drive(xSpeed, ySpeed, rotSpeed, fieldRelative);
   }
 
   
@@ -55,6 +68,6 @@ public class Move extends Command {
   
   @Override
   public boolean isFinished() {
-    return false;
+    return xController.atGoal() && yController.atGoal() && rotController.atGoal();
   }
 }

@@ -16,11 +16,15 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 
@@ -37,20 +41,15 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   // Initalize list of tagPoses to access with IDs
   private List<Pose3d> tagPoses = new ArrayList<>();
 
-  // it tells me to import numbers and hcange to N1 or N3 when they all in smae import?
-  // this is benson work idk how to do statistics and determine values
   private static final edu.wpi.first.math.Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1); // 0.1, 0.1, 0.1
-//   private static final edu.wpi.first.math.Vector<N3> localMeasurementStdDevs = VecBuilder.fill(Units.degreesToRadians(0.01), 0.01, 0);
   private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 0.9);
 
   
   private final SwerveDrivePoseEstimator poseEstimator; // should be SwerveDrivePoseEstimator<N7, N7, N5>
-  // Field2d can be put on smartdashboard
   private final Field2d field2d = new Field2d();
   public PoseEstimatorSubsystem(DriveTrain m_swerve) {
     apriltaglayout = VisionConstants.APRIL_TAGS_LAYOUT;
     this.m_swerve = m_swerve;
-    // this is my sign to be a liberal arts major
     poseEstimator = new SwerveDrivePoseEstimator(
       DriveConstants.kDriveKinematics,
       m_swerve.getGyroRotation(),
@@ -59,11 +58,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
       stateStdDevs,
       visionMeasurementStdDevs
     );
-    // loop to add tag poses to list
+    
     for (int tagId : VisionConstants.tagIds) {
       var tagPoseOptional = apriltaglayout.getTagPose(tagId);
       if (tagPoseOptional.isPresent()) {
-        // do i want 2d or 3d poses?
         tagPoses.add(tagPoseOptional.get());// .toPose2d()
       }
     }
@@ -75,20 +73,46 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
-  public Pose3d findBestTagPose() {
+  public Pose3d getCurrentTargetPose() {
     return tagPoses.get(currentTarget.getFiducialId() - 1);
   }
+
   public Transform3d findCameraRelativeTagPose() {
     return currentTarget.getBestCameraToTarget();
   }
+
   public PhotonPipelineResult getNewestResult() {
     return camera.getLatestResult();
+  }
+
+  /**
+   * 
+   * @param approachOffset The offset distance in front of the tag to be (positive being further from tag)
+   * @param lateralOffset The offset distance to the side of the tag (positive being right, negative being left)
+   * @param rotationalOffset
+   * @return Returns a robot pose with the given offsets relative to tag (including bumpers)
+   */
+  public Pose2d calculateGoalPoseForBestTag(double approachOffset, double lateralOffset, Rotation2d rotationalOffset) {
+    Pose2d robotPose = m_swerve.getPose();
+    Transform3d targetTransformation = currentTarget.getBestCameraToTarget();
+    var robotPose3d = new Pose3d(robotPose.getX(), robotPose.getY(), 0,
+      new Rotation3d(0, 0, robotPose.getRotation().getRadians()));
+    var cameraPose = robotPose3d.transformBy(VisionConstants.camPosition);
+    var camToTarget = targetTransformation;
+    var targetPose = cameraPose.transformBy(camToTarget).toPose2d();
+    Translation2d lateralOffsetTranslation = new Translation2d(0, lateralOffset).rotateBy(camToTarget.getRotation().toRotation2d());
+    Translation2d approachOffsetTranslation = new Translation2d(AutoConstants.robotCenterToFrontDistance + approachOffset, 0).rotateBy(camToTarget.getRotation().toRotation2d());
+
+    Pose2d goalPose = new Pose2d(
+      targetPose.getX() + lateralOffsetTranslation.getX() + approachOffsetTranslation.getX(),
+      targetPose.getY() + lateralOffsetTranslation.getY() + approachOffsetTranslation.getY(),
+      targetPose.getRotation().rotateBy(Rotation2d.k180deg.plus(rotationalOffset)));
+    return goalPose;
   }
 
 
   @Override
   public void periodic() {
-    // this is deprecated, would need to make array and get last item
     SmartDashboard.putBoolean("cam connected", camera.isConnected());
     var pipelineResult = camera.getLatestResult();
     var resultTimestamp = pipelineResult.getTimestampSeconds();
@@ -96,10 +120,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
       previousPipelineTimestamp = resultTimestamp;
       hasTarget = true;
-      // somethings prob deprecated
       var target = pipelineResult.getBestTarget();
       currentTarget = target;
-      // var?
       int fiducialId = target.getFiducialId();
       if (target.getPoseAmbiguity() <= 0.2 && fiducialId >= 0 && fiducialId < tagPoses.size()) {
         var targetPose = tagPoses.get(fiducialId - 1);
@@ -115,7 +137,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     poseEstimator.update(
       m_swerve.getGyroRotation(), // also a m_swerve.getSwerveModuleStates() but thats too many args?
       m_swerve.getSwerveModulePositions());
-    // why is this stuff only error for me what is this method supposed to be called on 
     field2d.setRobotPose(poseEstimator.getEstimatedPosition()); // m_swerve.getPose() maybe??
     SmartDashboard.putData(field2d);
   }
