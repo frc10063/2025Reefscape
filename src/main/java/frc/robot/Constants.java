@@ -107,7 +107,7 @@ public final class Constants {
     public static final boolean kGyroReversed = false;
 
     public static final double MAX_LINEAR_SPEED = 3.5; //3.5
-    public static final double LINEAR_SPEED = 3; 
+    public static final double LINEAR_SPEED = 2.8; 
     public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
   }
   public static final class ModuleConstants {
@@ -161,7 +161,7 @@ public final class Constants {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     
-    public static final double robotCenterToFrontDistance = 0.425;
+    public static final double robotCenterToFrontDistance = 0.440;
 
     public static final double coralLeftOffset = 0.171;
     public static final double coralRightOffset = 0.425;

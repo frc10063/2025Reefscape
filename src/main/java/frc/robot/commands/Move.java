@@ -17,10 +17,10 @@ public class Move extends Command {
   private final DriveTrain m_swerve;
   private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(2, 3);
   private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(2, 3);
-  private static final TrapezoidProfile.Constraints rotConstraints = new TrapezoidProfile.Constraints(Math.PI, Math.PI);
+  private static final TrapezoidProfile.Constraints rotConstraints = new TrapezoidProfile.Constraints(2 * Math.PI, 2 * Math.PI);
   private final ProfiledPIDController rotController = new ProfiledPIDController(3, 0, 0, rotConstraints);
   private final ProfiledPIDController xController = new ProfiledPIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD, xConstraints);
-  private final ProfiledPIDController yController = new ProfiledPIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD, xConstraints);
+  private final ProfiledPIDController yController = new ProfiledPIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD, yConstraints);
   private double xDistance;
   private double yDistance;
   private Rotation2d targetAngle;
@@ -39,7 +39,7 @@ public class Move extends Command {
   public void initialize() {
     xController.reset(m_swerve.getPose().getX());
     xController.setTolerance(0.1);
-    yController.reset(m_swerve.getPose().getX());
+    yController.reset(m_swerve.getPose().getY());
     yController.setTolerance(0.1);
     rotController.reset(m_swerve.getPose().getRotation().getRadians());
     rotController.setTolerance(Units.degreesToRadians(3));

@@ -27,9 +27,9 @@ public class AlignCommand extends Command {
   private final DriveTrain m_swerve;
   private final PoseEstimatorSubsystem m_vision;
   private final boolean targetRightCoral;
-  private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(0.5, 0.5);
-  private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(0.5, 0.5);
-  private static final TrapezoidProfile.Constraints rotConstraints = new TrapezoidProfile.Constraints(Math.PI, Math.PI);
+  private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(2, 3);
+  private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(2, 3);
+  private static final TrapezoidProfile.Constraints rotConstraints = new TrapezoidProfile.Constraints(2 * Math.PI, 2 * Math.PI);
 
   private final ProfiledPIDController xController = new ProfiledPIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD, xConstraints);
   private final ProfiledPIDController yController = new ProfiledPIDController(AutoConstants.translationkP, AutoConstants.translationkI, AutoConstants.translationkD, yConstraints);
@@ -88,7 +88,7 @@ public class AlignCommand extends Command {
     Translation2d lateralOffsetTranslation = new Translation2d(0, lateralOffset);
     lateralOffsetTranslation = lateralOffsetTranslation.rotateBy(targetPoseV2.getRotation());
 
-    Translation2d approachOffset = new Translation2d(AutoConstants.robotCenterToFrontDistance + 0.15, 0);
+    Translation2d approachOffset = new Translation2d(AutoConstants.robotCenterToFrontDistance, 0);
     // approachOffset = approachOffset.rotateBy(targetTagPose.getRotation());
     approachOffset = approachOffset.rotateBy(targetPoseV2.getRotation());
 

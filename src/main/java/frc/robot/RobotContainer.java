@@ -89,7 +89,7 @@ public class RobotContainer {
 
   // Joystick triggers
   Trigger runIntakeTrigger = m_joystick.button(1);
-  
+
   // Setpoints
   Trigger L1Trigger = m_joystick.button(2);
   Trigger L2Trigger = m_joystick.button(4);
@@ -111,7 +111,7 @@ public class RobotContainer {
   Trigger fastSpeedTrigger = m_controller.rightTrigger();
   Trigger speedChangeTrigger = m_controller.leftTrigger(0.01).or(m_controller.rightTrigger(0.01));
   
-  Trigger fieldRelativeHoldTrigger = m_controller.rightBumper();
+  Trigger fieldRelativeHoldTrigger = m_controller.a();
   
   Trigger fieldRelativeToggleTrigger = m_controller.b();
   Trigger resetGyroTrigger = m_controller.y();
@@ -205,9 +205,9 @@ public class RobotContainer {
     
     // options for sendable auto chooser
     m_chooser.setDefaultOption("Taxi Auto", Autos.taxi(m_swerve));
-    m_chooser.addOption("Middle Reef Auto", middleAutoCommand);
-    m_chooser.addOption("Left Reef Auto", leftAutoCommand);
-    m_chooser.addOption("Right Reef Auto", rightAutoCommand);
+    m_chooser.addOption("Middle Reef Auto", Autos.middleReefAuto(m_swerve, m_elevatorSubsystem, m_endEffectorSubsystem, m_vision));
+    m_chooser.addOption("Left Reef Auto", Autos.VisionAlignAuto(m_swerve, m_elevatorSubsystem, m_endEffectorSubsystem, m_vision, true));
+    m_chooser.addOption("Right Reef Auto", Autos.VisionAlignAuto(m_swerve, m_elevatorSubsystem, m_endEffectorSubsystem, m_vision, false));
     //m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L2")));
   
     SmartDashboard.putData(m_chooser);
@@ -341,10 +341,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return m_chooser.getSelected();
+    return m_chooser.getSelected();
     
     // return Autos.taxi(m_swerve);
-    return chaseTagCommand;
+    // return chaseTagCommand;
     
   }
 }
