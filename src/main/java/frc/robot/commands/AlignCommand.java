@@ -131,8 +131,6 @@ public class AlignCommand extends Command {
           currentPose.getRotation().getDegrees()));
     // Pose2d currentPose = m_vision.getPoseEstimate();
 
-    // if all goes wrong, replace targetPose with goalPoseV2
-    // i did that ^
     double xSpeed = xController.calculate(currentPose.getX(), goalPoseV2.getX());
     double ySpeed = yController.calculate(currentPose.getY(), goalPoseV2.getY());
     double rot = rotController.calculate(currentPose.getRotation().getRadians(), goalPoseV2.getRotation().getRadians());
@@ -140,7 +138,7 @@ public class AlignCommand extends Command {
     xSpeed = MathUtil.clamp(xSpeed, -AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxSpeedMetersPerSecond);
     ySpeed = MathUtil.clamp(ySpeed, -AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxSpeedMetersPerSecond);
     rot = MathUtil.clamp(rot, -AutoConstants.kMaxAngularSpeedRadiansPerSecond, AutoConstants.kMaxAngularSpeedRadiansPerSecond);
-    // according to the teams code im getting inspiration from this should be fieldrelative
+
     m_swerve.drive(xSpeed, ySpeed, rot, true);
   }
 

@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.math.controller.PIDController;
@@ -38,7 +39,6 @@ import frc.robot.commands.AlignCommand;
 import frc.robot.commands.AlignToTagCommand;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ChaseTagCommand;
-import frc.robot.commands.RotationCommand;
 import frc.robot.commands.Move;
 import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
@@ -146,18 +146,16 @@ public class RobotContainer {
   
 
   // Commands
-  RotationCommand rotMiddle90Command = new RotationCommand(m_swerve, -Math.PI/2);
+  Move rotMiddle90Command = new Move(m_swerve, 0, 0, new Rotation2d(-Math.PI/2), true);
   // for starting left side 
-  RotationCommand rotLeftCommand = new RotationCommand(m_swerve, -Math.PI/3);
+  Move rotLeftCommand = new Move(m_swerve, 0, 0, new Rotation2d(-Math.PI/3), true);
   // for right side
-  RotationCommand rotRightCommand = new RotationCommand(m_swerve, -2 * Math.PI/3);
+  Move rotRightCommand = new Move(m_swerve, 0, 0, new Rotation2d(Math.PI/3), true);
   ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
   Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
   Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
   
   // Command taxiAutoCommand = new Move(m_swerve, -2, 0, true);
-  // Command visionLeftReefAuto = new VisionLeftReefAuto();
-  // Command visionRightReefAuto = new VisionRightReefAuto();
 
   Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_endEffectorSubsystem);
   Command leftAutoCommand = new LeftReefAuto(m_swerve, m_endEffectorSubsystem);

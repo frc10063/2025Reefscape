@@ -122,7 +122,6 @@ public class SwerveModule extends SubsystemBase {
     //   m_driveEncoder.getDistance(), new Rotation2d(m_turningEncoder.getDistance()));
     // with scale (m_driveEncoder.getPosition() * kdriveEncoderCPR * kDriveEncoderDistancePerPulse)
     
-    // 74 8 25 18 75 16 20 75 39
     return new SwerveModulePosition(
         m_driveMotor.getPosition().refresh().getValueAsDouble()  * kDrivePositionConversionFactor,
         new Rotation2d(m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse));
@@ -130,7 +129,6 @@ public class SwerveModule extends SubsystemBase {
   
   /**
    * Sets the desired state for the module.
-   * .-- --- -- . -. / .- .-. . / ... -.-. .- .-. -.--
    * @param desiredState Desired state with speed and angle.
    */
   // var encoderRotation = new Rotation2d(m_turningEncoder.getDistance());
