@@ -115,6 +115,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void moveElevator(double elevatorSpeed) {
     double encoderValue = m_elevatorEncoder.get();
     double maxPosition = kElevatorMaxPosition;
+    SmartDashboard.putNumber("Elevator Speed", elevatorSpeed);
     if (elevatorSpeed == 0) {
       m_elevatorLeftMotor.setVoltage(kG);
       m_elevatorRightMotor.setVoltage(kG);
@@ -188,6 +189,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Elevator Speed", m_elevatorLeftMotor.get());
     SmartDashboard.putNumber("Position", m_elevatorEncoder.get());
 
+  
     // m_profiledPIDController.setP(SmartDashboard.getNumber("Elev kP", m_profiledPIDController.getP()));
     // m_profiledPIDController.setI(SmartDashboard.getNumber("Elev kI", m_profiledPIDController.getI()));
     // m_profiledPIDController.setD(SmartDashboard.getNumber("Elev kD", m_profiledPIDController.getD()));

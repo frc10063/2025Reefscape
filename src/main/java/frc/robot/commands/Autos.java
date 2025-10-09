@@ -40,7 +40,7 @@ public final class Autos {
   }
   public static Command VisionAlignAuto(DriveTrain m_swerve, ElevatorSubsystem m_elevatorSubsystem, EndEffectorSubsystem m_endEffectorSubsystem, PoseEstimatorSubsystem m_vision, boolean startLeft) {
     return Commands.sequence(
-      new Move(m_swerve, 0, 0, new Rotation2d(startLeft ? -(2 * Math.PI)/3: (2 * Math.PI)/3), false), 
+      new Move(m_swerve, -1, 0, new Rotation2d(startLeft ? -(2 * Math.PI)/3: (2 * Math.PI)/3), false), 
       new AlignCommand(m_swerve, m_vision, startLeft),
       m_elevatorSubsystem.moveElevatorTo("L2"), 
       m_endEffectorSubsystem.runEndEffector(),

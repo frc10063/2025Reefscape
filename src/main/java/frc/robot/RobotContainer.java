@@ -308,6 +308,7 @@ public class RobotContainer {
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
     coralManipulatingTrigger.onTrue(m_endEffectorSubsystem.coralToPosition());
+    
     // Bongo
     L1BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L1"), () -> m_elevatorSubsystem.isAtLevel("L1")));
     L2BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L2"), () -> m_elevatorSubsystem.isAtLevel("L2")));

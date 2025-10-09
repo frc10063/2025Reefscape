@@ -73,7 +73,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
-  public Pose3d getCurrentTargetPose() {
+  public Pose3d findBestTagPose() {
     return tagPoses.get(currentTarget.getFiducialId() - 1);
   }
 
@@ -85,30 +85,30 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     return camera.getLatestResult();
   }
 
-  /**
-   * 
-   * @param approachOffset The offset distance in front of the tag to be (positive being further from tag)
-   * @param lateralOffset The offset distance to the side of the tag (positive being right, negative being left)
-   * @param rotationalOffset
-   * @return Returns a robot pose with the given offsets relative to tag (including bumpers)
-   */
-  public Pose2d calculateGoalPoseForBestTag(double approachOffset, double lateralOffset, Rotation2d rotationalOffset) {
-    Pose2d robotPose = m_swerve.getPose();
-    Transform3d targetTransformation = currentTarget.getBestCameraToTarget();
-    var robotPose3d = new Pose3d(robotPose.getX(), robotPose.getY(), 0,
-      new Rotation3d(0, 0, robotPose.getRotation().getRadians()));
-    var cameraPose = robotPose3d.transformBy(VisionConstants.camPosition);
-    var camToTarget = targetTransformation;
-    var targetPose = cameraPose.transformBy(camToTarget).toPose2d();
-    Translation2d lateralOffsetTranslation = new Translation2d(0, lateralOffset).rotateBy(camToTarget.getRotation().toRotation2d());
-    Translation2d approachOffsetTranslation = new Translation2d(AutoConstants.robotCenterToFrontDistance + approachOffset, 0).rotateBy(camToTarget.getRotation().toRotation2d());
+  // /**
+  //  * 
+  //  * @param approachOffset The offset distance in front of the tag to be (positive being further from tag)
+  //  * @param lateralOffset The offset distance to the side of the tag (positive being right, negative being left)
+  //  * @param rotationalOffset
+  //  * @return Returns a robot pose with the given offsets relative to tag (including bumpers)
+  //  */
+  // public Pose2d calculateGoalPoseForBestTag(double approachOffset, double lateralOffset, Rotation2d rotationalOffset) {
+  //   Pose2d robotPose = m_swerve.getPose();
+  //   Transform3d targetTransformation = currentTarget.getBestCameraToTarget();
+  //   var robotPose3d = new Pose3d(robotPose.getX(), robotPose.getY(), 0,
+  //     new Rotation3d(0, 0, robotPose.getRotation().getRadians()));
+  //   var cameraPose = robotPose3d.transformBy(VisionConstants.camPosition);
+  //   var camToTarget = targetTransformation;
+  //   var targetPose = cameraPose.transformBy(camToTarget).toPose2d();
+  //   Translation2d lateralOffsetTranslation = new Translation2d(0, lateralOffset).rotateBy(camToTarget.getRotation().toRotation2d());
+  //   Translation2d approachOffsetTranslation = new Translation2d(AutoConstants.robotCenterToFrontDistance + approachOffset, 0).rotateBy(camToTarget.getRotation().toRotation2d());
 
-    Pose2d goalPose = new Pose2d(
-      targetPose.getX() + lateralOffsetTranslation.getX() + approachOffsetTranslation.getX(),
-      targetPose.getY() + lateralOffsetTranslation.getY() + approachOffsetTranslation.getY(),
-      targetPose.getRotation().rotateBy(Rotation2d.k180deg.plus(rotationalOffset)));
-    return goalPose;
-  }
+  //   Pose2d goalPose = new Pose2d(
+  //     targetPose.getX() + lateralOffsetTranslation.getX() + approachOffsetTranslation.getX(),
+  //     targetPose.getY() + lateralOffsetTranslation.getY() + approachOffsetTranslation.getY(),
+  //     targetPose.getRotation().rotateBy(Rotation2d.k180deg.plus(rotationalOffset)));
+  //   return goalPose;
+  // }
 
 
   @Override

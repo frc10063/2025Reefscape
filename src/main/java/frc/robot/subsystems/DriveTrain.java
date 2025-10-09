@@ -162,7 +162,7 @@ public class DriveTrain extends SubsystemBase {
             fieldRelative
                 ? ChassisSpeeds.fromFieldRelativeSpeeds(
                     xSpeed, ySpeed, rot, m_gyro.getRotation2d())
-                : new ChassisSpeeds(ySpeed, xSpeed, rot),
+                : new ChassisSpeeds(xSpeed, ySpeed, rot),
             kDrivePeriod));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, MAX_LINEAR_SPEED);

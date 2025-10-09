@@ -53,7 +53,7 @@ public class AlignCommand extends Command {
   public void initialize() {
     xController.setTolerance(0.05, 0.1);
     yController.setTolerance(0.05, 0.1);
-    rotController.setTolerance(Units.degreesToRadians(3));
+    rotController.setTolerance(Units.degreesToRadians(1));
 
     // could use this but eh
     // robotPose = m_vision.getPoseEstimate();
