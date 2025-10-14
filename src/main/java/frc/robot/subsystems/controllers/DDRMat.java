@@ -1,6 +1,6 @@
 // 7 year note when club is alive again: this ddrmat code has no comp value
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.controllers;
 
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -9,16 +9,16 @@ public class DDRMat extends CommandJoystick {
     public DDRMat(int port) {
         super(port);
     }
-    public Trigger getOrangeUpArrow() { // might be 8
+    public Trigger getOrangeUpArrow() { 
         return button(3);
     }
-    public Trigger getBlueUpArrow() { // might be 14
+    public Trigger getBlueUpArrow() { 
         return button(10);
     }
-    public Trigger getOrangeDownArrow() { // might be 3
+    public Trigger getOrangeDownArrow() { 
         return button(8);
     }
-    public Trigger getBlueDownArrow() { // might be 10
+    public Trigger getBlueDownArrow() { 
         return button(14);
     }
     public Trigger getLeftArrow() {
@@ -27,10 +27,10 @@ public class DDRMat extends CommandJoystick {
     public Trigger getRightArrow() {
         return button(4);
     }
-    public Trigger getOrangeCenterButton() { // unknown
+    public Trigger getOrangeCenterButton() { 
         return button(2);
     }
-    public Trigger getBlueCenterButton() { // unknown
+    public Trigger getBlueCenterButton() { 
         return button(15);
     }
     public Trigger getPlusButton() {

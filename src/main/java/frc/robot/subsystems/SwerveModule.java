@@ -118,10 +118,6 @@ public class SwerveModule extends SubsystemBase {
    * @return The current position of the module.
    */
   public SwerveModulePosition getPosition() {
-    // return new SwerveModulePosition(
-    //   m_driveEncoder.getDistance(), new Rotation2d(m_turningEncoder.getDistance()));
-    // with scale (m_driveEncoder.getPosition() * kdriveEncoderCPR * kDriveEncoderDistancePerPulse)
-    
     return new SwerveModulePosition(
         m_driveMotor.getPosition().refresh().getValueAsDouble()  * kDrivePositionConversionFactor,
         new Rotation2d(m_turningEncoder.get() * kturningEncoderCPR * kTurningEncoderDistancePerPulse));

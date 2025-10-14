@@ -9,16 +9,9 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import edu.wpi.first.math.controller.PIDController;
-// import edu.wpi.first.math.controller.ProfiledPIDController;
-// import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Rotation2d;
-// import edu.wpi.first.math.geometry.Translation2d;
-// import edu.wpi.first.math.trajectory.Trajectory;
-// import edu.wpi.first.math.trajectory.TrajectoryConfig;
-// import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -28,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-// import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -36,7 +28,6 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlignCommand;
-import frc.robot.commands.AlignToTagCommand;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ChaseTagCommand;
 import frc.robot.commands.Move;
@@ -44,13 +35,13 @@ import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
 import frc.robot.commands.RightReefAuto;
 import frc.robot.subsystems.AlgaeSubsystem;
-import frc.robot.subsystems.Bongo;
-import frc.robot.subsystems.DDRMat;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 // import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.controllers.Bongo;
+import frc.robot.subsystems.controllers.DDRMat;
 
 
 
@@ -161,8 +152,6 @@ public class RobotContainer {
   Command leftAutoCommand = new LeftReefAuto(m_swerve, m_endEffectorSubsystem);
   Command rightAutoCommand = new RightReefAuto(m_swerve, m_endEffectorSubsystem);
 
-  Command alignToTagCommand = new AlignToTagCommand(m_vision, m_swerve);
-
   // chooser for autos
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -209,6 +198,8 @@ public class RobotContainer {
     //m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L2")));
   
     SmartDashboard.putData(m_chooser);
+
+    DriverStation.silenceJoystickConnectionWarning(true);
     
     // Configure the trigger bindings
     configureBindings();
@@ -279,8 +270,6 @@ public class RobotContainer {
     fastSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::fastSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
 
     // chaseTagTrigger.whileTrue(leftAlignCommand);
-    // idk if this works
-    // I coulda been on team 6969 if i stayed in ny but now im stuck here
     // speedChangeTrigger.whileTrue(new StartEndCommand(() -> m_swerve.setSpeedMultiplier(calculateSpeedMultiplier()), m_swerve::defaultSpeed, new Subsystem[0]));
     alignRightCoralTrigger.whileTrue(rightAlignCommand);
     alignLeftCoralTrigger.whileTrue(leftAlignCommand);
