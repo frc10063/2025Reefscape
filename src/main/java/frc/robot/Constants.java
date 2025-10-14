@@ -237,6 +237,7 @@ public final class Constants {
     // for 7m/s^2, 137143
     // 2 m/s * ( 39.37 in / 1m) * (1 rotation / 4.1154829 in) * (2048 counts / 1 rotation)
     // 39183
+    // for 2.5 m/s 48980
 
     // thinking out loud here
     // so 2048 encoder pulses is the equivalent of one rotation of the spool thing
