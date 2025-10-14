@@ -189,7 +189,7 @@ public final class Constants {
     
     public static final double GEAR_RATIO = 12.75;
     
-    public static final Distance SPOOL_DIAMETER = Inches.of(1.25);
+    public static final Distance SPOOL_DIAMETER = Inches.of(1.31);
     public static final Distance BASE_PLATE_HEIGHT = Inches.of(1.7);
     public static final Distance END_EFFECTOR_HEIGHT = Inches.of(20.3).plus(BASE_PLATE_HEIGHT);
     public static final Distance STARTING_HEIGHT = Inches.of(41);
@@ -226,16 +226,17 @@ public final class Constants {
     public static final double kV = 0.00071;
     public static final double kS = 0;
 
-    public static final double kMaxVelocity = 25000; // was 0.974 m/s or 25000 counts, test 51331 counts or 2m/s
-    public static final double kMaxAcceleration = 25000; // was 0.974 m/s or 25000 counts, test 128326 counts or 5m/s
+    public static final double kMaxVelocity = 39183; // was 0.974 m/s or 25000 counts, test 51331 counts or 2m/s
+    public static final double kMaxAcceleration = 137143; // was 0.974 m/s or 25000 counts, test 128326 counts or 5m/s
 
     // 25000 counts/sec * (1 rotation / 2048 counts) * (3.14159 in / 1 rotation) * (1 m / 39.37 in)
     // 0.974 m/s
 
-    // 5 m/s^2 * ( 39.37 in / 1m) * (1 rotation / 3.14159 in) * (2048 counts / 1 rotation)
-    // = 128326
-    // 2 m/s * ( 39.37 in / 1m) * (1 rotation / 3.14159 in) * (2048 counts / 1 rotation)
-    // 51331
+    // 5 m/s^2 * ( 39.37 in / 1m) * (1 rotation / 4.1154829 in) * (2048 counts / 1 rotation)
+    // = 97959
+    // for 7m/s^2, 137143
+    // 2 m/s * ( 39.37 in / 1m) * (1 rotation / 4.1154829 in) * (2048 counts / 1 rotation)
+    // 39183
 
     // thinking out loud here
     // so 2048 encoder pulses is the equivalent of one rotation of the spool thing
