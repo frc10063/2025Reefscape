@@ -227,7 +227,7 @@ public final class Constants {
     public static final double kS = 0;
 
     public static final double kMaxVelocity = 39183; // was 0.974 m/s or 25000 counts, test 51331 counts or 2m/s
-    public static final double kMaxAcceleration = 137143; // was 0.974 m/s or 25000 counts, test 128326 counts or 5m/s
+    public static final double kMaxAcceleration = 97959; // was 0.974 m/s or 25000 counts, test 128326 counts or 5m/s
 
     // 25000 counts/sec * (1 rotation / 2048 counts) * (3.14159 in / 1 rotation) * (1 m / 39.37 in)
     // 0.974 m/s

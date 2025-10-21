@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.elevator;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -37,7 +37,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // intialize the encoder objects
   private final Encoder m_elevatorEncoder;
-  private static PIDController m_pidController; // --> OLD (is now NEW!)
+  private static PIDController m_pidController; 
   private static ProfiledPIDController m_profiledPIDController;
         
   private static ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
