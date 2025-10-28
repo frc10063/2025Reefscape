@@ -106,8 +106,8 @@ public final class Constants {
     public static final boolean kGyroReversed = false;
 
     public static final double MAX_LINEAR_SPEED = 3.5; //3.5
-    public static final double LINEAR_SPEED = 2.5; 
-    public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
+    public static final double LINEAR_SPEED = 0.5; 
+    public static final double MAX_ANGULAR_VELOCITY = 1 * Math.PI;
   }
   public static final class ModuleConstants {
     public static final double MAX_ANGULAR_VELOCITY = 4 * Math.PI;
@@ -211,9 +211,9 @@ public final class Constants {
       Map.of(
         "ZERO", 0, 
         "FEEDER", 800, 
-        "L1", 2544, 
-        "L2", 7948, 
-        "L3", 14800, 
+        "L1", 2044, 
+        "L2", 7348, 
+        "L3", 14200, 
         "L4", 22800);
     public static final double[] kElevatorDeAlgaeSetpoints = new double[] {9300, 15000};
 

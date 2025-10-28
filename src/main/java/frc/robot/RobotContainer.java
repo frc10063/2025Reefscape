@@ -59,7 +59,7 @@ public class RobotContainer {
   private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kXBoxControllerPort);
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final Bongo m_bongoController = new Bongo(OperatorConstants.kBongoControllerPort);
-  // private final DDRMat m_ddrController = new DDRMat(OperatorConstants.kDDRControllerPort);
+  private final DDRMat m_ddrController = new DDRMat(OperatorConstants.kDDRControllerPort);
 
 
   // slew rate limiters (optional)
@@ -106,6 +106,7 @@ public class RobotContainer {
   
   Trigger fieldRelativeToggleTrigger = m_controller.b();
   Trigger resetGyroTrigger = m_controller.y();
+  Trigger controllerSwapTrigger = m_controller.x();
 
   // Bongo Triggers for fun
   Trigger L1BongoTrigger = m_bongoController.getBottomLeft();
@@ -118,7 +119,7 @@ public class RobotContainer {
   Trigger bongoZeroTrigger = m_bongoController.getBottomLeft().and(m_bongoController.getBottomRight());
  // Trigger bongoPlaceL4Trigger = m_bongoController.getLeftFullBongo().and(m_bongoController.getRightFullBongo());
 
-  //Trigger clapIntakeTrigger = m_bongoController.getClap();
+  Trigger clapIntakeTrigger = m_bongoController.getClap();
 
   Trigger algaeToggleTrigger = m_bongoController.getMiddleButton();
 
@@ -152,12 +153,32 @@ public class RobotContainer {
   Command leftAutoCommand = new LeftReefAuto(m_swerve, m_endEffectorSubsystem);
   Command rightAutoCommand = new RightReefAuto(m_swerve, m_endEffectorSubsystem);
 
+  
   // chooser for autos
   SendableChooser<Command> m_chooser = new SendableChooser<>();
+  SendableChooser<Command> m_driveChooser = new SendableChooser<>();
+  // SendableChooser<Runnable> m_operatorChooser = new SendableChooser<>();
 
   boolean fieldRelative = true;
   double DDRSpeedMultiplier = 1;
   double speedMultiplier = 1;
+  boolean swerveController = true;
+  Command ddrCommand = new RunCommand(
+    () ->
+      m_swerve.drive(
+        m_ddrController.getMatYValue() * DDRSpeedMultiplier, 
+        m_ddrController.getMatXValue() * DDRSpeedMultiplier, 
+        m_ddrController.getMatRotValue() * DDRSpeedMultiplier,
+        fieldRelative),
+      m_swerve);
+  Command controllerCommand = new RunCommand(
+    () ->
+          m_swerve.drive(
+            Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+            Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+            Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY,
+            fieldRelative),
+          m_swerve);
 
   // methods for enabling/disabling field relative from controller
   public void fieldRelativeToggle() {
@@ -176,7 +197,7 @@ public class RobotContainer {
     }
   }
   public void lowerDDRSpeed() {
-    if (DDRSpeedMultiplier > 1) {
+    if (DDRSpeedMultiplier > 0.4) {
       DDRSpeedMultiplier = DDRSpeedMultiplier - 0.2;
     }
   }
@@ -185,6 +206,16 @@ public class RobotContainer {
     double fastSpeedInput = (0.66 * m_controller.getRightTriggerAxis()) + 1;
     return slowSpeedInput * fastSpeedInput;
   }
+  public void setXboxController() {
+    swerveController = true;
+  }
+  //   swerveController = true;
+  //   SmartDashboard.putBoolean("controller?", swerveController);
+  // }
+  public void setDDRCommand() {
+    swerveController = false;
+  }
+  
 
 
 
@@ -196,9 +227,12 @@ public class RobotContainer {
     m_chooser.addOption("Left Reef Auto", Autos.VisionAlignAuto(m_swerve, m_elevatorSubsystem, m_endEffectorSubsystem, m_vision, true));
     m_chooser.addOption("Right Reef Auto", Autos.VisionAlignAuto(m_swerve, m_elevatorSubsystem, m_endEffectorSubsystem, m_vision, false));
     //m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L2")));
-  
-    SmartDashboard.putData(m_chooser);
 
+    // m_driveChooser.setDefaultOption("Xbox Controller", xboxControllerSwap);
+    // m_driveChooser.addOption("DDR Mat", ddrControllerSwap);
+
+    SmartDashboard.putData(m_chooser);
+    SmartDashboard.putData("Drive Controller", m_driveChooser);
     DriverStation.silenceJoystickConnectionWarning(true);
     
     // Configure the trigger bindings
@@ -263,12 +297,15 @@ public class RobotContainer {
     // zero gyro
     resetGyroTrigger.onTrue(new InstantCommand(m_swerve::zeroHeading));
     
-    fieldRelativeToggleTrigger.onTrue(new InstantCommand(this::fieldRelativeToggle));
+    // fieldRelativeToggleTrigger.onTrue(new InstantCommand(this::fieldRelativeToggle));
+    fieldRelativeToggleTrigger.onTrue(controllerCommand.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     fieldRelativeHoldTrigger.whileTrue(new StartEndCommand(this::disableFieldRelative, this::enableFieldRelative, new Subsystem[0]));
 
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
     fastSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::fastSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
 
+    controllerSwapTrigger.onTrue(ddrCommand.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    
     // chaseTagTrigger.whileTrue(leftAlignCommand);
     // speedChangeTrigger.whileTrue(new StartEndCommand(() -> m_swerve.setSpeedMultiplier(calculateSpeedMultiplier()), m_swerve::defaultSpeed, new Subsystem[0]));
     alignRightCoralTrigger.whileTrue(rightAlignCommand);
@@ -280,7 +317,7 @@ public class RobotContainer {
     L1Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L1"));
     L2Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L2"));
     L3Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L3"));
-    L4Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L4"));
+    // L4Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L4"));
 
 
     runIntakeTrigger.onTrue(m_endEffectorSubsystem.runEndEffector());
@@ -302,16 +339,16 @@ public class RobotContainer {
     L1BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L1"), () -> m_elevatorSubsystem.isAtLevel("L1")));
     L2BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L2"), () -> m_elevatorSubsystem.isAtLevel("L2")));
     L3BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L3"), () -> m_elevatorSubsystem.isAtLevel("L3")));
-    L4BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L4"), () -> m_elevatorSubsystem.isAtLevel("L4")));
+    // L4BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L4"), () -> m_elevatorSubsystem.isAtLevel("L4")));
     
     bongoPlaceL2Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L2"));
     bongoPlaceL3Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L3"));
     //bongoPlaceL4Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, 4).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
     bongoZeroTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo("ZERO"));
-    // clapIntakeTrigger.onTrue(new StartEndCommand(m_intakeSubsystem::runIntakeMaxSpeed, m_intakeSubsystem::stopIntake, m_intakeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    clapIntakeTrigger.onTrue(new StartEndCommand(m_endEffectorSubsystem::runIntakeMaxSpeed, m_endEffectorSubsystem::stopIntake, m_endEffectorSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     algaeToggleTrigger.onTrue(new StartEndCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem::stopAlgae, m_algaeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-
+    // algaeToggleTrigger.onTrue(new StartEndCommand(m_endEffectorSubsystem::runIntakeMaxSpeed, m_endEffectorSubsystem::stopIntake, m_endEffectorSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     // DDRL1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
     // DDRL2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
@@ -335,4 +372,5 @@ public class RobotContainer {
     // return chaseTagCommand;
     
   }
+  
 }
