@@ -106,8 +106,8 @@ public final class Constants {
     public static final boolean kGyroReversed = false;
 
     public static final double MAX_LINEAR_SPEED = 3.5; //3.5
-    public static final double LINEAR_SPEED = 0.5; 
-    public static final double MAX_ANGULAR_VELOCITY = 1 * Math.PI;
+    public static final double LINEAR_SPEED = 3; 
+    public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
   }
   public static final class ModuleConstants {
     public static final double MAX_ANGULAR_VELOCITY = 4 * Math.PI;

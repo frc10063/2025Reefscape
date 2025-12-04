@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -25,14 +22,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlignCommand;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ChaseTagCommand;
-import frc.robot.commands.Move;
 import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
+import frc.robot.commands.Move;
 import frc.robot.commands.RightReefAuto;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.DriveTrain;
@@ -41,6 +37,7 @@ import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.controllers.Bongo;
 import frc.robot.subsystems.controllers.DDRMat;
+import frc.robot.subsystems.controllers.Headset;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 
 
@@ -60,7 +57,7 @@ public class RobotContainer {
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final Bongo m_bongoController = new Bongo(OperatorConstants.kBongoControllerPort);
   private final DDRMat m_ddrController = new DDRMat(OperatorConstants.kDDRControllerPort);
-
+  private final Headset m_eegHeadset = new Headset(4);
 
   // slew rate limiters (optional)
   // private final SlewRateLimiter m_xLimiter = new SlewRateLimiter(3);
@@ -136,7 +133,8 @@ public class RobotContainer {
   Trigger alignLeftCoralTrigger = m_controller.leftBumper();
   Trigger alignRightCoralTrigger = m_controller.rightBumper();
   
-
+  Trigger pushTrigger = m_eegHeadset.pushButton();
+  Trigger pullTrigger = m_eegHeadset.pullButton();
   // Commands
   Move rotMiddle90Command = new Move(m_swerve, 0, 0, new Rotation2d(-Math.PI/2), true);
   // for starting left side 
@@ -323,12 +321,12 @@ public class RobotContainer {
     runIntakeTrigger.onTrue(m_endEffectorSubsystem.runEndEffector());
 
 
-    // forwardAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
-    // reverseAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
+    forwardAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
+    reverseAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
 
 
-    // deAlgaeL2Trigger.onTrue(new RunCommand(m_algaeSubsystem::extendAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-    // deAlgaeL3Trigger.onTrue(new RunCommand(m_algaeSubsystem::retractAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    deAlgaeL2Trigger.onTrue(new RunCommand(m_algaeSubsystem::extendAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    deAlgaeL3Trigger.onTrue(new RunCommand(m_algaeSubsystem::retractAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     
 
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
@@ -358,6 +356,17 @@ public class RobotContainer {
     // DDRL4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
     // DDRIncreaseSpeedTrigger.onTrue(new InstantCommand(this::addDDRSpeed));
     // DDRDecreaseSpeedTrigger.onTrue(new InstantCommand(this::lowerDDRSpeed));
+    pushTrigger.whileTrue(new StartEndCommand(
+      () ->
+        m_swerve.drive(1, 0, 0, fieldRelative), 
+      () ->
+        m_swerve.drive(0, 0, 0, fieldRelative), m_swerve));
+    pullTrigger.whileTrue(new StartEndCommand(
+      () ->
+        m_swerve.drive(-1, 0, 0, fieldRelative), 
+      () ->
+        m_swerve.drive(0, 0, 0, fieldRelative), m_swerve));
+
   }
 
   /**
