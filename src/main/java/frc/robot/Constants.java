@@ -13,6 +13,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 
+import com.pathplanner.lib.config.RobotConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -106,8 +107,10 @@ public final class Constants {
     public static final boolean kGyroReversed = false;
 
     public static final double MAX_LINEAR_SPEED = 3.5; //3.5
-    public static final double LINEAR_SPEED = 0.5; 
-    public static final double MAX_ANGULAR_VELOCITY = 1 * Math.PI;
+    public static final double LINEAR_SPEED = 2.5; 
+    public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
+
+
   }
   public static final class ModuleConstants {
     public static final double MAX_ANGULAR_VELOCITY = 4 * Math.PI;

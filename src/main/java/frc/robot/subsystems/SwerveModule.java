@@ -160,7 +160,6 @@ public class SwerveModule extends SubsystemBase {
 
     driveOutput = (driveOutput + driveFeedforward);
     turnOutput = -(turnOutput);
-
     SmartDashboard.putNumber("Desired angle" + turnPort, desiredState.angle.getRadians());
     SmartDashboard.putNumber("Drive Motor "+drivePort, driveOutput);
     SmartDashboard.putNumber("Turn Motor "+turnPort, turnOutput);

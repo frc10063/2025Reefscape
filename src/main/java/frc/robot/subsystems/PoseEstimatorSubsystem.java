@@ -84,7 +84,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   public PhotonPipelineResult getNewestResult() {
     return camera.getLatestResult();
   }
-
   /**
    * 
    * @param approachOffset The offset distance in front of the tag to be (positive being further from tag)
