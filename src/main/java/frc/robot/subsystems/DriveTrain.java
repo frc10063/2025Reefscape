@@ -195,10 +195,6 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Speed Multiplier", speedMultiplier);
   }
 
-  public void setSpeedMultiplier(double speedInput) {
-    speedMultiplier = speedInput;
-  }
-
   /**
    * Method to drive the robot using joystick info.
    *
@@ -219,8 +215,6 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("YSpeed", ySpeed);
     SmartDashboard.putNumber("Rotation", rot);
     SmartDashboard.putBoolean("Field Relative", fieldRelative);
-
-
 
     var swerveModuleStates = kDriveKinematics.toSwerveModuleStates(
         ChassisSpeeds.discretize(

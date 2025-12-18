@@ -4,16 +4,10 @@
 
 package frc.robot;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
-
-import com.pathplanner.lib.config.RobotConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -25,11 +19,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.TimedRobot;
 
 
@@ -56,17 +46,17 @@ public final class Constants {
   }
 
   public static final class DriveConstants {
-    public static final int kFrontLeftDriveMotorPort = 5; // 2 3 4 5
+    public static final int kFrontLeftDriveMotorPort = 5; 
     public static final int kRearLeftDriveMotorPort = 2;
     public static final int kRearRightDriveMotorPort = 3;
     public static final int kFrontRightDriveMotorPort = 4;
 
-    public static final int kFrontLeftTurningMotorPort = 9; // 6 7 8 9
+    public static final int kFrontLeftTurningMotorPort = 9; 
     public static final int kRearLeftTurningMotorPort = 6;
     public static final int kRearRightTurningMotorPort = 7;
     public static final int kFrontRightTurningMotorPort = 8;
 
-    public static final int kFrontLeftTurningEncoderPorts = 0; // 3 2 1 0
+    public static final int kFrontLeftTurningEncoderPorts = 0; 
     public static final int kRearLeftTurningEncoderPorts = 3;
     public static final int kRearRightTurningEncoderPorts = 2; 
     public static final int kFrontRightTurningEncoderPorts = 1;

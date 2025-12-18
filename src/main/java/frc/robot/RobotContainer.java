@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static frc.robot.Constants.DriveConstants.LINEAR_SPEED;
+import static frc.robot.Constants.DriveConstants.MAX_ANGULAR_VELOCITY;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -126,8 +128,8 @@ public class RobotContainer {
   // Trigger L3DDRTrigger = m_ddrController.getOrangeUpArrow();
   // Trigger L4DDR = m_ddrController.getRightArrow(); NO
   // Trigger DDRIntakeTrigger = m_ddrController.getRightArrow();
-  // Trigger DDRIncreaseSpeedTrigger = m_ddrController.getPlusButton();
-  // Trigger DDRDecreaseSpeedTrigger = m_ddrController.getMinusButton();
+  Trigger DDRIncreaseSpeedTrigger = m_ddrController.getPlusButton();
+  Trigger DDRDecreaseSpeedTrigger = m_ddrController.getMinusButton();
 
   // Vision align buttons, not tested
   Trigger alignLeftCoralTrigger = m_controller.leftBumper();
@@ -155,6 +157,7 @@ public class RobotContainer {
   // chooser for autos
   SendableChooser<Command> m_chooser = new SendableChooser<>();
   SendableChooser<Command> m_driveChooser = new SendableChooser<>();
+  private Command activeDriveCommand = null;
   // SendableChooser<Runnable> m_operatorChooser = new SendableChooser<>();
 
   boolean fieldRelative = true;
@@ -170,13 +173,21 @@ public class RobotContainer {
       m_swerve);
   Command controllerCommand = new RunCommand(
     () ->
-          m_swerve.drive(
-            Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
-            Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
-            Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY,
-            fieldRelative),
-          m_swerve);
-
+      m_swerve.drive(
+        Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+        Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+        Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY,
+        fieldRelative),
+      m_swerve);
+  Command wiiBalanceCommand = new RunCommand(
+    () -> 
+        m_swerve.drive(
+            m_balanceBoard.getYAxis() * DriveConstants.LINEAR_SPEED,
+            m_balanceBoard.getXAxis() * DriveConstants.LINEAR_SPEED,
+            m_balanceBoard.getRotAxis() * DriveConstants.MAX_ANGULAR_VELOCITY,
+            fieldRelative
+        ),
+    m_swerve);
   // methods for enabling/disabling field relative from controller
   public void fieldRelativeToggle() {
     fieldRelative = !fieldRelative;
@@ -213,6 +224,7 @@ public class RobotContainer {
 
     m_driveChooser.setDefaultOption("Xbox Controller", controllerCommand);
     m_driveChooser.addOption("DDR Mat", ddrCommand);
+    m_driveChooser.addOption("Balance Board", wiiBalanceCommand);
 
 
     SmartDashboard.putData(m_chooser);
@@ -225,6 +237,7 @@ public class RobotContainer {
     // Tangent line applied to make smaller movements smaller, but maintain same max speed
     // As by default up is -y on a joystick and left is +x, joystick inputs must be inverted
 
+    m_swerve.setDefaultCommand(controllerCommand);
     // m_swerve.setDefaultCommand(
     //     new RunCommand(
     //       () ->
@@ -235,16 +248,16 @@ public class RobotContainer {
     //               fieldRelative), 
     //               m_swerve));
 
-    m_swerve.setDefaultCommand(
-          new RunCommand(
-            () -> 
-                m_swerve.drive(
-                    m_balanceBoard.getYAxis(),
-                    m_balanceBoard.getXAxis(),
-                    m_balanceBoard.getRotAxis(),
-                    fieldRelative
-                ),
-            m_swerve));
+    // m_swerve.setDefaultCommand(
+    //       new RunCommand(
+    //         () -> 
+    //             m_swerve.drive(
+    //                 m_balanceBoard.getYAxis(),
+    //                 m_balanceBoard.getXAxis(),
+    //                 m_balanceBoard.getRotAxis(),
+    //                 fieldRelative
+    //             ),
+    //         m_swerve));
     // m_swerve.setDefaultCommand(
     //     new RunCommand(
     //       () ->
@@ -288,8 +301,6 @@ public class RobotContainer {
 
     controllerSwapTrigger.onTrue(ddrCommand.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     
-    // chaseTagTrigger.whileTrue(leftAlignCommand);
-    // speedChangeTrigger.whileTrue(new StartEndCommand(() -> m_swerve.setSpeedMultiplier(calculateSpeedMultiplier()), m_swerve::defaultSpeed, new Subsystem[0]));
     alignRightCoralTrigger.whileTrue(rightAlignCommand);
     alignLeftCoralTrigger.whileTrue(leftAlignCommand);
 
@@ -337,13 +348,28 @@ public class RobotContainer {
 
     // DDRIntakeTrigger.onTrue(new RunCommand(m_endEffectorSubsystem::runIntakeMaxSpeed, m_endEffectorSubsystem).withTimeout(0.5));
     // DDRL4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
-    // DDRIncreaseSpeedTrigger.onTrue(new InstantCommand(this::addDDRSpeed));
-    // DDRDecreaseSpeedTrigger.onTrue(new InstantCommand(this::lowerDDRSpeed));
+    DDRIncreaseSpeedTrigger.onTrue(new InstantCommand(this::addDDRSpeed));
+    DDRDecreaseSpeedTrigger.onTrue(new InstantCommand(this::lowerDDRSpeed));
 
     balanceBoardCalibrate.onTrue(new InstantCommand(m_balanceBoard::calibrate));
-
   }
 
+  public void updateDriveMode() {
+    Command selected = m_driveChooser.getSelected();
+
+    if (selected == null || selected.equals(activeDriveCommand)) {
+        return;
+    }
+
+    // Cancel old command
+    if (activeDriveCommand != null) {
+        activeDriveCommand.cancel();
+    }
+
+    // Schedule new one
+    selected.schedule();
+    activeDriveCommand = selected;
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
