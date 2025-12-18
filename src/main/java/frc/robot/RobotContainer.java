@@ -183,9 +183,9 @@ public class RobotContainer {
   Command wiiBalanceCommand = new RunCommand(
     () -> 
         m_swerve.drive(
-            m_balanceBoard.getYAxis() * DriveConstants.LINEAR_SPEED,
-            m_balanceBoard.getXAxis() * DriveConstants.LINEAR_SPEED,
-            m_balanceBoard.getRotAxis() * DriveConstants.MAX_ANGULAR_VELOCITY,
+            m_balanceBoard.applyResponseCurve(m_balanceBoard.getYAxis()) * DriveConstants.LINEAR_SPEED,
+            -m_balanceBoard.applyResponseCurve(m_balanceBoard.getXAxis()) * DriveConstants.LINEAR_SPEED,
+            m_balanceBoard.applyResponseCurve(m_balanceBoard.getRotAxis()) * DriveConstants.MAX_ANGULAR_VELOCITY,
             fieldRelative
         ),
     m_swerve);
@@ -223,13 +223,13 @@ public class RobotContainer {
     m_chooser.addOption("Right Reef Auto", Autos.VisionAlignAuto(m_swerve, m_elevatorSubsystem, m_endEffectorSubsystem, m_vision, false));
     //m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L2")));
 
-    m_driveChooser.setDefaultOption("Xbox Controller", controllerCommand);
-    m_driveChooser.addOption("DDR Mat", ddrCommand);
-    m_driveChooser.addOption("Balance Board", wiiBalanceCommand);
+    // m_driveChooser.setDefaultOption("Xbox Controller", controllerCommand);
+    // m_driveChooser.addOption("DDR Mat", ddrCommand);
+    // m_driveChooser.addOption("Balance Board", wiiBalanceCommand);
 
 
     SmartDashboard.putData(m_chooser);
-    SmartDashboard.putData("Drive Controller", m_driveChooser);
+    // SmartDashboard.putData("Drive Controller", m_driveChooser);
     DriverStation.silenceJoystickConnectionWarning(true);
     
     configureBindings();
@@ -238,7 +238,7 @@ public class RobotContainer {
     // Tangent line applied to make smaller movements smaller, but maintain same max speed
     // As by default up is -y on a joystick and left is +x, joystick inputs must be inverted
 
-    m_swerve.setDefaultCommand(controllerCommand);
+    // m_swerve.setDefaultCommand(controllerCommand);
     // m_swerve.setDefaultCommand(
     //     new RunCommand(
     //       () ->
@@ -269,16 +269,7 @@ public class RobotContainer {
     //             fieldRelative),
     //           m_swerve));
 
-    m_swerve.setDefaultCommand(
-      new RunCommand(
-        () ->
-          m_swerve.drive(
-            m_balanceBoard.getYAxis() * 1.5,
-            m_balanceBoard.getXAxis() * 1.5,
-            0,
-            fieldRelative)
-      , m_swerve)
-    );
+    m_swerve.setDefaultCommand(wiiBalanceCommand);
     m_elevatorSubsystem.setDefaultCommand(
         new RunCommand(
           () -> 
