@@ -45,7 +45,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 0.9);
 
   
-  private final SwerveDrivePoseEstimator poseEstimator; // should be SwerveDrivePoseEstimator<N7, N7, N5>
+  private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field2d = new Field2d();
   public PoseEstimatorSubsystem(DriveTrain m_swerve) {
     apriltaglayout = VisionConstants.APRIL_TAGS_LAYOUT;
@@ -84,7 +84,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   public PhotonPipelineResult getNewestResult() {
     return camera.getLatestResult();
   }
-
   /**
    * 
    * @param approachOffset The offset distance in front of the tag to be (positive being further from tag)
