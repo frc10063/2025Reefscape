@@ -42,6 +42,7 @@ import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.controllers.Bongo;
 import frc.robot.subsystems.controllers.DDRMat;
+import frc.robot.subsystems.controllers.WiiBalanceBoard;
 
 
 
@@ -60,7 +61,7 @@ public class RobotContainer {
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final Bongo m_bongoController = new Bongo(OperatorConstants.kBongoControllerPort);
   private final DDRMat m_ddrController = new DDRMat(OperatorConstants.kDDRControllerPort);
-
+  private final WiiBalanceBoard m_balanceBoard = new WiiBalanceBoard(5);
 
   // slew rate limiters (optional)
   // private final SlewRateLimiter m_xLimiter = new SlewRateLimiter(3);
@@ -253,15 +254,15 @@ public class RobotContainer {
     // Tangent line applied to make smaller movements smaller, but maintain same max speed
     // As by default up is -y on a joystick and left is +x, joystick inputs must be inverted
 
-    m_swerve.setDefaultCommand(
-        new RunCommand(
-          () ->
-              m_swerve.drive(
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
-                  fieldRelative), 
-                  m_swerve));
+    // m_swerve.setDefaultCommand(
+    //     new RunCommand(
+    //       () ->
+    //           m_swerve.drive(
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
+    //               fieldRelative), 
+    //               m_swerve));
 
     // m_swerve.setDefaultCommand(
     //     new RunCommand(
@@ -272,7 +273,17 @@ public class RobotContainer {
     //             m_ddrController.getMatRotValue() * DDRSpeedMultiplier,
     //             fieldRelative),
     //           m_swerve));
-    
+
+    m_swerve.setDefaultCommand(
+      new RunCommand(
+        () ->
+          m_swerve.drive(
+            m_balanceBoard.getYAxis() * 1.5,
+            m_balanceBoard.getXAxis() * 1.5,
+            0,
+            fieldRelative)
+      , m_swerve)
+    );
     m_elevatorSubsystem.setDefaultCommand(
         new RunCommand(
           () -> 

@@ -22,38 +22,6 @@ import frc.robot.subsystems.PoseEstimatorSubsystem;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
-  public Autos(DriveTrain m_swerve, PoseEstimatorSubsystem m_poseEstimator) {
-    RobotConfig config;
-    try {
-      config = RobotConfig.fromGUISettings();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    AutoBuilder.configure(
-            m_poseEstimator::getPoseEstimate, // Robot pose supplier
-            m_swerve::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-            m_swerve::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> m_swerve.drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-            ),
-            config, // The robot configuration
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            m_swerve // Reference to this subsystem to set requirements
-    );
-  }
   public static Command coralPlacingAuto(ElevatorSubsystem m_elevatorSubsystem, EndEffectorSubsystem m_endEffectorSubsystem, String level) {
     return Commands.sequence(m_elevatorSubsystem.moveElevatorTo(level),
     m_endEffectorSubsystem.runEndEffector(),

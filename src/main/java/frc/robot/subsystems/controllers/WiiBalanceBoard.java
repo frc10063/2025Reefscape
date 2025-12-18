@@ -16,10 +16,10 @@ public class WiiBalanceBoard extends GenericHID {
         return this.getRawAxis(3) > -0.95;
     }
     public double getYAxis() {
-        return isInUse() ? -MathUtil.applyDeadband(this.getRawAxis(1), 0.15) : 0;
+        return -MathUtil.applyDeadband(this.getRawAxis(1), 0.15);
     }
     public double getXAxis() {
-        return isInUse() ? MathUtil.applyDeadband(this.getRawAxis(0), 0.15) : 0;
+        return MathUtil.applyDeadband(this.getRawAxis(0), 0.15);
     }
     
 
