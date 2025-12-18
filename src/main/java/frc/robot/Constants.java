@@ -49,6 +49,8 @@ public final class Constants {
     public static final int kJoystickControllerPort = 1;
     public static final int kBongoControllerPort = 2;
     public static final int kDDRControllerPort = 3;
+    public static final int kHeadsetPort = 4;
+    public static final int kBalanceBoardPort = 5;
 
     public static final boolean TESTING_MODE = true;
   }
@@ -79,15 +81,10 @@ public final class Constants {
     public static final boolean kFrontRightDriveEncoderReversed = false;
     public static final boolean kRearRightDriveEncoderReversed = false;
 
-    // for the front of hte robot being opposite the battery,
-    // the zeroes are 0.935, 0.754, 0.483, 0.436
-
-    // these are now changed so the zero is to the right 
-    // as the front of the robot is 90 degrees right
-    public static final double kFrontLeftExpectedZero = 0.186; // 0.935
-    public static final double kRearLeftExpectedZero = 0.685; // 0.754
-    public static final double kRearRightExpectedZero = 0.504; // 0.483
-    public static final double kFrontRightExpectedZero = 0.233; // 0.436
+    public static final double kFrontLeftExpectedZero = 0.186; 
+    public static final double kRearLeftExpectedZero = 0.685; 
+    public static final double kRearRightExpectedZero = 0.504; 
+    public static final double kFrontRightExpectedZero = 0.233; 
 
     public static final double kDrivePeriod = TimedRobot.kDefaultPeriod;
 
@@ -96,20 +93,24 @@ public final class Constants {
 
     public static final Distance kWheelBase = Meters.of(0.7);
     // Distance between front and back wheels on robot
-    
+    public static final Translation2d[] MODULE_TRANSLATIONS = {
+      new Translation2d(kWheelBase.magnitude() / 2, kTrackWidth.magnitude() / 2),
+      new Translation2d(kWheelBase.magnitude() / 2, -kTrackWidth.magnitude() / 2),
+      new Translation2d(-kWheelBase.magnitude() / 2, kTrackWidth.magnitude() / 2),
+      new Translation2d(-kWheelBase.magnitude() / 2, -kTrackWidth.magnitude() / 2)
+    };
+
     public static final SwerveDriveKinematics kDriveKinematics =
-        new SwerveDriveKinematics(
-            new Translation2d(kWheelBase.magnitude() / 2, kTrackWidth.magnitude() / 2),
-            new Translation2d(kWheelBase.magnitude() / 2, -kTrackWidth.magnitude() / 2),
-            new Translation2d(-kWheelBase.magnitude() / 2, kTrackWidth.magnitude() / 2),
-            new Translation2d(-kWheelBase.magnitude() / 2, -kTrackWidth.magnitude() / 2));
+        new SwerveDriveKinematics(MODULE_TRANSLATIONS);
     
     public static final boolean kGyroReversed = false;
 
-    public static final double MAX_LINEAR_SPEED = 3.5; //3.5
+    public static final double MAX_LINEAR_SPEED = 3.8862; //3.5
     public static final double LINEAR_SPEED = 2.5; 
     public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
-
+    
+    public static final double ROBOT_MASS_KG = 0;
+    public static final double ROBOT_MOI = 0;
 
   }
   public static final class ModuleConstants {
@@ -129,7 +130,11 @@ public final class Constants {
 
     public static final double DRIVE_GEAR_RATIO = 6.75;
     public static final double STEER_GEAR_RATIO =  150.0 / 7.0;
-    public static final double WHEEL_DIAMETER = 0.1016;
+    public static final double WHEEL_RADIUS = 0.0508;
+    public static final double WHEEL_DIAMETER = WHEEL_RADIUS * 2;
+    public static final double WHEEL_COF = 0;
+    public static final double CURRENT_LIMIT = 0;
+    
 
     public static final double kDriveDistancePerROTATION = (WHEEL_DIAMETER * Math.PI) / DRIVE_GEAR_RATIO;
 

@@ -5,11 +5,14 @@
 package frc.robot.subsystems;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.studica.frc.AHRS;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -17,44 +20,65 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ModuleConstants;
+
 import static frc.robot.Constants.DriveConstants.*;
 
 public class DriveTrain extends SubsystemBase {
+  private SwerveDrivePoseEstimator poseEstimator;
+  private static final edu.wpi.first.math.Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1); 
+  private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 0.9);
+
   public DriveTrain() {
     m_gyro.reset();
-    RobotConfig config;
-    try {
-      config = RobotConfig.fromGUISettings();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    poseEstimator = new SwerveDrivePoseEstimator(
+      kDriveKinematics,
+      getGyroRotation(),
+      getSwerveModulePositions(), 
+      new Pose2d(),
+      stateStdDevs,
+      visionMeasurementStdDevs
+    );
 
+    RobotConfig config = new RobotConfig(
+      ROBOT_MASS_KG,
+      ROBOT_MOI, 
+      new ModuleConfig(
+        ModuleConstants.WHEEL_RADIUS,
+        MAX_LINEAR_SPEED, 
+        ModuleConstants.WHEEL_COF, 
+        DCMotor.getKrakenX60Foc(1)
+          .withReduction(ModuleConstants.DRIVE_GEAR_RATIO),
+          ModuleConstants.CURRENT_LIMIT, 
+          1),
+      MODULE_TRANSLATIONS);
     AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
-            this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-            ),
-            config, // The robot configuration
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this // Reference to this subsystem to set requirements
+      this::getPose, // Robot pose supplier
+      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+      this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+      (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+      new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+              new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+              new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+      ),
+      config, // The robot configuration
+      () -> {
+        // Boolean supplier that controls when the path will be mirrored for the red alliance
+        // This will flip the path being followed to the red side of the field.
+        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+          return alliance.get() == DriverStation.Alliance.Red;
+        }
+        return false;
+      },
+      this 
     );
   }
 

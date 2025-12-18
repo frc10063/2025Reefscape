@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,6 +43,7 @@ import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.controllers.Bongo;
 import frc.robot.subsystems.controllers.DDRMat;
+import frc.robot.subsystems.controllers.WiiBalanceBoard;
 
 
 
@@ -60,13 +62,8 @@ public class RobotContainer {
   private final CommandJoystick m_joystick = new CommandJoystick(OperatorConstants.kJoystickControllerPort);
   private final Bongo m_bongoController = new Bongo(OperatorConstants.kBongoControllerPort);
   private final DDRMat m_ddrController = new DDRMat(OperatorConstants.kDDRControllerPort);
-
-
-  // slew rate limiters (optional)
-  // private final SlewRateLimiter m_xLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_yLimiter = new SlewRateLimiter(3);
-  // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
-
+  private final XboxController m_EEGHeadset = new XboxController(OperatorConstants.kHeadsetPort);
+  private final WiiBalanceBoard m_balanceBoard = new WiiBalanceBoard(OperatorConstants.kBalanceBoardPort);
 
   // Subsystems
   private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
@@ -136,6 +133,7 @@ public class RobotContainer {
   Trigger alignLeftCoralTrigger = m_controller.leftBumper();
   Trigger alignRightCoralTrigger = m_controller.rightBumper();
   
+  Trigger balanceBoardCalibrate = m_balanceBoard.calibrationButton();
 
   // Commands
   Move rotMiddle90Command = new Move(m_swerve, 0, 0, new Rotation2d(-Math.PI/2), true);
@@ -161,7 +159,6 @@ public class RobotContainer {
 
   boolean fieldRelative = true;
   double DDRSpeedMultiplier = 1;
-  double speedMultiplier = 1;
   boolean swerveController = true;
   Command ddrCommand = new RunCommand(
     () ->
@@ -201,20 +198,6 @@ public class RobotContainer {
       DDRSpeedMultiplier = DDRSpeedMultiplier - 0.2;
     }
   }
-  public double calculateSpeedMultiplier() {
-    double slowSpeedInput = (-0.8 * m_controller.getLeftTriggerAxis()) + 1;
-    double fastSpeedInput = (0.66 * m_controller.getRightTriggerAxis()) + 1;
-    return slowSpeedInput * fastSpeedInput;
-  }
-  public void setXboxController() {
-    swerveController = true;
-  }
-  //   swerveController = true;
-  //   SmartDashboard.putBoolean("controller?", swerveController);
-  // }
-  public void setDDRCommand() {
-    swerveController = false;
-  }
   
 
 
@@ -228,41 +211,40 @@ public class RobotContainer {
     m_chooser.addOption("Right Reef Auto", Autos.VisionAlignAuto(m_swerve, m_elevatorSubsystem, m_endEffectorSubsystem, m_vision, false));
     //m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L2")));
 
-    // m_driveChooser.setDefaultOption("Xbox Controller", xboxControllerSwap);
-    // m_driveChooser.addOption("DDR Mat", ddrControllerSwap);
+    m_driveChooser.setDefaultOption("Xbox Controller", controllerCommand);
+    m_driveChooser.addOption("DDR Mat", ddrCommand);
+
 
     SmartDashboard.putData(m_chooser);
     SmartDashboard.putData("Drive Controller", m_driveChooser);
     DriverStation.silenceJoystickConnectionWarning(true);
     
-    // Configure the trigger bindings
     configureBindings();
-    
-
-    // m_swerve.setDefaultCommand(
-    //     new RunCommand(
-    //       () ->
-    //           m_swerve.drive(
-    //               -MathUtil.applyDeadband(m_controller.getLeftY(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
-    //               -MathUtil.applyDeadband(m_controller.getLeftX(), 0.05) * DriveConstants.kMaxSpeedMetersPerSecond, 
-    //               -MathUtil.applyDeadband(m_controller.getRightX(), 0.05) * DriveConstants.kMaxRotationSpeedRadiansPerSecond, 
-    //               fieldRelative), 
-    //               m_swerve));
 
     // Default commands run when nothing is scheduled
     // Tangent line applied to make smaller movements smaller, but maintain same max speed
     // As by default up is -y on a joystick and left is +x, joystick inputs must be inverted
 
-    m_swerve.setDefaultCommand(
-        new RunCommand(
-          () ->
-              m_swerve.drive(
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
-                  Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
-                  fieldRelative), 
-                  m_swerve));
+    // m_swerve.setDefaultCommand(
+    //     new RunCommand(
+    //       () ->
+    //           m_swerve.drive(
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+    //               Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY, 
+    //               fieldRelative), 
+    //               m_swerve));
 
+    m_swerve.setDefaultCommand(
+          new RunCommand(
+            () -> 
+                m_swerve.drive(
+                    m_balanceBoard.getYAxis(),
+                    m_balanceBoard.getXAxis(),
+                    m_balanceBoard.getRotAxis(),
+                    fieldRelative
+                ),
+            m_swerve));
     // m_swerve.setDefaultCommand(
     //     new RunCommand(
     //       () ->
@@ -348,7 +330,6 @@ public class RobotContainer {
     bongoZeroTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo("ZERO"));
     clapIntakeTrigger.onTrue(new StartEndCommand(m_endEffectorSubsystem::runIntakeMaxSpeed, m_endEffectorSubsystem::stopIntake, m_endEffectorSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     algaeToggleTrigger.onTrue(new StartEndCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem::stopAlgae, m_algaeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-    // algaeToggleTrigger.onTrue(new StartEndCommand(m_endEffectorSubsystem::runIntakeMaxSpeed, m_endEffectorSubsystem::stopIntake, m_endEffectorSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     // DDRL1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
     // DDRL2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
@@ -358,6 +339,9 @@ public class RobotContainer {
     // DDRL4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
     // DDRIncreaseSpeedTrigger.onTrue(new InstantCommand(this::addDDRSpeed));
     // DDRDecreaseSpeedTrigger.onTrue(new InstantCommand(this::lowerDDRSpeed));
+
+    balanceBoardCalibrate.onTrue(new InstantCommand(m_balanceBoard::calibrate));
+
   }
 
   /**
