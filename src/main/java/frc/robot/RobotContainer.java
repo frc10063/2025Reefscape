@@ -3,9 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.Constants.DriveConstants.LINEAR_SPEED;
 import static frc.robot.Constants.DriveConstants.MAX_ANGULAR_VELOCITY;
 
@@ -28,14 +25,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlignCommand;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ChaseTagCommand;
-import frc.robot.commands.Move;
 import frc.robot.commands.LeftReefAuto;
 import frc.robot.commands.MiddleReefAuto;
+import frc.robot.commands.Move;
 import frc.robot.commands.RightReefAuto;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.DriveTrain;
@@ -45,6 +41,7 @@ import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.controllers.Bongo;
 import frc.robot.subsystems.controllers.DDRMat;
+import frc.robot.subsystems.controllers.WiiBalanceBoard;
 import frc.robot.subsystems.controllers.WiiBalanceBoard;
 
 
@@ -182,9 +179,9 @@ public class RobotContainer {
   Command wiiBalanceCommand = new RunCommand(
     () -> 
         m_swerve.drive(
-            m_balanceBoard.getYAxis() * DriveConstants.LINEAR_SPEED,
-            m_balanceBoard.getXAxis() * DriveConstants.LINEAR_SPEED,
-            m_balanceBoard.getRotAxis() * DriveConstants.MAX_ANGULAR_VELOCITY,
+            m_balanceBoard.applyResponseCurve(m_balanceBoard.getYAxis()) * DriveConstants.LINEAR_SPEED,
+            -m_balanceBoard.applyResponseCurve(m_balanceBoard.getXAxis()) * DriveConstants.LINEAR_SPEED,
+            m_balanceBoard.applyResponseCurve(m_balanceBoard.getRotAxis()) * DriveConstants.MAX_ANGULAR_VELOCITY,
             fieldRelative
         ),
     m_swerve);
@@ -228,7 +225,7 @@ public class RobotContainer {
 
 
     SmartDashboard.putData(m_chooser);
-    SmartDashboard.putData("Drive Controller", m_driveChooser);
+    // SmartDashboard.putData("Drive Controller", m_driveChooser);
     DriverStation.silenceJoystickConnectionWarning(true);
     
     configureBindings();
@@ -267,7 +264,8 @@ public class RobotContainer {
     //             m_ddrController.getMatRotValue() * DDRSpeedMultiplier,
     //             fieldRelative),
     //           m_swerve));
-    
+
+    // m_swerve.setDefaultCommand(wiiBalanceCommand);
     m_elevatorSubsystem.setDefaultCommand(
         new RunCommand(
           () -> 
@@ -316,12 +314,12 @@ public class RobotContainer {
     runIntakeTrigger.onTrue(m_endEffectorSubsystem.runEndEffector());
 
 
-    // forwardAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
-    // reverseAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
+    forwardAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
+    reverseAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
 
 
-    // deAlgaeL2Trigger.onTrue(new RunCommand(m_algaeSubsystem::extendAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-    // deAlgaeL3Trigger.onTrue(new RunCommand(m_algaeSubsystem::retractAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    deAlgaeL2Trigger.onTrue(new RunCommand(m_algaeSubsystem::extendAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    deAlgaeL3Trigger.onTrue(new RunCommand(m_algaeSubsystem::retractAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     
 
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));

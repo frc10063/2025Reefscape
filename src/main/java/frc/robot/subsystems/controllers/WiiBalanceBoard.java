@@ -6,6 +6,7 @@ package frc.robot.subsystems.controllers;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /** Add your docs here. */
@@ -19,7 +20,7 @@ public class WiiBalanceBoard extends GenericHID {
     private double yOffset = 0.0;
     private double rotOffset = 0.0;
 
-    private double DEADBAND = 0.08;
+    private double DEADBAND = 0.15;
     public WiiBalanceBoard(int port) {
         super(port);
     }
@@ -42,12 +43,13 @@ public class WiiBalanceBoard extends GenericHID {
      * Returns the normalized weights in an array
      */
     private double[] getNormalizedCorners() {
-        double fl = getFL();
-        double fr = getFR();
-        double bl = getBL();
-        double br = getBR();
-
+        double fl = getFL() + 1;
+        double fr = getFR() + 1;
+        double bl = getBL() + 1;
+        double br = getBR() + 1;
+        
         double total = fl + fr + bl + br;
+        SmartDashboard.putNumber("weight", total);
         if (total < 0.05) {
             return new double[] {0.25, 0.25, 0.25, 0.25};
         }
@@ -66,11 +68,14 @@ public class WiiBalanceBoard extends GenericHID {
         double fr = ratios[1];
         double bl = ratios[2];
         double br = ratios[3];
+        SmartDashboard.putNumberArray("ratios", ratios);
 
         double x = (fr + br) - (fl + bl);
         x -= xOffset;
         x = MathUtil.applyDeadband(x, DEADBAND);
+        SmartDashboard.putNumber("X board", x);
         return MathUtil.clamp(x, -1.0, 1.0);
+
     }
 
     // Returns Y axis from weight ratios with forward being +
@@ -100,6 +105,11 @@ public class WiiBalanceBoard extends GenericHID {
         rot = MathUtil.applyDeadband(rot, DEADBAND);
         return MathUtil.clamp(rot, -1.0, 1.0);
     }
+
+    public double applyResponseCurve(double input) {
+        return Math.copySign(input * input, input);
+    }
+
 
     public void calibrate() {
         double[] ratios = getNormalizedCorners();
