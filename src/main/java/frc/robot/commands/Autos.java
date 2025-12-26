@@ -18,7 +18,7 @@ import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
-import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
@@ -43,7 +43,7 @@ public final class Autos {
   public static Command L1Sequence(DriveTrain m_swerve, EndEffectorSubsystem m_endEffectorSubsystem) {
     return Commands.run(() -> m_swerve.drive(0, -0.3, 0, false)).alongWith(m_endEffectorSubsystem.runL1EndEffector()).withTimeout(2);
   }
-  public static Command VisionAlignAuto(DriveTrain m_swerve, ElevatorSubsystem m_elevatorSubsystem, EndEffectorSubsystem m_endEffectorSubsystem, PoseEstimatorSubsystem m_vision, boolean startLeft) {
+  public static Command VisionAlignAuto(DriveTrain m_swerve, ElevatorSubsystem m_elevatorSubsystem, EndEffectorSubsystem m_endEffectorSubsystem, VisionSubsystem m_vision, boolean startLeft) {
     return Commands.sequence(
       new Move(m_swerve, -1, 0, new Rotation2d(startLeft ? -(2 * Math.PI)/3: (2 * Math.PI)/3), false), 
       new AlignCommand(m_swerve, m_vision, startLeft),
@@ -52,7 +52,7 @@ public final class Autos {
       m_elevatorSubsystem.moveElevatorTo("ZERO")
     );
   }
-  public static Command middleReefAuto(DriveTrain m_swerve, ElevatorSubsystem m_elevatorSubsystem, EndEffectorSubsystem m_endEffectorSubsystem, PoseEstimatorSubsystem m_vision) {
+  public static Command middleReefAuto(DriveTrain m_swerve, ElevatorSubsystem m_elevatorSubsystem, EndEffectorSubsystem m_endEffectorSubsystem, VisionSubsystem m_vision) {
     return Commands.sequence(
       new Move(m_swerve, 0, 0, new Rotation2d(Math.PI/2), true), 
       new AlignCommand(m_swerve, m_vision, false), 

@@ -11,7 +11,9 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.studica.frc.AHRS;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -20,6 +22,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,8 +35,8 @@ import static frc.robot.Constants.DriveConstants.*;
 
 public class DriveTrain extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator;
-  private static final edu.wpi.first.math.Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1); 
-  private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 0.9);
+  private static final Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1); 
+  private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 0.9);
 
   public DriveTrain() {
     m_gyro.reset();
@@ -59,19 +62,16 @@ public class DriveTrain extends SubsystemBase {
           1),
       MODULE_TRANSLATIONS);
     AutoBuilder.configure(
-      this::getPose, // Robot pose supplier
-      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-      this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-      (speeds, feedforwards) -> drive(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-      new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-              new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+      this::getPose, 
+      this::setPose, 
+      this::getRobotRelativeSpeeds, 
+      (speeds, feedforwards) -> drive(speeds), 
+      new PPHolonomicDriveController( 
+              new PIDConstants(5.0, 0.0, 0.0), 
+              new PIDConstants(5.0, 0.0, 0.0) 
       ),
-      config, // The robot configuration
+      config, 
       () -> {
-        // Boolean supplier that controls when the path will be mirrored for the red alliance
-        // This will flip the path being followed to the red side of the field.
-        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
         var alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
           return alliance.get() == DriverStation.Alliance.Red;
@@ -84,7 +84,7 @@ public class DriveTrain extends SubsystemBase {
 
   double speedMultiplier = 1;
   private Field2d field2d = new Field2d();
-  /** Creates a new DriveTrain. */
+  
   private final SwerveModule m_frontLeft = new SwerveModule(
       kFrontLeftDriveMotorPort,
       kFrontLeftTurningMotorPort,
@@ -116,25 +116,27 @@ public class DriveTrain extends SubsystemBase {
 
   private final AHRS m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
   private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
-      kDriveKinematics,
+    kDriveKinematics,
+    m_gyro.getRotation2d(),
+    new SwerveModulePosition[] {
+      m_frontLeft.getPosition(),
+      m_frontRight.getPosition(),
+      m_rearLeft.getPosition(),
+      m_rearRight.getPosition()
+    }
+  );
+
+  /** Updates the field relative position of the robot. */
+  public void updateOdometry() {
+    m_odometry.update(
       m_gyro.getRotation2d(),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
-      });
-
-  /** Updates the field relative position of the robot. */
-  public void updateOdometry() {
-    m_odometry.update(
-        m_gyro.getRotation2d(),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        });
+      }
+    );
   }
 
   public SwerveModulePosition[] getSwerveModulePositions() {
@@ -148,7 +150,7 @@ public class DriveTrain extends SubsystemBase {
 
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return kDriveKinematics.toChassisSpeeds(getSwerveModuleStates());
-    };
+  };
 
   public SwerveModuleState[] getSwerveModuleStates() {
     return new SwerveModuleState[] {
@@ -160,13 +162,22 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /*
-   * Returns the currently-estimated pose of the robot
+   * Returns the currently-estimated pose of the robot from odometry
    * 
    * @return The pose
    */
-  public Pose2d getPose() {
+  public Pose2d getOdometry() {
     return m_odometry.getPoseMeters();
   }
+
+  public Pose2d getPose() {
+    return poseEstimator.getEstimatedPosition();
+  }
+
+  public void setPose(Pose2d pose) {
+    poseEstimator.resetPosition(getGyroRotation(), getSwerveModulePositions(), pose);
+  }
+
 
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
@@ -263,32 +274,44 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * Returns the heading of the robot.
-   *
-   * @return the robot's heading in degrees, from -180 to 180
+   * Returns the heading of the robot from the gyro
+   * @return the robot's heading as a rotation
    */
-  public double getHeading() {
-    return m_gyro.getRotation2d().getDegrees();
-  }
-
   public Rotation2d getGyroRotation() {
     return m_gyro.getRotation2d();
   }
 
+  /*
+   * Returns the rotation of the robot based on pose estimation
+   */
+  public Rotation2d getRotation() {
+    return getPose().getRotation();
+  }
   /**
-   * Returns the turn rate of the robot.
-   *
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
     return m_gyro.getRate() * (kGyroReversed ? -1.0 : 1.0);
   }
 
+  public void addVisionMeasurement(
+      Pose2d visionMeasurementPose, 
+      double timestamp, 
+      Matrix<N3, N1> visionMeasurementStdDevs) {
+    poseEstimator.addVisionMeasurement(visionMeasurementPose, timestamp, visionMeasurementStdDevs);
+  }
+
+  public Field2d getPoseEstimatorField() {
+    return field2d;
+  }
+  
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Gyro Heading", getHeading());
+    SmartDashboard.putNumber("Gyro Heading", getGyroRotation().getDegrees());
     updateOdometry();
-    field2d.setRobotPose(m_odometry.getPoseMeters());
-    SmartDashboard.putData("Field", field2d);
+    poseEstimator.update(
+      getGyroRotation(), 
+      getSwerveModulePositions());
+    field2d.setRobotPose(getPose());
   }
 }

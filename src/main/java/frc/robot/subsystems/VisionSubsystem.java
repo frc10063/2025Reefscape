@@ -12,6 +12,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -20,6 +21,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,14 +30,14 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 
-public class PoseEstimatorSubsystem extends SubsystemBase {
+public class VisionSubsystem extends SubsystemBase {
   // https://github.com/STMARobotics/frc-7028-2023/blob/5916bb426b97f10e17d9dfd5ec6c3b6fda49a7ce/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java#L11
   private AprilTagFieldLayout apriltaglayout; // layout of field tags
 
   private PhotonCamera camera = new PhotonCamera("photonvision"); // create camera
-  private DriveTrain m_swerve;
+  // private DriveTrain m_swerve;
   private PhotonTrackedTarget currentTarget;
-
+  private final VisionConsumer consumer;
   private boolean hasTarget = false;
   private double previousPipelineTimestamp = 0;
   // Initalize list of tagPoses to access with IDs
@@ -45,19 +47,20 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 0.9);
 
   
-  private final SwerveDrivePoseEstimator poseEstimator;
+  // private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field2d = new Field2d();
-  public PoseEstimatorSubsystem(DriveTrain m_swerve) {
+  public VisionSubsystem(VisionConsumer consumer) {
     apriltaglayout = VisionConstants.APRIL_TAGS_LAYOUT;
-    this.m_swerve = m_swerve;
-    poseEstimator = new SwerveDrivePoseEstimator(
-      DriveConstants.kDriveKinematics,
-      m_swerve.getGyroRotation(),
-      m_swerve.getSwerveModulePositions(), // m_swerve.getDrivetrainState().getSwerveModulePositions(),
-      new Pose2d(), 
-      stateStdDevs,
-      visionMeasurementStdDevs
-    );
+    this.consumer = consumer;
+    // this.m_swerve = m_swerve;
+    // poseEstimator = new SwerveDrivePoseEstimator(
+    //   DriveConstants.kDriveKinematics,
+    //   m_swerve.getGyroRotation(),
+    //   m_swerve.getSwerveModulePositions(), // m_swerve.getDrivetrainState().getSwerveModulePositions(),
+    //   new Pose2d(), 
+    //   stateStdDevs,
+    //   visionMeasurementStdDevs
+    // );
     
     for (int tagId : VisionConstants.tagIds) {
       var tagPoseOptional = apriltaglayout.getTagPose(tagId);
@@ -69,9 +72,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   public boolean hasTarget() {
     return hasTarget;
   }
-  public Pose2d getPoseEstimate() {
-    return poseEstimator.getEstimatedPosition();
-  }
+  // public Pose2d getPoseEstimate() {
+  //   return poseEstimator.getEstimatedPosition();
+  // }
 
   public Pose3d findBestTagPose() {
     return tagPoses.get(currentTarget.getFiducialId() - 1);
@@ -85,14 +88,14 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     return camera.getLatestResult();
   }
   /**
-   * 
+   * @param currentPose The current pose of the robot
    * @param approachOffset The offset distance in front of the tag to be (positive being further from tag)
    * @param lateralOffset The offset distance to the side of the tag (positive being right, negative being left)
    * @param rotationalOffset
    * @return Returns a robot pose with the given offsets relative to tag (including bumpers)
    */
-  public Pose2d calculateGoalPoseForBestTag(double approachOffset, double lateralOffset, Rotation2d rotationalOffset) {
-    Pose2d robotPose = m_swerve.getPose();
+  public Pose2d calculateGoalPoseForBestTag(Pose2d currentPose, double approachOffset, double lateralOffset, Rotation2d rotationalOffset) {
+    Pose2d robotPose = currentPose;
     Transform3d targetTransformation = currentTarget.getBestCameraToTarget();
     var robotPose3d = new Pose3d(robotPose.getX(), robotPose.getY(), 0,
       new Rotation3d(0, 0, robotPose.getRotation().getRadians()));
@@ -128,15 +131,19 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         Pose3d camPose = targetPose.transformBy(camToTarget.inverse());
 
         var visionMeasurement = camPose.transformBy(VisionConstants.camPosition);
-        poseEstimator.addVisionMeasurement(visionMeasurement.toPose2d(), resultTimestamp);
+        consumer.accept(visionMeasurement.toPose2d(), resultTimestamp, visionMeasurementStdDevs);
       }
     }
-    // Update pose estimator
-    var drivetrainState = m_swerve.getPose();
-    poseEstimator.update(
-      m_swerve.getGyroRotation(), // also a m_swerve.getSwerveModuleStates() but thats too many args?
-      m_swerve.getSwerveModulePositions());
-    field2d.setRobotPose(poseEstimator.getEstimatedPosition()); 
-    SmartDashboard.putData(field2d);
+    // poseEstimator.update(
+    //   m_swerve.getGyroRotation(), // also a m_swerve.getSwerveModuleStates() but thats too many args?
+    //   m_swerve.getSwerveModulePositions()); 
+  }
+  @FunctionalInterface
+  public static interface VisionConsumer {
+    public void accept(
+      Pose2d visionMeasurementPose,
+      double timestamp,
+      Matrix<N3, N1> visionMeasurementStdDevs
+    );
   }
 }

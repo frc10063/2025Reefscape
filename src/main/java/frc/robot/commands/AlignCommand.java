@@ -19,13 +19,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AlignCommand extends Command {
   /** Creates a new AlignCommand. */
   private final DriveTrain m_swerve;
-  private final PoseEstimatorSubsystem m_vision;
+  private final VisionSubsystem m_vision;
   private final boolean targetRightCoral;
   private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(2, 3);
   private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(2, 3);
@@ -41,7 +41,7 @@ public class AlignCommand extends Command {
   private Pose2d targetPose;
   private Pose2d robotPose;
   private Pose2d goalPoseV2;
-  public AlignCommand(DriveTrain m_swerve, PoseEstimatorSubsystem m_vision, boolean targetRightCoral) {
+  public AlignCommand(DriveTrain m_swerve, VisionSubsystem m_vision, boolean targetRightCoral) {
     this.m_swerve = m_swerve;
     this.m_vision = m_vision;
     this.targetRightCoral = targetRightCoral;

@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Bongo extends CommandJoystick {
-    // When you see this in 7 years when the club is alive again,
-    // this is the Gamecube DonkeyKong Bongo Controller
+    // When you see this in 7 years (if the club dies again, hopefully won't happen),
+    // this is the Gamecube Donkey Kong Bongo Controller
     // it has no competitive value but its cool
     public Bongo(int port) {
         super(port);

@@ -42,7 +42,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 // import frc.robot.subsystems.AlgaeSubsystem;
-import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.controllers.Bongo;
 import frc.robot.subsystems.controllers.DDRMat;
 import frc.robot.subsystems.controllers.WiiBalanceBoard;
@@ -72,7 +72,7 @@ public class RobotContainer {
   private final DriveTrain m_swerve = new DriveTrain();
   private final EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem(m_elevatorSubsystem);
   private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
-  private final PoseEstimatorSubsystem m_vision = new PoseEstimatorSubsystem(m_swerve);
+  private final VisionSubsystem m_vision = new VisionSubsystem(m_swerve::addVisionMeasurement);
   
 
 
@@ -342,12 +342,6 @@ public class RobotContainer {
     clapIntakeTrigger.onTrue(new StartEndCommand(m_endEffectorSubsystem::runIntakeMaxSpeed, m_endEffectorSubsystem::stopIntake, m_endEffectorSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     algaeToggleTrigger.onTrue(new StartEndCommand(m_algaeSubsystem::toggleAlgae, m_algaeSubsystem::stopAlgae, m_algaeSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-    // DDRL1Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[0]), m_elevatorSubsystem));
-    // DDRL2Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[1]), m_elevatorSubsystem));
-    // DDRL3Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[2]), m_elevatorSubsystem));
-
-    // DDRIntakeTrigger.onTrue(new RunCommand(m_endEffectorSubsystem::runIntakeMaxSpeed, m_endEffectorSubsystem).withTimeout(0.5));
-    // DDRL4Trigger.whileTrue(new RunCommand(() -> m_elevatorSubsystem.setElevatorPosition(ElevatorConstants.kElevatorSetpoints[3]), m_elevatorSubsystem));
     DDRIncreaseSpeedTrigger.onTrue(new InstantCommand(this::addDDRSpeed));
     DDRDecreaseSpeedTrigger.onTrue(new InstantCommand(this::lowerDDRSpeed));
 
