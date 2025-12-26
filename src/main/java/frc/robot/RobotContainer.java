@@ -42,7 +42,6 @@ import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.controllers.Bongo;
 import frc.robot.subsystems.controllers.DDRMat;
 import frc.robot.subsystems.controllers.WiiBalanceBoard;
-import frc.robot.subsystems.controllers.WiiBalanceBoard;
 
 
 
@@ -113,18 +112,12 @@ public class RobotContainer {
   Trigger bongoPlaceL2Trigger = m_bongoController.getLeftFullBongo();
   Trigger bongoPlaceL3Trigger = m_bongoController.getRightFullBongo();
   Trigger bongoZeroTrigger = m_bongoController.getBottomLeft().and(m_bongoController.getBottomRight());
- // Trigger bongoPlaceL4Trigger = m_bongoController.getLeftFullBongo().and(m_bongoController.getRightFullBongo());
+  Trigger bongoPlaceL4Trigger = m_bongoController.getLeftFullBongo().and(m_bongoController.getRightFullBongo());
 
   Trigger clapIntakeTrigger = m_bongoController.getClap();
 
   Trigger algaeToggleTrigger = m_bongoController.getMiddleButton();
 
-  // DDRMat Triggers for Elevator / Intake
-  // Trigger L1DDRTrigger = m_ddrController.getLeftArrow();
-  // Trigger L2DDRTrigger = m_ddrController.getBlueUpArrow();
-  // Trigger L3DDRTrigger = m_ddrController.getOrangeUpArrow();
-  // Trigger L4DDR = m_ddrController.getRightArrow(); NO
-  // Trigger DDRIntakeTrigger = m_ddrController.getRightArrow();
   Trigger DDRIncreaseSpeedTrigger = m_ddrController.getPlusButton();
   Trigger DDRDecreaseSpeedTrigger = m_ddrController.getMinusButton();
 
@@ -135,56 +128,32 @@ public class RobotContainer {
   Trigger balanceBoardCalibrate = m_balanceBoard.calibrationButton();
 
   // Commands
-  Move rotMiddle90Command = new Move(m_swerve, 0, 0, new Rotation2d(-Math.PI/2), true);
-  // for starting left side 
-  Move rotLeftCommand = new Move(m_swerve, 0, 0, new Rotation2d(-Math.PI/3), true);
-  // for right side
-  Move rotRightCommand = new Move(m_swerve, 0, 0, new Rotation2d(Math.PI/3), true);
-  ChaseTagCommand chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
-  Command leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
-  Command rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
-  
-  // Command taxiAutoCommand = new Move(m_swerve, -2, 0, true);
+  ChaseTagCommand chaseTagCommand;
+  Command leftAlignCommand;
+  Command rightAlignCommand;
 
-  Command middleAutoCommand = new MiddleReefAuto(m_swerve, m_endEffectorSubsystem);
-  Command leftAutoCommand = new LeftReefAuto(m_swerve, m_endEffectorSubsystem);
-  Command rightAutoCommand = new RightReefAuto(m_swerve, m_endEffectorSubsystem);
+  Command controllerCommand;
+  Command ddrCommand;
+  Command wiiBalanceCommand;
+
+  // these were never tested
+  Command middleAutoCommand;
+  Command leftAutoCommand;
+  Command rightAutoCommand;
 
   
   // chooser for autos
   SendableChooser<Command> m_chooser = new SendableChooser<>();
+
+  // chooser for controllers, not tested
   SendableChooser<Command> m_driveChooser = new SendableChooser<>();
+
   private Command activeDriveCommand = null;
-  // SendableChooser<Runnable> m_operatorChooser = new SendableChooser<>();
 
   boolean fieldRelative = true;
   double DDRSpeedMultiplier = 1;
-  boolean swerveController = true;
-  Command ddrCommand = new RunCommand(
-    () ->
-      m_swerve.drive(
-        m_ddrController.getMatYValue() * DDRSpeedMultiplier, 
-        m_ddrController.getMatXValue() * DDRSpeedMultiplier, 
-        m_ddrController.getMatRotValue() * DDRSpeedMultiplier,
-        fieldRelative),
-      m_swerve);
-  Command controllerCommand = new RunCommand(
-    () ->
-      m_swerve.drive(
-        Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
-        Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
-        Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY,
-        fieldRelative),
-      m_swerve);
-  Command wiiBalanceCommand = new RunCommand(
-    () -> 
-        m_swerve.drive(
-            m_balanceBoard.applyResponseCurve(m_balanceBoard.getYAxis()) * DriveConstants.LINEAR_SPEED,
-            -m_balanceBoard.applyResponseCurve(m_balanceBoard.getXAxis()) * DriveConstants.LINEAR_SPEED,
-            m_balanceBoard.applyResponseCurve(m_balanceBoard.getRotAxis()) * DriveConstants.MAX_ANGULAR_VELOCITY,
-            fieldRelative
-        ),
-    m_swerve);
+  
+
   // methods for enabling/disabling field relative from controller
   public void fieldRelativeToggle() {
     fieldRelative = !fieldRelative;
@@ -211,13 +180,47 @@ public class RobotContainer {
 
 
   public RobotContainer() {
-    
+    // Tangent line applied to make smaller movements smaller, but maintain same max speed
+    // As by default up is -y on a joystick and left is +x, joystick inputs must be inverted
+    controllerCommand = new RunCommand(
+      () ->
+        m_swerve.drive(
+          Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftY(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+          Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getLeftX(), 0.1)) * DriveConstants.LINEAR_SPEED, 
+          Math.tan((Math.PI/4) * -MathUtil.applyDeadband(m_controller.getRightX(), 0.1)) * DriveConstants.MAX_ANGULAR_VELOCITY,
+          fieldRelative),
+    m_swerve);
+    ddrCommand = new RunCommand(
+      () ->
+        m_swerve.drive(
+          m_ddrController.getMatYValue() * DDRSpeedMultiplier, 
+          m_ddrController.getMatXValue() * DDRSpeedMultiplier, 
+          m_ddrController.getMatRotValue() * DDRSpeedMultiplier,
+          fieldRelative),
+    m_swerve);
+    wiiBalanceCommand = new RunCommand(
+      () -> 
+        m_swerve.drive(
+            m_balanceBoard.applyResponseCurve(m_balanceBoard.getYAxis()) * DriveConstants.LINEAR_SPEED,
+            -m_balanceBoard.applyResponseCurve(m_balanceBoard.getXAxis()) * DriveConstants.LINEAR_SPEED,
+            m_balanceBoard.applyResponseCurve(m_balanceBoard.getRotAxis()) * DriveConstants.MAX_ANGULAR_VELOCITY,
+            fieldRelative
+          ),
+    m_swerve);
+
+    chaseTagCommand = new ChaseTagCommand(m_vision, m_swerve);
+    leftAlignCommand  = new AlignCommand(m_swerve, m_vision, false);
+    rightAlignCommand = new AlignCommand(m_swerve, m_vision, true);
+
+    middleAutoCommand = new MiddleReefAuto(m_swerve, m_endEffectorSubsystem);
+    leftAutoCommand = new LeftReefAuto(m_swerve, m_endEffectorSubsystem);
+    rightAutoCommand = new RightReefAuto(m_swerve, m_endEffectorSubsystem);
+
     // options for sendable auto chooser
     m_chooser.setDefaultOption("Taxi Auto", Autos.taxi(m_swerve));
     m_chooser.addOption("Middle Reef Auto", Autos.middleReefAuto(m_swerve, m_elevatorSubsystem, m_endEffectorSubsystem, m_vision));
     m_chooser.addOption("Left Reef Auto", Autos.VisionAlignAuto(m_swerve, m_elevatorSubsystem, m_endEffectorSubsystem, m_vision, true));
     m_chooser.addOption("Right Reef Auto", Autos.VisionAlignAuto(m_swerve, m_elevatorSubsystem, m_endEffectorSubsystem, m_vision, false));
-    //m_chooser.addOption("Real Middle Reef Auto", Commands.sequence(rotMiddle90Command, taxiAutoCommand.withTimeout(3), Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L2")));
 
     m_driveChooser.setDefaultOption("Xbox Controller", controllerCommand);
     m_driveChooser.addOption("DDR Mat", ddrCommand);
@@ -225,15 +228,12 @@ public class RobotContainer {
 
 
     SmartDashboard.putData(m_chooser);
-    // SmartDashboard.putData("Drive Controller", m_driveChooser);
+    SmartDashboard.putData("Drive Controller", m_driveChooser);
     DriverStation.silenceJoystickConnectionWarning(true);
     
     configureBindings();
 
     // Default commands run when nothing is scheduled
-    // Tangent line applied to make smaller movements smaller, but maintain same max speed
-    // As by default up is -y on a joystick and left is +x, joystick inputs must be inverted
-
     m_swerve.setDefaultCommand(controllerCommand);
     // m_swerve.setDefaultCommand(
     //     new RunCommand(
@@ -245,26 +245,7 @@ public class RobotContainer {
     //               fieldRelative), 
     //               m_swerve));
 
-    // m_swerve.setDefaultCommand(
-    //       new RunCommand(
-    //         () -> 
-    //             m_swerve.drive(
-    //                 m_balanceBoard.getYAxis(),
-    //                 m_balanceBoard.getXAxis(),
-    //                 m_balanceBoard.getRotAxis(),
-    //                 fieldRelative
-    //             ),
-    //         m_swerve));
-    // m_swerve.setDefaultCommand(
-    //     new RunCommand(
-    //       () ->
-    //           m_swerve.drive(
-    //             m_ddrController.getMatYValue() * DDRSpeedMultiplier, 
-    //             m_ddrController.getMatXValue() * DDRSpeedMultiplier, 
-    //             m_ddrController.getMatRotValue() * DDRSpeedMultiplier,
-    //             fieldRelative),
-    //           m_swerve));
-
+    // m_swerve.setDefaultCommand(ddrCommand);
     // m_swerve.setDefaultCommand(wiiBalanceCommand);
     m_elevatorSubsystem.setDefaultCommand(
         new RunCommand(
@@ -290,37 +271,28 @@ public class RobotContainer {
     // zero gyro
     resetGyroTrigger.onTrue(new InstantCommand(m_swerve::zeroHeading));
     
-    // fieldRelativeToggleTrigger.onTrue(new InstantCommand(this::fieldRelativeToggle));
-    fieldRelativeToggleTrigger.onTrue(controllerCommand.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    fieldRelativeToggleTrigger.onTrue(new InstantCommand(this::fieldRelativeToggle));
     fieldRelativeHoldTrigger.whileTrue(new StartEndCommand(this::disableFieldRelative, this::enableFieldRelative, new Subsystem[0]));
 
     halfSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::slowSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
     fastSpeedTrigger.whileTrue(new StartEndCommand(m_swerve::fastSpeed, m_swerve::defaultSpeed, new Subsystem[0]));
-
-    controllerSwapTrigger.onTrue(ddrCommand.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     
     alignRightCoralTrigger.whileTrue(rightAlignCommand);
     alignLeftCoralTrigger.whileTrue(leftAlignCommand);
-
-
 
     // Joystick bindings
     L1Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L1"));
     L2Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L2"));
     L3Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L3"));
-    // L4Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L4"));
-
+    L4Trigger.onTrue(m_elevatorSubsystem.moveElevatorTo("L4"));
 
     runIntakeTrigger.onTrue(m_endEffectorSubsystem.runEndEffector());
-
 
     forwardAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::runAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
     reverseAlgaeTrigger.whileTrue(new StartEndCommand(m_algaeSubsystem::reverseAlgaeMaxSpeed, m_algaeSubsystem::stopAlgae, m_algaeSubsystem));
 
-
     deAlgaeL2Trigger.onTrue(new RunCommand(m_algaeSubsystem::extendAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     deAlgaeL3Trigger.onTrue(new RunCommand(m_algaeSubsystem::retractAlgae, m_algaeSubsystem).withTimeout(1.2).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-    
 
     OverrideElevatorSafetyTrigger.onTrue(new InstantCommand(m_elevatorSubsystem::overrideElevatorSafety));
 
@@ -330,11 +302,11 @@ public class RobotContainer {
     L1BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L1"), () -> m_elevatorSubsystem.isAtLevel("L1")));
     L2BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L2"), () -> m_elevatorSubsystem.isAtLevel("L2")));
     L3BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L3"), () -> m_elevatorSubsystem.isAtLevel("L3")));
-    // L4BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L4"), () -> m_elevatorSubsystem.isAtLevel("L4")));
+    L4BongoTrigger.onTrue(Commands.either(m_endEffectorSubsystem.runEndEffector(), m_elevatorSubsystem.moveElevatorTo("L4"), () -> m_elevatorSubsystem.isAtLevel("L4")));
     
     bongoPlaceL2Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L2"));
     bongoPlaceL3Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L3"));
-    //bongoPlaceL4Trigger.onTrue(new CoralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, 4).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+    bongoPlaceL4Trigger.onTrue(Autos.coralPlacingAuto(m_elevatorSubsystem, m_endEffectorSubsystem, "L4"));
 
     bongoZeroTrigger.onTrue(m_elevatorSubsystem.moveElevatorTo("ZERO"));
     clapIntakeTrigger.onTrue(new StartEndCommand(m_endEffectorSubsystem::runIntakeMaxSpeed, m_endEffectorSubsystem::stopIntake, m_endEffectorSubsystem).withTimeout(0.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
@@ -346,6 +318,7 @@ public class RobotContainer {
     balanceBoardCalibrate.onTrue(new InstantCommand(m_balanceBoard::calibrate));
   }
 
+  // not tested, should hopefully update drive controller based on dashboard chooser
   public void updateDriveMode() {
     Command selected = m_driveChooser.getSelected();
 
@@ -371,8 +344,6 @@ public class RobotContainer {
     return m_chooser.getSelected();
     
     // return Autos.taxi(m_swerve);
-    // return chaseTagCommand;
-    
   }
   
 }

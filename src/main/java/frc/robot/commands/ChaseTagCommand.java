@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ChaseTagCommand extends Command {
@@ -37,7 +37,7 @@ public class ChaseTagCommand extends Command {
           new Rotation3d(0, 0, Math.PI)); // yaw may be -pi/2 if front hasnt changed
 //   private final PhotonCamera photonCamera;
   private final DriveTrain swerve;
-  private final PoseEstimatorSubsystem vision;
+  private final VisionSubsystem vision;
 
   private final ProfiledPIDController xController = new ProfiledPIDController(2, 0, 0, xConstraints);
   private final ProfiledPIDController yController = new ProfiledPIDController(2, 0, 0, yConstraints);
@@ -45,7 +45,7 @@ public class ChaseTagCommand extends Command {
 
   private PhotonTrackedTarget lastTarget;
 
-  public ChaseTagCommand(PoseEstimatorSubsystem vision, DriveTrain swerve) {
+  public ChaseTagCommand(VisionSubsystem vision, DriveTrain swerve) {
     this.swerve = swerve;
     this.vision = vision;
 
