@@ -1,6 +1,6 @@
 // 7 year note when club is alive again: this ddrmat code has no comp value
 
-package frc.robot.subsystems.controllers;
+package frc.robot.controllers;
 
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;

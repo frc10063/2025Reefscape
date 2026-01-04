@@ -239,7 +239,7 @@ public final class Constants {
 
     // thinking out loud here
     // so 2048 encoder pulses is the equivalent of one rotation of the spool thing
-    // One rotation of the spool thing is equal to pi * diameter inches (roughly 3.14 if diameter is 1)
+    // One rotation of the spool is equal to pi * diameter inches (roughly 3.14 if diameter is 1)
     // Bc the current measurements are in pulses the kp is correcting 0.0025 of the error
     // 0.0025 * 2048 means a kp of 5.12 essentially per rotation
     // If Im basing the hieghts on inches then it should be 5.12/3.14 = 1.63 as a kp
