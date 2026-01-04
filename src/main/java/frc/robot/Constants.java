@@ -98,7 +98,7 @@ public final class Constants {
     public static final double MAX_LINEAR_SPEED = 3.8862; //3.5
     public static final double LINEAR_SPEED = 2.5; 
     public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
-    
+    // temporary values
     public static final double ROBOT_MASS_KG = 0;
     public static final double ROBOT_MOI = 0;
 
@@ -122,6 +122,7 @@ public final class Constants {
     public static final double STEER_GEAR_RATIO =  150.0 / 7.0;
     public static final double WHEEL_RADIUS = 0.0508;
     public static final double WHEEL_DIAMETER = WHEEL_RADIUS * 2;
+    // temporary values
     public static final double WHEEL_COF = 0;
     public static final double CURRENT_LIMIT = 0;
     

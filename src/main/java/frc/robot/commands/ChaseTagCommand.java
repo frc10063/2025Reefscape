@@ -26,7 +26,7 @@ import frc.robot.subsystems.VisionSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ChaseTagCommand extends Command {
   /** Creates a new ChaseTagCommand. */
-  // this is honestly useless but it cool to mess around with
+  // this is honestly useless but it cool for messing around and testing vision
   private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(0.5, 0.5);
   private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(0.5, 0.5);
   private static final TrapezoidProfile.Constraints rotConstraints = new TrapezoidProfile.Constraints(Math.PI, Math.PI);
@@ -91,7 +91,8 @@ public class ChaseTagCommand extends Command {
         var target = targetOpt.get();
         lastTarget = target;
 
-        var cameraPose = robotPose.transformBy(VisionConstants.camPosition);        var camToTarget = target.getBestCameraToTarget();
+        var cameraPose = robotPose.transformBy(VisionConstants.camPosition);
+        var camToTarget = target.getBestCameraToTarget();
         var targetPose = cameraPose.transformBy(camToTarget);
         var goalPose = targetPose.transformBy(tagToGoal).toPose2d();
         if (Math.abs(xController.getGoal().position - goalPose.getX()) > 0.05) {

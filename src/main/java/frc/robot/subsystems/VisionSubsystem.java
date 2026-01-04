@@ -31,7 +31,6 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 
 public class VisionSubsystem extends SubsystemBase {
-  // https://github.com/STMARobotics/frc-7028-2023/blob/5916bb426b97f10e17d9dfd5ec6c3b6fda49a7ce/src/main/java/frc/robot/subsystems/PoseEstimatorSubsystem.java#L11
   private AprilTagFieldLayout apriltaglayout; // layout of field tags
 
   private PhotonCamera camera = new PhotonCamera("photonvision"); // create camera
@@ -46,21 +45,10 @@ public class VisionSubsystem extends SubsystemBase {
   private static final edu.wpi.first.math.Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1); // 0.1, 0.1, 0.1
   private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 0.9);
 
-  
-  // private final SwerveDrivePoseEstimator poseEstimator;
-  private final Field2d field2d = new Field2d();
   public VisionSubsystem(VisionConsumer consumer) {
     apriltaglayout = VisionConstants.APRIL_TAGS_LAYOUT;
     this.consumer = consumer;
-    // this.m_swerve = m_swerve;
-    // poseEstimator = new SwerveDrivePoseEstimator(
-    //   DriveConstants.kDriveKinematics,
-    //   m_swerve.getGyroRotation(),
-    //   m_swerve.getSwerveModulePositions(), // m_swerve.getDrivetrainState().getSwerveModulePositions(),
-    //   new Pose2d(), 
-    //   stateStdDevs,
-    //   visionMeasurementStdDevs
-    // );
+    
     
     for (int tagId : VisionConstants.tagIds) {
       var tagPoseOptional = apriltaglayout.getTagPose(tagId);
@@ -135,7 +123,7 @@ public class VisionSubsystem extends SubsystemBase {
       }
     }
     // poseEstimator.update(
-    //   m_swerve.getGyroRotation(), // also a m_swerve.getSwerveModuleStates() but thats too many args?
+    //   m_swerve.getGyroRotation(), 
     //   m_swerve.getSwerveModulePositions()); 
   }
   @FunctionalInterface
