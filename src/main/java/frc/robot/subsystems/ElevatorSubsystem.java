@@ -154,7 +154,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Desired Motion", m_profiledPIDController.getSetpoint().position);
   }
   public Command moveElevatorTo(String level) {
-    // return Commands.runOnce(SetGoal(kElevatorSetpoints[level - 1]), this).run(setElevatorPositionV2(kElevatorSetpoints[level - 1]));
     return Commands.sequence(Commands.runOnce(() -> setGoalLevel(level), this), 
       Commands.run(() -> PIDControlToGoal()).until(this::reachedGoal)).finallyDo(this::stop);
   }
@@ -165,7 +164,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setGoalLevel(String level) {
-    // resets start position profiledPID to current position 
     m_profiledPIDController.reset(m_elevatorEncoder.get());
     m_profiledPIDController.setGoal(getPositionOf(level));
   }
